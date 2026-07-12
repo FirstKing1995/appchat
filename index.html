@@ -2,139 +2,269 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phantom Chat V2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phantom Mobile Immersive</title>
     <style>
-        :root { --bg: #0a0a0a; --surface: #1a1a1a; --primary: #00ff88; --text: #e0e0e0; --danger: #ff3366; }
-        body { margin: 0; font-family: monospace; background: var(--bg); color: var(--text); display: flex; justify-content: center; height: 100vh; overflow: hidden; }
-        #app { width: 100%; max-width: 450px; background: var(--surface); position: relative; display: flex; flex-direction: column; }
-        .screen { display: none; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; }
-        .screen.active { display: flex; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;}
-        button { padding: 12px; background: var(--primary); border: none; color: #000; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; margin-bottom: 10px;}
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; }
+        /* === TIKTOK STYLE MOBILE-FIRST RESET === */
+        :root {
+            --bg-color: #000000;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent: #00f2fe; /* Ciano estilo neon */
+            --danger: #ff0050; /* Vermelho TikTok */
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            width: 100vw;
+            height: 100dvh; /* Evita que o teclado/barra do Chrome quebre o layout */
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* === SCREENS === */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        /* === LOGIN & FORMS === */
+        .glass-panel {
+            margin: auto; width: 90%; max-width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 30px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .glass-panel h2 { margin: 0 0 10px 0; text-align: center; font-size: 28px; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
+        input[type="text"], input[type="password"] {
+            width: 100%; padding: 16px; border-radius: 12px; border: none;
+            background: rgba(255, 255, 255, 0.1); color: white; font-size: 16px; outline: none;
+        }
+        input::placeholder { color: rgba(255,255,255,0.4); }
+        input:focus { border: 1px solid var(--accent); background: rgba(255, 255, 255, 0.15); }
+        button.btn-primary {
+            width: 100%; padding: 16px; border: none; border-radius: 12px;
+            background: var(--accent); color: #000; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: transform 0.1s;
+        }
+        button.btn-primary:active { transform: scale(0.97); }
         
-        /* Lista e Online */
-        .online-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 5px var(--primary); }
-        .user-list, #groups-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
-        .user-list li, #groups-list li { padding: 12px; border-bottom: 1px solid #333; cursor: pointer; display: flex; align-items: center; }
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--text-muted); }
+        .toggle-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
+
+        /* === DASHBOARD (LISTAS) === */
+        .dash-header {
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            z-index: 2;
+        }
+        .user-info { display: flex; flex-direction: column; gap: 4px; }
+        .user-info .name { font-size: 18px; font-weight: bold; }
+        .user-info .status { font-size: 12px; color: var(--accent); }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
         
-        /* Area de Chat */
-        #messages-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
-        .msg { padding: 10px; border-radius: 8px; max-width: 85%; word-wrap: break-word; position: relative; transition: opacity 0.5s; }
-        .msg.sent { align-self: flex-end; background: #2a3a30; border: 1px solid var(--primary); }
-        .msg.received { align-self: flex-start; background: #333; }
-        .msg img, .msg video, .msg audio { max-width: 100%; border-radius: 5px; display: block; margin-top: 5px;}
+        .scroll-list { flex: 1; overflow-y: auto; padding: 0 20px; margin: 0; list-style: none; padding-bottom: 30px; }
+        .scroll-list::-webkit-scrollbar { display: none; } /* Oculta scrollbar */
+        .list-item {
+            padding: 20px; background: var(--glass-bg); margin-bottom: 15px;
+            border-radius: 16px; border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 500;
+        }
+        .online-indicator { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
+
+        /* === TELA DE CHAT (TIKTOK STYLE) === */
+        #chat-screen { background: #000; }
+        .chat-top-bar {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 20px 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%); z-index: 10;
+        }
+        .chat-top-bar h3 { margin: 0; font-size: 18px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px);}
+
+        /* Area de mensagens ocupa quase tudo, scroll invisivel */
+        #messages-container {
+            flex: 1; overflow-y: scroll; padding: 80px 70px 90px 15px; 
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        #messages-container::-webkit-scrollbar { display: none; }
         
-        /* Mecanismo Anti-Print (Blur) */
-        .anti-print-blur { filter: blur(15px); pointer-events: none; user-select: none; transition: filter 0.2s; }
-        .reveal-btn { width: 100%; background: #333; color: #888; border: 1px dashed #666; padding: 15px; margin-top: 10px; cursor: pointer; user-select: none; }
-        .reveal-btn:active, .reveal-btn.touching { background: var(--primary); color: #000; }
+        .msg {
+            max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4;
+            animation: slideUp 0.3s ease-out forwards; position: relative; word-break: break-word;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .input-area { display: flex; gap: 8px; align-items: center; background: #111; padding: 10px; border-top: 1px solid #333;}
-        .upload-btn { cursor: pointer; font-size: 20px; background: #333; padding: 10px; border-radius: 4px; }
-        .fade-out { opacity: 0 !important; }
-        
-        .toggle-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 14px;}
-        input[type="checkbox"] { width: auto; }
+        .msg.received { align-self: flex-start; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-bottom-left-radius: 4px; }
+        .msg.sent { align-self: flex-end; background: var(--accent); color: #000; font-weight: 500; border-bottom-right-radius: 4px; }
+        .msg img, .msg video { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+
+        /* Botões laterais flutuantes (Anti-Print / Ações) */
+        .side-action-bar {
+            position: absolute; right: 15px; bottom: 100px;
+            display: flex; flex-direction: column; gap: 20px; z-index: 10;
+        }
+        .side-btn {
+            width: 50px; height: 50px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.1); color: white; font-size: 24px;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s;
+        }
+        .side-btn.active { background: var(--accent); color: #000; transform: scale(1.1); }
+        .side-btn span { position: absolute; bottom: -18px; font-size: 10px; font-weight: bold; color: white; text-shadow: 0 1px 2px #000; }
+
+        /* Blur Overlay (Anti-Print Seguro) */
+        .blur-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 5; display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.2s ease; pointer-events: none;
+        }
+        .blur-overlay p { color: white; font-size: 14px; opacity: 0.6; text-align: center; }
+
+        /* Input Inferior Pill */
+        .bottom-input-bar {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 500px; display: flex; align-items: center; gap: 10px;
+            background: rgba(30, 30, 30, 0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 8px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); z-index: 10;
+        }
+        .bottom-input-bar input[type="text"] {
+            flex: 1; background: transparent; border: none; color: white; font-size: 15px;
+            padding: 10px 15px; outline: none; margin: 0;
+        }
+        .btn-send {
+            background: var(--accent); color: #000; border: none; border-radius: 50%;
+            width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;
+            font-size: 18px; padding-left: 4px; /* ajuste otico do ícone play */
+        }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- Tela de Login -->
-        <div id="login-screen" class="screen">
-            <h2 style="color: var(--primary)">PHANTOM V2</h2>
-            <input type="text" id="username" placeholder="Seu apelido anônimo">
-            <input type="password" id="password" placeholder="Sua senha secreta">
-            <input type="text" id="emoji" placeholder="Seu Emoji 👻">
-            <div class="toggle-container">
-                <input type="checkbox" id="is-invisible">
-                <label for="is-invisible">Modo Invisível (Ver, não ser visto)</label>
-            </div>
-            <button onclick="PhantomApp.auth()">Acessar Rede</button>
-        </div>
-
-        <!-- Tela Principal (Grupos e Online) -->
-        <div id="dashboard-screen" class="screen">
-            <div class="header">
-                <div>
-                    <span id="my-profile"></span>
-                    <br><small id="status-text" style="color:#888"></small>
+        <div id="login-screen" class="screen active">
+            <div class="glass-panel">
+                <h2>PHANTOM</h2>
+                <input type="text" id="username" placeholder="Apelido Anônimo">
+                <input type="password" id="password" placeholder="Chave Secreta">
+                <input type="text" id="emoji" placeholder="Avatar (Ex: 🦊)">
+                <div class="toggle-row">
+                    <label for="is-invisible">Operar como Fantasma (Invisível)</label>
+                    <input type="checkbox" id="is-invisible">
                 </div>
-                <button onclick="PhantomApp.logout()" style="background:var(--danger); padding: 5px 10px;">Sair</button>
+                <button class="btn-primary" onclick="App.auth()">ACESSAR</button>
             </div>
-            
-            <div style="display:flex; justify-content: space-between; align-items: center;">
-                <h3>Chats</h3>
-                <button onclick="PhantomApp.showNewGroupScreen()" style="padding: 5px 10px;">+ Chat</button>
-            </div>
-            <ul id="groups-list"></ul>
-
-            <h3 style="margin-top: 20px; font-size: 14px; color: #888;">Agentes Online Agora:</h3>
-            <ul id="online-users-list" class="user-list"></ul>
         </div>
 
-        <!-- Tela Criar Chat -->
+        <div id="dashboard-screen" class="screen">
+            <div class="dash-header">
+                <div class="user-info">
+                    <span class="name" id="my-profile">Nome</span>
+                    <span class="status" id="status-text">Status</span>
+                </div>
+                <button class="btn-danger" onclick="App.logout()">Sair</button>
+            </div>
+            
+            <div style="padding: 0 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="margin: 0; color: var(--text-muted);">Sessões Ativas</h3>
+                <button class="btn-primary" style="width: auto; padding: 8px 16px; border-radius: 20px;" onclick="App.showNewGroupScreen()">+ Criar</button>
+            </div>
+            <ul class="scroll-list" id="groups-list"></ul>
+
+            <div style="padding: 0 20px; margin-top: 10px; margin-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 14px; color: var(--danger);">Radares (Online)</h3>
+            </div>
+            <ul class="scroll-list" id="online-users-list" style="flex: none; max-height: 30%;"></ul>
+        </div>
+
         <div id="create-group-screen" class="screen">
-            <h3>Nova Conexão</h3>
-            <input type="text" id="group-name" placeholder="Nome do Chat">
-            <div id="users-selection" style="flex:1; overflow-y:auto;"></div>
-            <button onclick="PhantomApp.createGroup()">Estabelecer Conexão</button>
-            <button onclick="PhantomApp.switchScreen('dashboard-screen')" style="background:#333; color:white;">Cancelar</button>
+            <div class="glass-panel" style="max-height: 90vh;">
+                <h3 style="margin-top:0;">Nova Interceptação</h3>
+                <input type="text" id="group-name" placeholder="Nome do Chat">
+                <div id="users-selection" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px;"></div>
+                <button class="btn-primary" onclick="App.createGroup()">Iniciar Sessão</button>
+                <button class="btn-primary" style="background: rgba(255,255,255,0.1); color: white;" onclick="App.switchScreen('dashboard-screen')">Cancelar</button>
+            </div>
         </div>
 
-        <!-- Tela de Chat -->
-        <div id="chat-screen" class="screen" style="padding:0;">
-            <div class="header" style="padding: 15px; margin: 0; background: #111;">
-                <button onclick="PhantomApp.backToDash()" style="margin:0; padding:5px 10px; background:#333; color:white;">← Voltar</button>
-                <h3 id="current-group-name" style="margin:0;">Grupo</h3>
-            </div>
-            
-            <!-- Botão Anti-Print -->
-            <button id="anti-print-trigger" class="reveal-btn">
-                [ SEGURE AQUI PARA REVELAR MENSAGENS ]
-            </button>
+        <div id="chat-screen" class="screen">
+            <div class="chat-top-bar">
+                <button class="back-btn" onclick="App.backToDash()">‹</button>
+                <h3 id="current-group-name">Grupo</h3>
+                <div style="width: 40px;"></div> </div>
 
-            <div id="messages-container" class="anti-print-blur" style="padding: 15px;"></div>
-            
-            <div class="input-area">
-                <label for="media-upload" class="upload-btn">📎</label>
-                <!-- Aceita imagem, video e audio -->
-                <input type="file" id="media-upload" accept="image/*,video/mp4,audio/*" onchange="PhantomApp.handleMedia(event)" hidden>
-                <input type="text" id="msg-input" placeholder="Transmitir..." autocomplete="off">
-                <button onclick="PhantomApp.sendTextMessage()" style="margin:0;">►</button>
+            <div id="blur-protection" class="blur-overlay">
+                <p>Chat Criptografado<br>Segure o botão lateral para visualizar</p>
+            </div>
+
+            <div id="messages-container"></div>
+
+            <div class="side-action-bar">
+                <button class="side-btn" id="anti-print-trigger">
+                    👁️<span>EXIBIR</span>
+                </button>
+                <button class="side-btn" onclick="document.getElementById('media-upload').click()">
+                    📎<span>MÍDIA</span>
+                </button>
+            </div>
+
+            <div class="bottom-input-bar">
+                <input type="file" id="media-upload" accept="image/*,video/mp4,audio/*" onchange="App.handleMedia(event)" hidden>
+                <input type="text" id="msg-input" placeholder="Transmitir mensagem..." autocomplete="off">
+                <button class="btn-send" onclick="App.sendTextMessage()">►</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'SUA_URL_DO_APPS_SCRIPT_AQUI'; // Substitua
+        const API_URL = 'SUA_URL_DO_APPS_SCRIPT_AQUI'; // <-- INSIRA SUA URL AQUI
 
-        class PhantomEngine {
+        class PhantomCore {
             constructor() {
                 this.currentUser = null;
                 this.currentGroup = null;
                 this.lastSync = 0;
                 this.syncInterval = null;
                 this.heartbeatInterval = null;
-                this.MESSAGE_LIFESPAN = 15000; // 15 segundos
+                this.MESSAGE_LIFESPAN = 15000;
                 
-                this.initApp();
-                this.setupAntiPrint();
+                this.init();
+                this.setupMobileAntiPrint();
             }
 
             async request(action, payload) {
                 payload.action = action;
                 try {
                     const response = await fetch(API_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
+                        method: 'POST', body: JSON.stringify(payload)
                     });
                     const data = await response.json();
                     if (!data.success) throw new Error(data.error);
                     return data.data;
                 } catch (error) {
-                    alert("Erro de API: " + error.message);
+                    alert("Falha de Comunicação: " + error.message);
                     throw error;
                 }
             }
@@ -144,10 +274,10 @@
                 document.getElementById(screenId).classList.add('active');
             }
 
-            initApp() {
-                const saved = localStorage.getItem('phantom_session');
-                if (saved) {
-                    this.currentUser = JSON.parse(saved);
+            init() {
+                const session = localStorage.getItem('phantom_mobile_session');
+                if (session) {
+                    this.currentUser = JSON.parse(session);
                     this.loadDashboard();
                 } else {
                     this.switchScreen('login-screen');
@@ -157,36 +287,35 @@
             async auth() {
                 const name = document.getElementById('username').value.trim();
                 const pass = document.getElementById('password').value.trim();
-                const emoji = document.getElementById('emoji').value.trim() || '👻';
+                const emoji = document.getElementById('emoji').value.trim() || '🕵️';
                 const isInvisible = document.getElementById('is-invisible').checked;
 
-                if (!name || !pass) return alert('Nome e Senha obrigatórios.');
+                if (!name || !pass) return;
 
-                document.querySelector('#login-screen button').innerText = 'Autenticando...';
+                const btn = document.querySelector('#login-screen button');
+                btn.innerText = 'PROCESSANDO...';
                 try {
                     const user = await this.request('auth', { name, emoji, password: pass, isInvisible });
                     this.currentUser = user;
-                    localStorage.setItem('phantom_session', JSON.stringify(user));
+                    localStorage.setItem('phantom_mobile_session', JSON.stringify(user));
                     this.loadDashboard();
                 } catch(e) {
-                    document.querySelector('#login-screen button').innerText = 'Acessar Rede';
+                    btn.innerText = 'ACESSAR';
                 }
             }
 
             logout() {
-                localStorage.removeItem('phantom_session');
-                clearInterval(this.heartbeatInterval);
+                localStorage.removeItem('phantom_mobile_session');
                 location.reload();
             }
 
             async loadDashboard() {
                 this.switchScreen('dashboard-screen');
                 document.getElementById('my-profile').innerText = `${this.currentUser.emoji} ${this.currentUser.name}`;
-                document.getElementById('status-text').innerText = this.currentUser.isInvisible ? 'Modo: Invisível' : 'Modo: Visível';
+                document.getElementById('status-text').innerText = this.currentUser.isInvisible ? '● Invisível' : '● Visível';
                 
                 this.fetchGroups();
                 this.runHeartbeat();
-                // Roda o heartbeat a cada 10 segundos
                 if(!this.heartbeatInterval) {
                     this.heartbeatInterval = setInterval(() => this.runHeartbeat(), 10000);
                 }
@@ -195,16 +324,16 @@
             async runHeartbeat() {
                 if(!this.currentUser) return;
                 const onlineUsers = await this.request('heartbeat', { 
-                    userId: this.currentUser.id, 
-                    isInvisible: this.currentUser.isInvisible 
+                    userId: this.currentUser.id, isInvisible: this.currentUser.isInvisible 
                 });
                 
                 const list = document.getElementById('online-users-list');
-                list.innerHTML = '';
-                if(onlineUsers.length === 0) list.innerHTML = '<li style="color:#555">Nenhum agente detectado.</li>';
+                list.innerHTML = onlineUsers.length ? '' : '<li style="padding:15px; color:#555;">Nenhum radar ativo.</li>';
                 
                 onlineUsers.forEach(u => {
-                    list.innerHTML += `<li><span class="online-dot"></span> ${u.emoji} ${u.name}</li>`;
+                    list.innerHTML += `<li class="list-item" style="padding:10px 20px; min-height: 50px;">
+                        <div>${u.emoji} ${u.name}</div><div class="online-indicator"></div>
+                    </li>`;
                 });
             }
 
@@ -214,7 +343,8 @@
                 list.innerHTML = '';
                 groups.forEach(g => {
                     const li = document.createElement('li');
-                    li.innerText = `# ${g.name}`;
+                    li.className = 'list-item';
+                    li.innerHTML = `<span># ${g.name}</span> <span style="color:var(--text-muted)">›</span>`;
                     li.onclick = () => this.openChat(g);
                     list.appendChild(li);
                 });
@@ -227,16 +357,16 @@
                 container.innerHTML = '';
                 users.forEach(u => {
                     if (u.id === this.currentUser.id) return;
-                    container.innerHTML += `<label style="display:block; margin-bottom:8px;">
-                        <input type="checkbox" value="${u.id}"> ${u.emoji} ${u.name}
+                    container.innerHTML += `<label class="toggle-row" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
+                        <span>${u.emoji} ${u.name}</span>
+                        <input type="checkbox" value="${u.id}">
                     </label>`;
                 });
             }
 
             async createGroup() {
-                const name = document.getElementById('group-name').value || 'Chat Anônimo';
-                const checkboxes = document.querySelectorAll('#users-selection input:checked');
-                const members = Array.from(checkboxes).map(c => c.value);
+                const name = document.getElementById('group-name').value || 'Operação Oculta';
+                const members = Array.from(document.querySelectorAll('#users-selection input:checked')).map(c => c.value);
                 members.push(this.currentUser.id);
                 await this.request('createGroup', { name, members });
                 this.switchScreen('dashboard-screen');
@@ -249,7 +379,6 @@
                 document.getElementById('current-group-name').innerText = group.name;
                 document.getElementById('messages-container').innerHTML = '';
                 this.switchScreen('chat-screen');
-                
                 this.syncInterval = setInterval(() => this.syncMessages(), 3000);
             }
 
@@ -261,11 +390,7 @@
 
             async syncMessages() {
                 if(!this.currentGroup) return;
-                const messages = await this.request('syncMessages', { 
-                    groupId: this.currentGroup.id, 
-                    lastTimestamp: this.lastSync 
-                });
-
+                const messages = await this.request('syncMessages', { groupId: this.currentGroup.id, lastTimestamp: this.lastSync });
                 messages.forEach(msg => {
                     this.renderMessage(msg);
                     this.lastSync = Math.max(this.lastSync, msg.timestamp);
@@ -278,38 +403,25 @@
                 if (!content) return;
                 input.value = '';
                 
-                // Exibe renderização otimista (local) para fluidez
-                this.renderMessage({ senderId: this.currentUser.id, content: content, type: 'text', timestamp: new Date().getTime() }, true);
+                this.renderMessage({ senderId: this.currentUser.id, content: content, type: 'text', timestamp: Date.now() }, true);
                 
                 await this.request('sendMessage', { 
-                    groupId: this.currentGroup.id, 
-                    senderId: this.currentUser.id, 
-                    content: content, 
-                    type: 'text',
-                    mimeType: 'text/plain'
+                    groupId: this.currentGroup.id, senderId: this.currentUser.id, 
+                    content: content, type: 'text', mimeType: 'text/plain'
                 });
             }
 
             async handleMedia(event) {
                 const file = event.target.files[0];
                 if (!file) return;
-                
-                // Validação de tamanho (Limitando a ~5MB para evitar timeout no Apps Script)
-                if (file.size > 5 * 1024 * 1024) {
-                    return alert("Arquivo muito grande. O limite do servidor Phantom é 5MB.");
-                }
+                if (file.size > 5 * 1024 * 1024) return alert("Arquivo excede 5MB.");
 
                 const reader = new FileReader();
                 reader.onload = async (e) => {
-                    const base64 = e.target.result;
-                    this.renderMessage({ senderId: this.currentUser.id, content: '[Enviando mídia...]', type: 'text', timestamp: new Date().getTime() }, true);
-                    
+                    this.renderMessage({ senderId: this.currentUser.id, content: 'Upload em andamento...', type: 'text', timestamp: Date.now() }, true);
                     await this.request('sendMessage', { 
-                        groupId: this.currentGroup.id, 
-                        senderId: this.currentUser.id, 
-                        content: base64, 
-                        type: 'media',
-                        mimeType: file.type
+                        groupId: this.currentGroup.id, senderId: this.currentUser.id, 
+                        content: e.target.result, type: 'media', mimeType: file.type
                     });
                 };
                 reader.readAsDataURL(file);
@@ -323,50 +435,39 @@
                 if (msg.type === 'text') {
                     div.innerText = msg.content;
                 } else if (msg.type === 'media') {
-                    // O backend envia um link do drive. Precisamos criar o elemento HTML adequado.
-                    // Como não sabemos a extensão exata só pela URL no front de forma fácil, o ideal seria o backend retornar o tipo exato, mas vamos fazer um inferência simples para o MVP.
-                    div.innerHTML = `<a href="${msg.content}" target="_blank" style="color:var(--primary)">[Abrir Mídia Recebida no Drive]</a>`;
+                    div.innerHTML = `<a href="${msg.content}" target="_blank" style="color:#fff; text-decoration:underline;">[Mídia Externalizada - Abrir]</a>`;
                 }
 
                 container.appendChild(div);
-                container.scrollTop = container.scrollHeight;
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
 
                 if (!isOptimistic) {
                     setTimeout(() => {
-                        div.classList.add('fade-out');
-                        setTimeout(() => div.remove(), 500); 
+                        div.style.opacity = '0';
+                        setTimeout(() => div.remove(), 300); 
                     }, this.MESSAGE_LIFESPAN);
                 }
             }
 
-            setupAntiPrint() {
+            setupMobileAntiPrint() {
                 const btn = document.getElementById('anti-print-trigger');
-                const container = document.getElementById('messages-container');
+                const overlay = document.getElementById('blur-protection');
 
-                const reveal = (e) => {
-                    e.preventDefault();
-                    btn.classList.add('touching');
-                    container.style.filter = 'blur(0px)';
-                };
-                
-                const conceal = (e) => {
-                    e.preventDefault();
-                    btn.classList.remove('touching');
-                    container.style.filter = 'blur(15px)';
-                };
+                const reveal = (e) => { e.preventDefault(); btn.classList.add('active'); overlay.style.opacity = '0'; };
+                const conceal = (e) => { e.preventDefault(); btn.classList.remove('active'); overlay.style.opacity = '1'; };
 
-                // Mouse
-                btn.addEventListener('mousedown', reveal);
-                window.addEventListener('mouseup', conceal); // Previne travar se arrastar o mouse para fora
-                
-                // Touch (Celulares)
-                btn.addEventListener('touchstart', reveal);
+                // Otimizado para touch (Mobile-First)
+                btn.addEventListener('touchstart', reveal, {passive: false});
                 window.addEventListener('touchend', conceal);
                 window.addEventListener('touchcancel', conceal);
+                
+                // Fallback Mouse
+                btn.addEventListener('mousedown', reveal);
+                window.addEventListener('mouseup', conceal);
             }
         }
 
-        const PhantomApp = new PhantomEngine();
+        const App = new PhantomCore();
     </script>
 </body>
 </html>
