@@ -15,9 +15,7 @@
             --glass-bg: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.15);
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
             margin: 0;
             padding: 0;
@@ -29,7 +27,6 @@
             overflow: hidden;
             position: relative;
         }
-
         /* === SCREENS === */
         .screen {
             position: absolute;
@@ -46,7 +43,6 @@
             pointer-events: auto;
             z-index: 10;
         }
-
         /* === LOGIN & FORMS === */
         .glass-panel {
             margin: auto; width: 90%; max-width: 400px;
@@ -69,10 +65,9 @@
             cursor: pointer; transition: transform 0.1s;
         }
         button.btn-primary:active { transform: scale(0.97); }
-        
+
         .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--text-muted); }
         .toggle-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
-
         /* === DASHBOARD (LISTAS) === */
         .dash-header {
             padding: 20px; display: flex; justify-content: space-between; align-items: center;
@@ -83,7 +78,7 @@
         .user-info .name { font-size: 18px; font-weight: bold; }
         .user-info .status { font-size: 12px; color: var(--accent); }
         .btn-danger { background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
-        
+
         .scroll-list { flex: 1; overflow-y: auto; padding: 0 20px; margin: 0; list-style: none; padding-bottom: 30px; }
         .scroll-list::-webkit-scrollbar { display: none; } /* Oculta scrollbar */
         .list-item {
@@ -92,7 +87,6 @@
             display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 500;
         }
         .online-indicator { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
-
         /* === TELA DE CHAT (TIKTOK STYLE) === */
         #chat-screen { background: #000; }
         .chat-top-bar {
@@ -102,24 +96,22 @@
         }
         .chat-top-bar h3 { margin: 0; font-size: 18px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
         .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px);}
-
         /* Area de mensagens ocupa quase tudo, scroll invisivel */
         #messages-container {
-            flex: 1; overflow-y: scroll; padding: 80px 70px 90px 15px; 
+            flex: 1; overflow-y: scroll; padding: 80px 70px 90px 15px;
             display: flex; flex-direction: column; gap: 15px;
         }
         #messages-container::-webkit-scrollbar { display: none; }
-        
+
         .msg {
             max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4;
             animation: slideUp 0.3s ease-out forwards; position: relative; word-break: break-word;
         }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
+
         .msg.received { align-self: flex-start; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-bottom-left-radius: 4px; }
         .msg.sent { align-self: flex-end; background: var(--accent); color: #000; font-weight: 500; border-bottom-right-radius: 4px; }
         .msg img, .msg video { max-width: 100%; border-radius: 10px; margin-top: 5px; }
-
         /* Botões laterais flutuantes (Anti-Print / Ações) */
         .side-action-bar {
             position: absolute; right: 15px; bottom: 100px;
@@ -134,7 +126,6 @@
         }
         .side-btn.active { background: var(--accent); color: #000; transform: scale(1.1); }
         .side-btn span { position: absolute; bottom: -18px; font-size: 10px; font-weight: bold; color: white; text-shadow: 0 1px 2px #000; }
-
         /* Blur Overlay (Anti-Print Seguro) */
         .blur-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -143,7 +134,6 @@
             transition: opacity 0.2s ease; pointer-events: none;
         }
         .blur-overlay p { color: white; font-size: 14px; opacity: 0.6; text-align: center; }
-
         /* Input Inferior Pill */
         .bottom-input-bar {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
@@ -177,7 +167,6 @@
                 <button class="btn-primary" onclick="App.auth()">ACESSAR</button>
             </div>
         </div>
-
         <div id="dashboard-screen" class="screen">
             <div class="dash-header">
                 <div class="user-info">
@@ -186,19 +175,17 @@
                 </div>
                 <button class="btn-danger" onclick="App.logout()">Sair</button>
             </div>
-            
+
             <div style="padding: 0 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h3 style="margin: 0; color: var(--text-muted);">Sessões Ativas</h3>
                 <button class="btn-primary" style="width: auto; padding: 8px 16px; border-radius: 20px;" onclick="App.showNewGroupScreen()">+ Criar</button>
             </div>
             <ul class="scroll-list" id="groups-list"></ul>
-
             <div style="padding: 0 20px; margin-top: 10px; margin-bottom: 10px;">
                 <h3 style="margin: 0; font-size: 14px; color: var(--danger);">Radares (Online)</h3>
             </div>
             <ul class="scroll-list" id="online-users-list" style="flex: none; max-height: 30%;"></ul>
         </div>
-
         <div id="create-group-screen" class="screen">
             <div class="glass-panel" style="max-height: 90vh;">
                 <h3 style="margin-top:0;">Nova Interceptação</h3>
@@ -208,19 +195,15 @@
                 <button class="btn-primary" style="background: rgba(255,255,255,0.1); color: white;" onclick="App.switchScreen('dashboard-screen')">Cancelar</button>
             </div>
         </div>
-
         <div id="chat-screen" class="screen">
             <div class="chat-top-bar">
                 <button class="back-btn" onclick="App.backToDash()">‹</button>
                 <h3 id="current-group-name">Grupo</h3>
                 <div style="width: 40px;"></div> </div>
-
             <div id="blur-protection" class="blur-overlay">
                 <p>Chat Criptografado<br>Segure o botão lateral para visualizar</p>
             </div>
-
             <div id="messages-container"></div>
-
             <div class="side-action-bar">
                 <button class="side-btn" id="anti-print-trigger">
                     👁️<span>EXIBIR</span>
@@ -229,7 +212,6 @@
                     📎<span>MÍDIA</span>
                 </button>
             </div>
-
             <div class="bottom-input-bar">
                 <input type="file" id="media-upload" accept="image/*,video/mp4,audio/*" onchange="App.handleMedia(event)" hidden>
                 <input type="text" id="msg-input" placeholder="Transmitir mensagem..." autocomplete="off">
@@ -237,10 +219,8 @@
             </div>
         </div>
     </div>
-
     <script>
-        const API_URL = 'SUA_URL_DO_APPS_SCRIPT_AQUI'; // <-- INSIRA SUA URL AQUI
-
+        const API_URL = 'SUA_URL_DO_APPS_SCRIPT_AQUI'; // <-- INSIRA SUA URL AQUI (URL de implantação do Code.gs)
         class PhantomCore {
             constructor() {
                 this.currentUser = null;
@@ -249,11 +229,10 @@
                 this.syncInterval = null;
                 this.heartbeatInterval = null;
                 this.MESSAGE_LIFESPAN = 15000;
-                
+
                 this.init();
                 this.setupMobileAntiPrint();
             }
-
             async request(action, payload) {
                 payload.action = action;
                 try {
@@ -268,12 +247,10 @@
                     throw error;
                 }
             }
-
             switchScreen(screenId) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.getElementById(screenId).classList.add('active');
             }
-
             init() {
                 const session = localStorage.getItem('phantom_mobile_session');
                 if (session) {
@@ -283,15 +260,12 @@
                     this.switchScreen('login-screen');
                 }
             }
-
             async auth() {
                 const name = document.getElementById('username').value.trim();
                 const pass = document.getElementById('password').value.trim();
                 const emoji = document.getElementById('emoji').value.trim() || '🕵️';
                 const isInvisible = document.getElementById('is-invisible').checked;
-
                 if (!name || !pass) return;
-
                 const btn = document.querySelector('#login-screen button');
                 btn.innerText = 'PROCESSANDO...';
                 try {
@@ -303,40 +277,36 @@
                     btn.innerText = 'ACESSAR';
                 }
             }
-
             logout() {
                 localStorage.removeItem('phantom_mobile_session');
                 location.reload();
             }
-
             async loadDashboard() {
                 this.switchScreen('dashboard-screen');
                 document.getElementById('my-profile').innerText = `${this.currentUser.emoji} ${this.currentUser.name}`;
                 document.getElementById('status-text').innerText = this.currentUser.isInvisible ? '● Invisível' : '● Visível';
-                
+
                 this.fetchGroups();
                 this.runHeartbeat();
                 if(!this.heartbeatInterval) {
                     this.heartbeatInterval = setInterval(() => this.runHeartbeat(), 10000);
                 }
             }
-
             async runHeartbeat() {
                 if(!this.currentUser) return;
-                const onlineUsers = await this.request('heartbeat', { 
-                    userId: this.currentUser.id, isInvisible: this.currentUser.isInvisible 
+                const onlineUsers = await this.request('heartbeat', {
+                    userId: this.currentUser.id, isInvisible: this.currentUser.isInvisible
                 });
-                
+
                 const list = document.getElementById('online-users-list');
                 list.innerHTML = onlineUsers.length ? '' : '<li style="padding:15px; color:#555;">Nenhum radar ativo.</li>';
-                
+
                 onlineUsers.forEach(u => {
                     list.innerHTML += `<li class="list-item" style="padding:10px 20px; min-height: 50px;">
                         <div>${u.emoji} ${u.name}</div><div class="online-indicator"></div>
                     </li>`;
                 });
             }
-
             async fetchGroups() {
                 const groups = await this.request('getGroups', { userId: this.currentUser.id });
                 const list = document.getElementById('groups-list');
@@ -349,7 +319,6 @@
                     list.appendChild(li);
                 });
             }
-
             async showNewGroupScreen() {
                 this.switchScreen('create-group-screen');
                 const users = await this.request('getUsers', {});
@@ -363,7 +332,6 @@
                     </label>`;
                 });
             }
-
             async createGroup() {
                 const name = document.getElementById('group-name').value || 'Operação Oculta';
                 const members = Array.from(document.querySelectorAll('#users-selection input:checked')).map(c => c.value);
@@ -372,7 +340,6 @@
                 this.switchScreen('dashboard-screen');
                 this.fetchGroups();
             }
-
             openChat(group) {
                 this.currentGroup = group;
                 this.lastSync = 0;
@@ -381,13 +348,11 @@
                 this.switchScreen('chat-screen');
                 this.syncInterval = setInterval(() => this.syncMessages(), 3000);
             }
-
             backToDash() {
                 clearInterval(this.syncInterval);
                 this.currentGroup = null;
                 this.switchScreen('dashboard-screen');
             }
-
             async syncMessages() {
                 if(!this.currentGroup) return;
                 const messages = await this.request('syncMessages', { groupId: this.currentGroup.id, lastTimestamp: this.lastSync });
@@ -396,77 +361,70 @@
                     this.lastSync = Math.max(this.lastSync, msg.timestamp);
                 });
             }
-
             async sendTextMessage() {
                 const input = document.getElementById('msg-input');
                 const content = input.value.trim();
                 if (!content) return;
                 input.value = '';
-                
+
                 this.renderMessage({ senderId: this.currentUser.id, content: content, type: 'text', timestamp: Date.now() }, true);
-                
-                await this.request('sendMessage', { 
-                    groupId: this.currentGroup.id, senderId: this.currentUser.id, 
+
+                await this.request('sendMessage', {
+                    groupId: this.currentGroup.id, senderId: this.currentUser.id,
                     content: content, type: 'text', mimeType: 'text/plain'
                 });
             }
-
             async handleMedia(event) {
                 const file = event.target.files[0];
                 if (!file) return;
                 if (file.size > 5 * 1024 * 1024) return alert("Arquivo excede 5MB.");
-
                 const reader = new FileReader();
                 reader.onload = async (e) => {
                     this.renderMessage({ senderId: this.currentUser.id, content: 'Upload em andamento...', type: 'text', timestamp: Date.now() }, true);
-                    await this.request('sendMessage', { 
-                        groupId: this.currentGroup.id, senderId: this.currentUser.id, 
+                    await this.request('sendMessage', {
+                        groupId: this.currentGroup.id, senderId: this.currentUser.id,
                         content: e.target.result, type: 'media', mimeType: file.type
                     });
                 };
                 reader.readAsDataURL(file);
             }
-
             renderMessage(msg, isOptimistic = false) {
                 const container = document.getElementById('messages-container');
                 const div = document.createElement('div');
                 div.className = `msg ${msg.senderId === this.currentUser.id ? 'sent' : 'received'}`;
-                
+
                 if (msg.type === 'text') {
                     div.innerText = msg.content;
                 } else if (msg.type === 'media') {
                     div.innerHTML = `<a href="${msg.content}" target="_blank" style="color:#fff; text-decoration:underline;">[Mídia Externalizada - Abrir]</a>`;
                 }
-
                 container.appendChild(div);
                 container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-
                 if (!isOptimistic) {
                     setTimeout(() => {
                         div.style.opacity = '0';
-                        setTimeout(() => div.remove(), 300); 
+                        setTimeout(() => div.remove(), 300);
                     }, this.MESSAGE_LIFESPAN);
                 }
             }
-
             setupMobileAntiPrint() {
                 const btn = document.getElementById('anti-print-trigger');
                 const overlay = document.getElementById('blur-protection');
-
                 const reveal = (e) => { e.preventDefault(); btn.classList.add('active'); overlay.style.opacity = '0'; };
-                const conceal = (e) => { e.preventDefault(); btn.classList.remove('active'); overlay.style.opacity = '1'; };
-
+                // FIX: conceal não pode chamar preventDefault() em um listener global de "touchend".
+                // Isso suprimia o evento de "click" sintético em TODOS os elementos da página no mobile,
+                // travando qualquer toque no app. preventDefault só é necessário no touchstart do próprio botão.
+                const conceal = () => { btn.classList.remove('active'); overlay.style.opacity = '1'; };
                 // Otimizado para touch (Mobile-First)
                 btn.addEventListener('touchstart', reveal, {passive: false});
-                window.addEventListener('touchend', conceal);
-                window.addEventListener('touchcancel', conceal);
-                
+                window.addEventListener('touchend', conceal, {passive: true});
+                window.addEventListener('touchcancel', conceal, {passive: true});
+
                 // Fallback Mouse
                 btn.addEventListener('mousedown', reveal);
                 window.addEventListener('mouseup', conceal);
             }
         }
-
         const App = new PhantomCore();
     </script>
 </body>
