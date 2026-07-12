@@ -3,53 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phantom Chat</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Phantom Chat V2</title>
+    <style>
+        :root { --bg: #0a0a0a; --surface: #1a1a1a; --primary: #00ff88; --text: #e0e0e0; --danger: #ff3366; }
+        body { margin: 0; font-family: monospace; background: var(--bg); color: var(--text); display: flex; justify-content: center; height: 100vh; overflow: hidden; }
+        #app { width: 100%; max-width: 450px; background: var(--surface); position: relative; display: flex; flex-direction: column; }
+        .screen { display: none; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; }
+        .screen.active { display: flex; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;}
+        button { padding: 12px; background: var(--primary); border: none; color: #000; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; margin-bottom: 10px;}
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; }
+        
+        /* Lista e Online */
+        .online-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 5px var(--primary); }
+        .user-list, #groups-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
+        .user-list li, #groups-list li { padding: 12px; border-bottom: 1px solid #333; cursor: pointer; display: flex; align-items: center; }
+        
+        /* Area de Chat */
+        #messages-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
+        .msg { padding: 10px; border-radius: 8px; max-width: 85%; word-wrap: break-word; position: relative; transition: opacity 0.5s; }
+        .msg.sent { align-self: flex-end; background: #2a3a30; border: 1px solid var(--primary); }
+        .msg.received { align-self: flex-start; background: #333; }
+        .msg img, .msg video, .msg audio { max-width: 100%; border-radius: 5px; display: block; margin-top: 5px;}
+        
+        /* Mecanismo Anti-Print (Blur) */
+        .anti-print-blur { filter: blur(15px); pointer-events: none; user-select: none; transition: filter 0.2s; }
+        .reveal-btn { width: 100%; background: #333; color: #888; border: 1px dashed #666; padding: 15px; margin-top: 10px; cursor: pointer; user-select: none; }
+        .reveal-btn:active, .reveal-btn.touching { background: var(--primary); color: #000; }
+        
+        .input-area { display: flex; gap: 8px; align-items: center; background: #111; padding: 10px; border-top: 1px solid #333;}
+        .upload-btn { cursor: pointer; font-size: 20px; background: #333; padding: 10px; border-radius: 4px; }
+        .fade-out { opacity: 0 !important; }
+        
+        .toggle-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 14px;}
+        input[type="checkbox"] { width: auto; }
+    </style>
 </head>
 <body>
     <div id="app">
         <!-- Tela de Login -->
-        <div id="login-screen" class="screen active">
-            <h2>Phantom Chat</h2>
-            <p>Comunicação 100% Efêmera</p>
+        <div id="login-screen" class="screen">
+            <h2 style="color: var(--primary)">PHANTOM V2</h2>
             <input type="text" id="username" placeholder="Seu apelido anônimo">
-            <input type="text" id="emoji" placeholder="Escolha um Emoji 👻">
-            <button onclick="PhantomApp.register()">Entrar</button>
+            <input type="password" id="password" placeholder="Sua senha secreta">
+            <input type="text" id="emoji" placeholder="Seu Emoji 👻">
+            <div class="toggle-container">
+                <input type="checkbox" id="is-invisible">
+                <label for="is-invisible">Modo Invisível (Ver, não ser visto)</label>
+            </div>
+            <button onclick="PhantomApp.auth()">Acessar Rede</button>
         </div>
 
-        <!-- Tela de Grupos -->
-        <div id="groups-screen" class="screen">
+        <!-- Tela Principal (Grupos e Online) -->
+        <div id="dashboard-screen" class="screen">
             <div class="header">
-                <h3>Seus Chats</h3>
-                <button onclick="PhantomApp.showNewGroupScreen()">+ Grupo</button>
+                <div>
+                    <span id="my-profile"></span>
+                    <br><small id="status-text" style="color:#888"></small>
+                </div>
+                <button onclick="PhantomApp.logout()" style="background:var(--danger); padding: 5px 10px;">Sair</button>
+            </div>
+            
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+                <h3>Chats</h3>
+                <button onclick="PhantomApp.showNewGroupScreen()" style="padding: 5px 10px;">+ Chat</button>
             </div>
             <ul id="groups-list"></ul>
+
+            <h3 style="margin-top: 20px; font-size: 14px; color: #888;">Agentes Online Agora:</h3>
+            <ul id="online-users-list" class="user-list"></ul>
         </div>
 
-        <!-- Tela Criar Grupo -->
+        <!-- Tela Criar Chat -->
         <div id="create-group-screen" class="screen">
-            <h3>Novo Grupo</h3>
-            <input type="text" id="group-name" placeholder="Nome do Grupo">
-            <div id="users-selection"></div>
-            <button onclick="PhantomApp.createGroup()">Criar</button>
-            <button onclick="PhantomApp.backToGroups()">Cancelar</button>
+            <h3>Nova Conexão</h3>
+            <input type="text" id="group-name" placeholder="Nome do Chat">
+            <div id="users-selection" style="flex:1; overflow-y:auto;"></div>
+            <button onclick="PhantomApp.createGroup()">Estabelecer Conexão</button>
+            <button onclick="PhantomApp.switchScreen('dashboard-screen')" style="background:#333; color:white;">Cancelar</button>
         </div>
 
         <!-- Tela de Chat -->
-        <div id="chat-screen" class="screen">
-            <div class="header">
-                <button onclick="PhantomApp.backToGroups()">Voltar</button>
-                <h3 id="current-group-name">Grupo</h3>
+        <div id="chat-screen" class="screen" style="padding:0;">
+            <div class="header" style="padding: 15px; margin: 0; background: #111;">
+                <button onclick="PhantomApp.backToDash()" style="margin:0; padding:5px 10px; background:#333; color:white;">← Voltar</button>
+                <h3 id="current-group-name" style="margin:0;">Grupo</h3>
             </div>
-            <div id="messages-container"></div>
+            
+            <!-- Botão Anti-Print -->
+            <button id="anti-print-trigger" class="reveal-btn">
+                [ SEGURE AQUI PARA REVELAR MENSAGENS ]
+            </button>
+
+            <div id="messages-container" class="anti-print-blur" style="padding: 15px;"></div>
+            
             <div class="input-area">
-                <label for="image-upload" class="upload-btn">📷</label>
-                <input type="file" id="image-upload" accept="image/*" onchange="PhantomApp.handleImage(event)" hidden>
-                <input type="text" id="msg-input" placeholder="Mensagem secreta...">
-                <button onclick="PhantomApp.sendTextMessage()">Enviar</button>
+                <label for="media-upload" class="upload-btn">📎</label>
+                <!-- Aceita imagem, video e audio -->
+                <input type="file" id="media-upload" accept="image/*,video/mp4,audio/*" onchange="PhantomApp.handleMedia(event)" hidden>
+                <input type="text" id="msg-input" placeholder="Transmitir..." autocomplete="off">
+                <button onclick="PhantomApp.sendTextMessage()" style="margin:0;">►</button>
             </div>
         </div>
     </div>
-    <script src="app.js"></script>
+
+    <script>
+        const API_URL = 'SUA_URL_DO_APPS_SCRIPT_AQUI'; // Substitua
+
+        class PhantomEngine {
+            constructor() {
+                this.currentUser = null;
+                this.currentGroup = null;
+                this.lastSync = 0;
+                this.syncInterval = null;
+                this.heartbeatInterval = null;
+                this.MESSAGE_LIFESPAN = 15000; // 15 segundos
+                
+                this.initApp();
+                this.setupAntiPrint();
+            }
+
+            async request(action, payload) {
+                payload.action = action;
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await response.json();
+                    if (!data.success) throw new Error(data.error);
+                    return data.data;
+                } catch (error) {
+                    alert("Erro de API: " + error.message);
+                    throw error;
+                }
+            }
+
+            switchScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(screenId).classList.add('active');
+            }
+
+            initApp() {
+                const saved = localStorage.getItem('phantom_session');
+                if (saved) {
+                    this.currentUser = JSON.parse(saved);
+                    this.loadDashboard();
+                } else {
+                    this.switchScreen('login-screen');
+                }
+            }
+
+            async auth() {
+                const name = document.getElementById('username').value.trim();
+                const pass = document.getElementById('password').value.trim();
+                const emoji = document.getElementById('emoji').value.trim() || '👻';
+                const isInvisible = document.getElementById('is-invisible').checked;
+
+                if (!name || !pass) return alert('Nome e Senha obrigatórios.');
+
+                document.querySelector('#login-screen button').innerText = 'Autenticando...';
+                try {
+                    const user = await this.request('auth', { name, emoji, password: pass, isInvisible });
+                    this.currentUser = user;
+                    localStorage.setItem('phantom_session', JSON.stringify(user));
+                    this.loadDashboard();
+                } catch(e) {
+                    document.querySelector('#login-screen button').innerText = 'Acessar Rede';
+                }
+            }
+
+            logout() {
+                localStorage.removeItem('phantom_session');
+                clearInterval(this.heartbeatInterval);
+                location.reload();
+            }
+
+            async loadDashboard() {
+                this.switchScreen('dashboard-screen');
+                document.getElementById('my-profile').innerText = `${this.currentUser.emoji} ${this.currentUser.name}`;
+                document.getElementById('status-text').innerText = this.currentUser.isInvisible ? 'Modo: Invisível' : 'Modo: Visível';
+                
+                this.fetchGroups();
+                this.runHeartbeat();
+                // Roda o heartbeat a cada 10 segundos
+                if(!this.heartbeatInterval) {
+                    this.heartbeatInterval = setInterval(() => this.runHeartbeat(), 10000);
+                }
+            }
+
+            async runHeartbeat() {
+                if(!this.currentUser) return;
+                const onlineUsers = await this.request('heartbeat', { 
+                    userId: this.currentUser.id, 
+                    isInvisible: this.currentUser.isInvisible 
+                });
+                
+                const list = document.getElementById('online-users-list');
+                list.innerHTML = '';
+                if(onlineUsers.length === 0) list.innerHTML = '<li style="color:#555">Nenhum agente detectado.</li>';
+                
+                onlineUsers.forEach(u => {
+                    list.innerHTML += `<li><span class="online-dot"></span> ${u.emoji} ${u.name}</li>`;
+                });
+            }
+
+            async fetchGroups() {
+                const groups = await this.request('getGroups', { userId: this.currentUser.id });
+                const list = document.getElementById('groups-list');
+                list.innerHTML = '';
+                groups.forEach(g => {
+                    const li = document.createElement('li');
+                    li.innerText = `# ${g.name}`;
+                    li.onclick = () => this.openChat(g);
+                    list.appendChild(li);
+                });
+            }
+
+            async showNewGroupScreen() {
+                this.switchScreen('create-group-screen');
+                const users = await this.request('getUsers', {});
+                const container = document.getElementById('users-selection');
+                container.innerHTML = '';
+                users.forEach(u => {
+                    if (u.id === this.currentUser.id) return;
+                    container.innerHTML += `<label style="display:block; margin-bottom:8px;">
+                        <input type="checkbox" value="${u.id}"> ${u.emoji} ${u.name}
+                    </label>`;
+                });
+            }
+
+            async createGroup() {
+                const name = document.getElementById('group-name').value || 'Chat Anônimo';
+                const checkboxes = document.querySelectorAll('#users-selection input:checked');
+                const members = Array.from(checkboxes).map(c => c.value);
+                members.push(this.currentUser.id);
+                await this.request('createGroup', { name, members });
+                this.switchScreen('dashboard-screen');
+                this.fetchGroups();
+            }
+
+            openChat(group) {
+                this.currentGroup = group;
+                this.lastSync = 0;
+                document.getElementById('current-group-name').innerText = group.name;
+                document.getElementById('messages-container').innerHTML = '';
+                this.switchScreen('chat-screen');
+                
+                this.syncInterval = setInterval(() => this.syncMessages(), 3000);
+            }
+
+            backToDash() {
+                clearInterval(this.syncInterval);
+                this.currentGroup = null;
+                this.switchScreen('dashboard-screen');
+            }
+
+            async syncMessages() {
+                if(!this.currentGroup) return;
+                const messages = await this.request('syncMessages', { 
+                    groupId: this.currentGroup.id, 
+                    lastTimestamp: this.lastSync 
+                });
+
+                messages.forEach(msg => {
+                    this.renderMessage(msg);
+                    this.lastSync = Math.max(this.lastSync, msg.timestamp);
+                });
+            }
+
+            async sendTextMessage() {
+                const input = document.getElementById('msg-input');
+                const content = input.value.trim();
+                if (!content) return;
+                input.value = '';
+                
+                // Exibe renderização otimista (local) para fluidez
+                this.renderMessage({ senderId: this.currentUser.id, content: content, type: 'text', timestamp: new Date().getTime() }, true);
+                
+                await this.request('sendMessage', { 
+                    groupId: this.currentGroup.id, 
+                    senderId: this.currentUser.id, 
+                    content: content, 
+                    type: 'text',
+                    mimeType: 'text/plain'
+                });
+            }
+
+            async handleMedia(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                // Validação de tamanho (Limitando a ~5MB para evitar timeout no Apps Script)
+                if (file.size > 5 * 1024 * 1024) {
+                    return alert("Arquivo muito grande. O limite do servidor Phantom é 5MB.");
+                }
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const base64 = e.target.result;
+                    this.renderMessage({ senderId: this.currentUser.id, content: '[Enviando mídia...]', type: 'text', timestamp: new Date().getTime() }, true);
+                    
+                    await this.request('sendMessage', { 
+                        groupId: this.currentGroup.id, 
+                        senderId: this.currentUser.id, 
+                        content: base64, 
+                        type: 'media',
+                        mimeType: file.type
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+
+            renderMessage(msg, isOptimistic = false) {
+                const container = document.getElementById('messages-container');
+                const div = document.createElement('div');
+                div.className = `msg ${msg.senderId === this.currentUser.id ? 'sent' : 'received'}`;
+                
+                if (msg.type === 'text') {
+                    div.innerText = msg.content;
+                } else if (msg.type === 'media') {
+                    // O backend envia um link do drive. Precisamos criar o elemento HTML adequado.
+                    // Como não sabemos a extensão exata só pela URL no front de forma fácil, o ideal seria o backend retornar o tipo exato, mas vamos fazer um inferência simples para o MVP.
+                    div.innerHTML = `<a href="${msg.content}" target="_blank" style="color:var(--primary)">[Abrir Mídia Recebida no Drive]</a>`;
+                }
+
+                container.appendChild(div);
+                container.scrollTop = container.scrollHeight;
+
+                if (!isOptimistic) {
+                    setTimeout(() => {
+                        div.classList.add('fade-out');
+                        setTimeout(() => div.remove(), 500); 
+                    }, this.MESSAGE_LIFESPAN);
+                }
+            }
+
+            setupAntiPrint() {
+                const btn = document.getElementById('anti-print-trigger');
+                const container = document.getElementById('messages-container');
+
+                const reveal = (e) => {
+                    e.preventDefault();
+                    btn.classList.add('touching');
+                    container.style.filter = 'blur(0px)';
+                };
+                
+                const conceal = (e) => {
+                    e.preventDefault();
+                    btn.classList.remove('touching');
+                    container.style.filter = 'blur(15px)';
+                };
+
+                // Mouse
+                btn.addEventListener('mousedown', reveal);
+                window.addEventListener('mouseup', conceal); // Previne travar se arrastar o mouse para fora
+                
+                // Touch (Celulares)
+                btn.addEventListener('touchstart', reveal);
+                window.addEventListener('touchend', conceal);
+                window.addEventListener('touchcancel', conceal);
+            }
+        }
+
+        const PhantomApp = new PhantomEngine();
+    </script>
 </body>
 </html>
