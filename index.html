@@ -27,6 +27,7 @@
             overflow: hidden;
             position: relative;
         }
+        svg { width: 20px; height: 20px; flex-shrink: 0; }
         /* === SCREENS === */
         .screen {
             position: absolute;
@@ -50,106 +51,176 @@
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 20px; padding: 30px;
-            display: flex; flex-direction: column; gap: 15px;
+            display: flex; flex-direction: column; gap: 14px;
         }
-        .glass-panel h2 { margin: 0 0 10px 0; text-align: center; font-size: 28px; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
+        .glass-panel h2 { margin: 0 0 4px 0; text-align: center; font-size: 28px; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
         input[type="text"], input[type="password"] {
             width: 100%; padding: 16px; border-radius: 12px; border: none;
             background: rgba(255, 255, 255, 0.1); color: white; font-size: 16px; outline: none;
         }
         input::placeholder { color: rgba(255,255,255,0.4); }
         input:focus { border: 1px solid var(--accent); background: rgba(255, 255, 255, 0.15); }
+        button { font-family: inherit; }
         button.btn-primary {
             width: 100%; padding: 16px; border: none; border-radius: 12px;
             background: var(--accent); color: #000; font-size: 16px; font-weight: bold;
             cursor: pointer; transition: transform 0.1s;
         }
         button.btn-primary:active { transform: scale(0.97); }
+        button.btn-ghost {
+            width: 100%; padding: 14px; border-radius: 12px; cursor: pointer;
+            background: rgba(255,255,255,0.06); color: var(--text-main);
+            border: 1px solid var(--glass-border); font-size: 14px; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .hint-text { margin: -6px 0 0 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+        .hint-text strong { color: var(--accent); font-weight: 600; }
 
         .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--text-muted); }
         .toggle-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
+
+        /* === ICON BUTTONS (usados no lugar de emojis na estrutura do app) === */
+        .icon-btn {
+            width: 44px; height: 44px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.1); color: white;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; flex-shrink: 0;
+        }
+        .icon-btn.danger { background: rgba(255, 0, 80, 0.15); color: var(--danger); }
+
+        /* === BOTÃO VOLTAR (grande, visível, alvo de toque confortável) === */
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.12); border: 1px solid var(--glass-border);
+            color: var(--text-main); padding: 10px 16px 10px 12px; min-height: 44px;
+            border-radius: 24px; font-size: 14px; font-weight: 700; cursor: pointer;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .back-btn:active { background: rgba(255,255,255,0.2); }
+
+        /* === TOP BAR PADRÃO (chat e criar grupo) === */
+        .top-bar {
+            padding: 16px 15px; display: flex; align-items: center; gap: 12px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 100%);
+            flex-shrink: 0; position: relative; z-index: 5;
+        }
+        .top-bar h3 { margin: 0; font-size: 17px; flex: 1; text-align: center; padding-right: 44px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
         /* === DASHBOARD (LISTAS) === */
         .dash-header {
             padding: 20px; display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-            z-index: 2;
         }
         .user-info { display: flex; flex-direction: column; gap: 4px; }
         .user-info .name { font-size: 18px; font-weight: bold; }
         .user-info .status { font-size: 12px; color: var(--accent); }
-        .btn-danger { background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
+
+        /* === TABS (Conversas / Online) === */
+        .tab-bar { display: flex; gap: 8px; padding: 0 20px 14px; flex-shrink: 0; }
+        .tab-btn {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px; border-radius: 14px; border: 1px solid transparent; cursor: pointer;
+            background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 14px; font-weight: 700;
+        }
+        .tab-btn.active { background: var(--glass-bg); border-color: var(--accent); color: var(--accent); }
+        .tab-badge {
+            min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--danger);
+            color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+        }
+        .tab-content { display: none; flex: 1; min-height: 0; flex-direction: column; }
+        .tab-content.active { display: flex; }
+        .tab-content-header {
+            padding: 0 20px 10px; display: flex; justify-content: space-between; align-items: center;
+            color: var(--text-muted); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        .btn-mini {
+            display: flex; align-items: center; gap: 6px; width: auto; padding: 8px 14px;
+            border-radius: 20px; background: var(--accent); color: #000; border: none;
+            font-size: 12px; font-weight: 800; cursor: pointer; text-transform: none; letter-spacing: 0;
+        }
 
         .scroll-list { flex: 1; overflow-y: auto; padding: 0 20px; margin: 0; list-style: none; padding-bottom: 30px; }
         .scroll-list::-webkit-scrollbar { display: none; } /* Oculta scrollbar */
         .list-item {
-            padding: 20px; background: var(--glass-bg); margin-bottom: 15px;
-            border-radius: 16px; border: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 500;
+            padding: 18px 20px; background: var(--glass-bg); margin-bottom: 12px;
+            border-radius: 16px; border: 1px solid var(--glass-border); cursor: pointer;
+            display: flex; align-items: center; gap: 14px; font-size: 16px; font-weight: 500;
         }
-        .online-indicator { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
-        /* === TELA DE CHAT (TIKTOK STYLE) === */
+        .list-item:active { background: rgba(255,255,255,0.14); }
+        .list-item .list-icon {
+            width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.08);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--accent);
+        }
+        .list-item .list-title { flex: 1; }
+        .list-item .list-title small { display: block; color: var(--text-muted); font-size: 11px; font-weight: 400; margin-top: 2px; }
+        .online-indicator { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); flex-shrink: 0; }
+        .empty-state { padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+        /* === TELA DE CHAT === */
         #chat-screen { background: #000; }
-        .chat-top-bar {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 20px 15px;
-            display: flex; align-items: center; justify-content: space-between;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%); z-index: 10;
-        }
-        .chat-top-bar h3 { margin: 0; font-size: 18px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px);}
-        /* Area de mensagens ocupa quase tudo, scroll invisivel */
+        /* Area de mensagens ocupa o espaço restante */
         #messages-container {
-            flex: 1; overflow-y: scroll; padding: 80px 70px 90px 15px;
-            display: flex; flex-direction: column; gap: 15px;
+            flex: 1; overflow-y: scroll; padding: 10px 15px 15px;
+            display: flex; flex-direction: column; gap: 15px; min-height: 0;
         }
         #messages-container::-webkit-scrollbar { display: none; }
 
         .msg {
             max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4;
             animation: slideUp 0.3s ease-out forwards; position: relative; word-break: break-word;
+            display: flex; align-items: flex-end; gap: 8px; transition: opacity 0.4s ease, transform 0.4s ease;
         }
+        .msg.fade-out { opacity: 0; transform: scale(0.9); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .msg.received { align-self: flex-start; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-bottom-left-radius: 4px; }
         .msg.sent { align-self: flex-end; background: var(--accent); color: #000; font-weight: 500; border-bottom-right-radius: 4px; }
-        .msg img, .msg video { max-width: 100%; border-radius: 10px; margin-top: 5px; }
-        /* Botões laterais flutuantes (Anti-Print / Ações) */
-        .side-action-bar {
-            position: absolute; right: 15px; bottom: 100px;
-            display: flex; flex-direction: column; gap: 20px; z-index: 10;
+        .msg.uploading { opacity: 0.6; font-style: italic; }
+        .msg-text { flex: 1; }
+        .ttl-badge {
+            font-size: 10px; font-weight: 800; opacity: 0.6; flex-shrink: 0;
+            padding: 2px 6px; border-radius: 8px; background: rgba(0,0,0,0.15);
         }
-        .side-btn {
-            width: 50px; height: 50px; border-radius: 50%; border: none;
-            background: rgba(255,255,255,0.1); color: white; font-size: 24px;
-            display: flex; justify-content: center; align-items: center;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s;
+        .msg.received .ttl-badge { background: rgba(255,255,255,0.12); }
+
+        .msg.msg-media { flex-direction: column; align-items: stretch; padding: 10px; gap: 6px; }
+        .msg.msg-media.locked {
+            cursor: pointer; padding: 22px 18px; align-items: center; flex-direction: row; justify-content: center; gap: 10px;
         }
-        .side-btn.active { background: var(--accent); color: #000; transform: scale(1.1); }
-        .side-btn span { position: absolute; bottom: -18px; font-size: 10px; font-weight: bold; color: white; text-shadow: 0 1px 2px #000; }
-        /* Blur Overlay (Anti-Print Seguro) */
-        .blur-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 5; display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.2s ease; pointer-events: none;
-        }
-        .blur-overlay p { color: white; font-size: 14px; opacity: 0.6; text-align: center; }
+        .msg.msg-media.locked:active { transform: scale(0.98); }
+        .media-lock { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+        .media-lock svg { width: 22px; height: 22px; }
+        .media-frame { width: 100%; display: block; }
+        .msg-media img.media-frame { border-radius: 12px; max-height: 320px; object-fit: cover; }
+        .msg-media iframe.media-frame { border: 0; height: 220px; border-radius: 12px; }
+        .media-footer { display: flex; justify-content: flex-end; }
+
         /* Input Inferior Pill */
         .bottom-input-bar {
-            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: 92%; max-width: 500px; display: flex; align-items: center; gap: 10px;
-            background: rgba(30, 30, 30, 0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 8px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); z-index: 10;
+            flex-shrink: 0; margin: 0 12px 12px; display: flex; align-items: center; gap: 6px;
+            background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 6px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
         }
         .bottom-input-bar input[type="text"] {
             flex: 1; background: transparent; border: none; color: white; font-size: 15px;
             padding: 10px 15px; outline: none; margin: 0;
         }
+        .bottom-input-bar .icon-btn { width: 40px; height: 40px; }
         .btn-send {
             background: var(--accent); color: #000; border: none; border-radius: 50%;
             width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;
-            font-size: 18px; padding-left: 4px; /* ajuste otico do ícone play */
+            cursor: pointer; flex-shrink: 0;
         }
+        .btn-send svg { margin-left: -2px; }
+
+        /* === TOAST (substitui alert()) === */
+        .toast {
+            position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(20px);
+            background: rgba(20,20,20,0.95); color: #fff; padding: 12px 20px; border-radius: 24px;
+            font-size: 13px; font-weight: 600; border: 1px solid var(--glass-border);
+            opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 999; max-width: 85vw; text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
@@ -157,7 +228,12 @@
         <div id="login-screen" class="screen active">
             <div class="glass-panel">
                 <h2>PHANTOM</h2>
-                <input type="text" id="username" placeholder="Apelido Anônimo">
+                <p class="hint-text">Escolha um <strong>apelido que não te identifique</strong>. Nada de nome real — o anonimato é a regra aqui.</p>
+                <input type="text" id="username" placeholder="Apelido Anônimo (ex: Raposa Ruiva)">
+                <button type="button" class="btn-ghost" onclick="App.suggestName()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                    Sugerir apelido anônimo
+                </button>
                 <input type="password" id="password" placeholder="Chave Secreta">
                 <input type="text" id="emoji" placeholder="Avatar (Ex: 🦊)">
                 <div class="toggle-row">
@@ -173,54 +249,90 @@
                     <span class="name" id="my-profile">Nome</span>
                     <span class="status" id="status-text">Status</span>
                 </div>
-                <button class="btn-danger" onclick="App.logout()">Sair</button>
+                <button class="icon-btn danger" onclick="App.logout()" title="Sair" aria-label="Sair">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
             </div>
 
-            <div style="padding: 0 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="margin: 0; color: var(--text-muted);">Sessões Ativas</h3>
-                <button class="btn-primary" style="width: auto; padding: 8px 16px; border-radius: 20px;" onclick="App.showNewGroupScreen()">+ Criar</button>
+            <div class="tab-bar">
+                <button class="tab-btn active" id="tab-btn-chats" onclick="App.switchTab('chats')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path></svg>
+                    Conversas
+                </button>
+                <button class="tab-btn" id="tab-btn-online" onclick="App.switchTab('online')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
+                    Online <span class="tab-badge" id="online-count-badge">0</span>
+                </button>
             </div>
-            <ul class="scroll-list" id="groups-list"></ul>
-            <div style="padding: 0 20px; margin-top: 10px; margin-bottom: 10px;">
-                <h3 style="margin: 0; font-size: 14px; color: var(--danger);">Radares (Online)</h3>
+
+            <div class="tab-content active" id="tab-chats">
+                <div class="tab-content-header">
+                    <span>Suas sessões</span>
+                    <button class="btn-mini" onclick="App.showNewGroupScreen()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Novo grupo
+                    </button>
+                </div>
+                <ul class="scroll-list" id="groups-list"></ul>
             </div>
-            <ul class="scroll-list" id="online-users-list" style="flex: none; max-height: 30%;"></ul>
+
+            <div class="tab-content" id="tab-online">
+                <div class="tab-content-header">
+                    <span id="online-count-text">0 online agora</span>
+                </div>
+                <ul class="scroll-list" id="online-users-list"></ul>
+            </div>
         </div>
+
         <div id="create-group-screen" class="screen">
-            <div class="glass-panel" style="max-height: 90vh;">
-                <h3 style="margin-top:0;">Nova Interceptação</h3>
+            <div class="top-bar">
+                <button class="back-btn" onclick="App.switchScreen('dashboard-screen')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    Voltar
+                </button>
+                <h3>Novo Grupo</h3>
+            </div>
+            <div class="glass-panel" style="margin: 10px auto; max-height: 80vh; overflow: hidden; flex: 1;">
                 <input type="text" id="group-name" placeholder="Nome do Chat">
                 <div id="users-selection" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px;"></div>
                 <button class="btn-primary" onclick="App.createGroup()">Iniciar Sessão</button>
-                <button class="btn-primary" style="background: rgba(255,255,255,0.1); color: white;" onclick="App.switchScreen('dashboard-screen')">Cancelar</button>
             </div>
         </div>
+
         <div id="chat-screen" class="screen">
-            <div class="chat-top-bar">
-                <button class="back-btn" onclick="App.backToDash()">‹</button>
+            <div class="top-bar">
+                <button class="back-btn" onclick="App.backToDash()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    Voltar
+                </button>
                 <h3 id="current-group-name">Grupo</h3>
-                <div style="width: 40px;"></div> </div>
-            <div id="blur-protection" class="blur-overlay">
-                <p>Chat Criptografado<br>Segure o botão lateral para visualizar</p>
             </div>
             <div id="messages-container"></div>
-            <div class="side-action-bar">
-                <button class="side-btn" id="anti-print-trigger">
-                    👁️<span>EXIBIR</span>
-                </button>
-                <button class="side-btn" onclick="document.getElementById('media-upload').click()">
-                    📎<span>MÍDIA</span>
-                </button>
-            </div>
             <div class="bottom-input-bar">
                 <input type="file" id="media-upload" accept="image/*,video/mp4,audio/*" onchange="App.handleMedia(event)" hidden>
+                <button class="icon-btn" onclick="document.getElementById('media-upload').click()" title="Anexar mídia" aria-label="Anexar mídia">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"></path></svg>
+                </button>
                 <input type="text" id="msg-input" placeholder="Transmitir mensagem..." autocomplete="off">
-                <button class="btn-send" onclick="App.sendTextMessage()">►</button>
+                <button class="btn-send" onclick="App.sendTextMessage()" title="Enviar" aria-label="Enviar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
             </div>
         </div>
     </div>
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwzMmvwO0RPr3wT-R9ZgYgaVC-3Yb_u9_i1GETR7AxEeRzJYo73D7KgmXQ99eh0vzA5Nw/exec'; // <-- INSIRA SUA URL AQUI (URL de implantação do Code.gs)
+
+        const ICONS = {
+            image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>',
+            video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>',
+            audio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"></path><path d="M19 10v2a7 7 0 01-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>',
+            lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>',
+            users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>',
+            hash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>'
+        };
+        const MEDIA_LABEL = { image: 'a imagem', video: 'o vídeo', audio: 'o áudio' };
+
         class PhantomCore {
             constructor() {
                 this.currentUser = null;
@@ -228,10 +340,10 @@
                 this.lastSync = 0;
                 this.syncInterval = null;
                 this.heartbeatInterval = null;
-                this.MESSAGE_LIFESPAN = 15000;
+                this.MESSAGE_LIFESPAN = 10000; // texto some 10s após aparecer (igual para quem envia e recebe)
+                this.MEDIA_LIFESPAN = 10000;   // mídia some 10s depois de ser aberta
 
                 this.init();
-                this.setupMobileAntiPrint();
             }
             async request(action, payload) {
                 payload.action = action;
@@ -243,13 +355,36 @@
                     if (!data.success) throw new Error(data.error);
                     return data.data;
                 } catch (error) {
-                    alert("Falha de Comunicação: " + error.message);
+                    this.toast('Falha de comunicação: ' + error.message);
                     throw error;
                 }
+            }
+            toast(message) {
+                const el = document.createElement('div');
+                el.className = 'toast';
+                el.textContent = message;
+                document.body.appendChild(el);
+                requestAnimationFrame(() => el.classList.add('show'));
+                setTimeout(() => {
+                    el.classList.remove('show');
+                    setTimeout(() => el.remove(), 300);
+                }, 3200);
             }
             switchScreen(screenId) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.getElementById(screenId).classList.add('active');
+            }
+            switchTab(tab) {
+                document.getElementById('tab-btn-chats').classList.toggle('active', tab === 'chats');
+                document.getElementById('tab-btn-online').classList.toggle('active', tab === 'online');
+                document.getElementById('tab-chats').classList.toggle('active', tab === 'chats');
+                document.getElementById('tab-online').classList.toggle('active', tab === 'online');
+            }
+            suggestName() {
+                const nouns = ['Raposa', 'Pantera', 'Coruja', 'Sombra', 'Fênix', 'Lobo', 'Cometa', 'Névoa', 'Aurora', 'Tempestade', 'Miragem', 'Eco'];
+                const adjectives = ['Ruiva', 'Silenciosa', 'Elétrica', 'Sombria', 'Veloz', 'Discreta', 'Selvagem', 'Charmosa', 'Misteriosa', 'Gelada', 'Noturna', 'Feroz'];
+                const name = `${nouns[Math.floor(Math.random() * nouns.length)]} ${adjectives[Math.floor(Math.random() * adjectives.length)]}`;
+                document.getElementById('username').value = name;
             }
             init() {
                 const session = localStorage.getItem('phantom_mobile_session');
@@ -265,19 +400,20 @@
                 const pass = document.getElementById('password').value.trim();
                 const emoji = document.getElementById('emoji').value.trim() || '🕵️';
                 const isInvisible = document.getElementById('is-invisible').checked;
-                if (!name || !pass) return;
-                const btn = document.querySelector('#login-screen button');
+                if (!name || !pass) return this.toast('Preencha apelido e chave secreta.');
+                const btn = document.querySelector('#login-screen button.btn-primary');
                 btn.innerText = 'PROCESSANDO...';
                 try {
                     const user = await this.request('auth', { name, emoji, password: pass, isInvisible });
                     this.currentUser = user;
                     localStorage.setItem('phantom_mobile_session', JSON.stringify(user));
                     this.loadDashboard();
-                } catch(e) {
+                } catch (e) {
                     btn.innerText = 'ACESSAR';
                 }
             }
             logout() {
+                clearInterval(this.heartbeatInterval);
                 localStorage.removeItem('phantom_mobile_session');
                 location.reload();
             }
@@ -288,44 +424,73 @@
 
                 this.fetchGroups();
                 this.runHeartbeat();
-                if(!this.heartbeatInterval) {
+                if (!this.heartbeatInterval) {
                     this.heartbeatInterval = setInterval(() => this.runHeartbeat(), 10000);
                 }
             }
             async runHeartbeat() {
-                if(!this.currentUser) return;
+                if (!this.currentUser) return;
                 const onlineUsers = await this.request('heartbeat', {
                     userId: this.currentUser.id, isInvisible: this.currentUser.isInvisible
                 });
 
-                const list = document.getElementById('online-users-list');
-                list.innerHTML = onlineUsers.length ? '' : '<li style="padding:15px; color:#555;">Nenhum radar ativo.</li>';
+                document.getElementById('online-count-badge').textContent = onlineUsers.length;
+                document.getElementById('online-count-text').textContent =
+                    onlineUsers.length === 1 ? '1 online agora' : `${onlineUsers.length} online agora`;
 
+                const list = document.getElementById('online-users-list');
+                if (!onlineUsers.length) {
+                    list.innerHTML = '<li class="empty-state">Nenhum radar ativo no momento.</li>';
+                    return;
+                }
+                list.innerHTML = '';
                 onlineUsers.forEach(u => {
-                    list.innerHTML += `<li class="list-item" style="padding:10px 20px; min-height: 50px;">
-                        <div>${u.emoji} ${u.name}</div><div class="online-indicator"></div>
-                    </li>`;
+                    const li = document.createElement('li');
+                    li.className = 'list-item';
+                    li.innerHTML = `
+                        <span class="list-icon">${u.emoji}</span>
+                        <span class="list-title">${u.name}</span>
+                        <span class="online-indicator"></span>`;
+                    li.onclick = () => this.openDirectChat(u);
+                    list.appendChild(li);
                 });
             }
             async fetchGroups() {
                 const groups = await this.request('getGroups', { userId: this.currentUser.id });
                 const list = document.getElementById('groups-list');
+                if (!groups.length) {
+                    list.innerHTML = '<li class="empty-state">Nenhuma sessão ainda. Toque em um usuário na aba Online para começar, ou crie um grupo.</li>';
+                    return;
+                }
                 list.innerHTML = '';
                 groups.forEach(g => {
                     const li = document.createElement('li');
                     li.className = 'list-item';
-                    li.innerHTML = `<span># ${g.name}</span> <span style="color:var(--text-muted)">›</span>`;
+                    li.innerHTML = `
+                        <span class="list-icon">${g.type === 'direct' ? ICONS.users : ICONS.hash}</span>
+                        <span class="list-title">${g.name}${g.type === 'group' ? `<small>${g.memberCount} membros</small>` : ''}</span>`;
                     li.onclick = () => this.openChat(g);
                     list.appendChild(li);
                 });
             }
+            async openDirectChat(user) {
+                try {
+                    const res = await this.request('openDirect', { userId: this.currentUser.id, otherId: user.id });
+                    this.openChat({ id: res.id, name: `${user.emoji} ${user.name}`, type: 'direct' });
+                } catch (e) { /* toast já exibido */ }
+            }
             async showNewGroupScreen() {
                 this.switchScreen('create-group-screen');
+                document.getElementById('group-name').value = '';
                 const users = await this.request('getUsers', {});
                 const container = document.getElementById('users-selection');
                 container.innerHTML = '';
-                users.forEach(u => {
-                    if (u.id === this.currentUser.id) return;
+                const others = users.filter(u => u.id !== this.currentUser.id);
+                if (!others.length) {
+                    container.innerHTML = '<p class="empty-state" style="padding:10px 0;">Ainda não há outros usuários registrados.</p>';
+                    return;
+                }
+                others.forEach(u => {
                     container.innerHTML += `<label class="toggle-row" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
                         <span>${u.emoji} ${u.name}</span>
                         <input type="checkbox" value="${u.id}">
@@ -333,11 +498,13 @@
                 });
             }
             async createGroup() {
-                const name = document.getElementById('group-name').value || 'Operação Oculta';
+                const name = document.getElementById('group-name').value.trim() || 'Operação Oculta';
                 const members = Array.from(document.querySelectorAll('#users-selection input:checked')).map(c => c.value);
+                if (!members.length) return this.toast('Selecione ao menos uma pessoa.');
                 members.push(this.currentUser.id);
                 await this.request('createGroup', { name, members });
                 this.switchScreen('dashboard-screen');
+                this.switchTab('chats');
                 this.fetchGroups();
             }
             openChat(group) {
@@ -346,86 +513,146 @@
                 document.getElementById('current-group-name').innerText = group.name;
                 document.getElementById('messages-container').innerHTML = '';
                 this.switchScreen('chat-screen');
+                clearInterval(this.syncInterval);
+                this.syncMessages();
                 this.syncInterval = setInterval(() => this.syncMessages(), 3000);
             }
             backToDash() {
                 clearInterval(this.syncInterval);
                 this.currentGroup = null;
                 this.switchScreen('dashboard-screen');
+                this.fetchGroups();
             }
             async syncMessages() {
-                if(!this.currentGroup) return;
-                const messages = await this.request('syncMessages', { groupId: this.currentGroup.id, lastTimestamp: this.lastSync });
+                if (!this.currentGroup) return;
+                let messages;
+                try {
+                    messages = await this.request('syncMessages', {
+                        groupId: this.currentGroup.id, userId: this.currentUser.id, lastTimestamp: this.lastSync
+                    });
+                } catch (e) { return; }
                 messages.forEach(msg => {
+                    if (msg.senderId === this.currentUser.id) return; // já renderizada de forma otimista ao enviar
                     this.renderMessage(msg);
                     this.lastSync = Math.max(this.lastSync, msg.timestamp);
                 });
             }
+            scrollToBottom() {
+                const container = document.getElementById('messages-container');
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            }
+            startCountdown(div, badgeEl, ms) {
+                let remaining = Math.ceil(ms / 1000);
+                badgeEl.textContent = remaining + 's';
+                const tick = setInterval(() => {
+                    remaining--;
+                    if (remaining <= 0) {
+                        clearInterval(tick);
+                        div.classList.add('fade-out');
+                        setTimeout(() => div.remove(), 400);
+                    } else {
+                        badgeEl.textContent = remaining + 's';
+                    }
+                }, 1000);
+            }
+            buildMediaMarkup(type, fileId) {
+                if (type === 'image') {
+                    return `<img class="media-frame" src="https://drive.google.com/thumbnail?id=${fileId}&sz=w1000" alt="Imagem">`;
+                }
+                return `<iframe class="media-frame" src="https://drive.google.com/file/d/${fileId}/preview" allow="autoplay"></iframe>`;
+            }
+            renderMessage(msg) {
+                const container = document.getElementById('messages-container');
+                const div = document.createElement('div');
+                const isMine = msg.senderId === this.currentUser.id;
+                div.className = `msg ${isMine ? 'sent' : 'received'}`;
+
+                if (msg.type === 'text') {
+                    const textEl = document.createElement('span');
+                    textEl.className = 'msg-text';
+                    textEl.innerText = msg.content;
+                    const badge = document.createElement('span');
+                    badge.className = 'ttl-badge';
+                    div.appendChild(textEl);
+                    div.appendChild(badge);
+                    container.appendChild(div);
+                    this.scrollToBottom();
+                    this.startCountdown(div, badge, this.MESSAGE_LIFESPAN);
+                } else {
+                    div.classList.add('msg-media', 'locked');
+                    div.innerHTML = `<div class="media-lock">${ICONS.lock}${ICONS[msg.type] || ICONS.image}<span>Toque para ver ${MEDIA_LABEL[msg.type] || 'a mídia'}</span></div>`;
+                    div.addEventListener('click', () => this.revealMedia(div, msg), { once: true });
+                    container.appendChild(div);
+                    this.scrollToBottom();
+                }
+                return div;
+            }
+            revealMedia(div, msg) {
+                div.classList.remove('locked');
+                div.innerHTML = this.buildMediaMarkup(msg.type, msg.content);
+                const footer = document.createElement('div');
+                footer.className = 'media-footer';
+                const badge = document.createElement('span');
+                badge.className = 'ttl-badge';
+                footer.appendChild(badge);
+                div.appendChild(footer);
+                this.startCountdown(div, badge, this.MEDIA_LIFESPAN);
+            }
+            renderUploadingPlaceholder() {
+                const container = document.getElementById('messages-container');
+                const div = document.createElement('div');
+                div.className = 'msg sent uploading';
+                div.innerHTML = `<span class="msg-text">Enviando mídia…</span>`;
+                container.appendChild(div);
+                this.scrollToBottom();
+                return div;
+            }
             async sendTextMessage() {
                 const input = document.getElementById('msg-input');
                 const content = input.value.trim();
-                if (!content) return;
+                if (!content || !this.currentGroup) return;
                 input.value = '';
-
-                this.renderMessage({ senderId: this.currentUser.id, content: content, type: 'text', timestamp: Date.now() }, true);
-
-                await this.request('sendMessage', {
-                    groupId: this.currentGroup.id, senderId: this.currentUser.id,
-                    content: content, type: 'text', mimeType: 'text/plain'
-                });
+                this.renderMessage({ senderId: this.currentUser.id, content, type: 'text', timestamp: Date.now() });
+                try {
+                    const res = await this.request('sendMessage', {
+                        groupId: this.currentGroup.id, senderId: this.currentUser.id,
+                        content, type: 'text', mimeType: 'text/plain'
+                    });
+                    this.lastSync = Math.max(this.lastSync, res.timestamp);
+                } catch (e) { /* toast já exibido */ }
             }
             async handleMedia(event) {
                 const file = event.target.files[0];
-                if (!file) return;
-                if (file.size > 5 * 1024 * 1024) return alert("Arquivo excede 5MB.");
+                event.target.value = '';
+                if (!file || !this.currentGroup) return;
+                if (file.size > 5 * 1024 * 1024) return this.toast('Arquivo excede 5MB.');
+                const type = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'audio';
+
                 const reader = new FileReader();
                 reader.onload = async (e) => {
-                    this.renderMessage({ senderId: this.currentUser.id, content: 'Upload em andamento...', type: 'text', timestamp: Date.now() }, true);
-                    await this.request('sendMessage', {
-                        groupId: this.currentGroup.id, senderId: this.currentUser.id,
-                        content: e.target.result, type: 'media', mimeType: file.type
-                    });
+                    const placeholder = this.renderUploadingPlaceholder();
+                    try {
+                        const res = await this.request('sendMessage', {
+                            groupId: this.currentGroup.id, senderId: this.currentUser.id,
+                            content: e.target.result, type, mimeType: file.type
+                        });
+                        this.lastSync = Math.max(this.lastSync, res.timestamp);
+                        placeholder.remove();
+                        this.renderMessage({ senderId: this.currentUser.id, content: res.fileId, type, timestamp: res.timestamp });
+                    } catch (err) {
+                        placeholder.remove();
+                    }
                 };
                 reader.readAsDataURL(file);
             }
-            renderMessage(msg, isOptimistic = false) {
-                const container = document.getElementById('messages-container');
-                const div = document.createElement('div');
-                div.className = `msg ${msg.senderId === this.currentUser.id ? 'sent' : 'received'}`;
-
-                if (msg.type === 'text') {
-                    div.innerText = msg.content;
-                } else if (msg.type === 'media') {
-                    div.innerHTML = `<a href="${msg.content}" target="_blank" style="color:#fff; text-decoration:underline;">[Mídia Externalizada - Abrir]</a>`;
-                }
-                container.appendChild(div);
-                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-                if (!isOptimistic) {
-                    setTimeout(() => {
-                        div.style.opacity = '0';
-                        setTimeout(() => div.remove(), 300);
-                    }, this.MESSAGE_LIFESPAN);
-                }
-            }
-            setupMobileAntiPrint() {
-                const btn = document.getElementById('anti-print-trigger');
-                const overlay = document.getElementById('blur-protection');
-                const reveal = (e) => { e.preventDefault(); btn.classList.add('active'); overlay.style.opacity = '0'; };
-                // FIX: conceal não pode chamar preventDefault() em um listener global de "touchend".
-                // Isso suprimia o evento de "click" sintético em TODOS os elementos da página no mobile,
-                // travando qualquer toque no app. preventDefault só é necessário no touchstart do próprio botão.
-                const conceal = () => { btn.classList.remove('active'); overlay.style.opacity = '1'; };
-                // Otimizado para touch (Mobile-First)
-                btn.addEventListener('touchstart', reveal, {passive: false});
-                window.addEventListener('touchend', conceal, {passive: true});
-                window.addEventListener('touchcancel', conceal, {passive: true});
-
-                // Fallback Mouse
-                btn.addEventListener('mousedown', reveal);
-                window.addEventListener('mouseup', conceal);
-            }
         }
+
         const App = new PhantomCore();
+
+        // Enviar com Enter no teclado do mobile/desktop
+        document.getElementById('msg-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); App.sendTextMessage(); }
+        });
     </script>
 </body>
 </html>
