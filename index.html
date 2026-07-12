@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Tela de Login -->
+        <div id="login-screen" class="screen active">
+            <h2>Phantom Chat</h2>
+            <p>Comunicação 100% Efêmera</p>
+            <input type="text" id="username" placeholder="Seu apelido anônimo">
+            <input type="text" id="emoji" placeholder="Escolha um Emoji 👻">
+            <button onclick="PhantomApp.register()">Entrar</button>
+        </div>
+
+        <!-- Tela de Grupos -->
+        <div id="groups-screen" class="screen">
+            <div class="header">
+                <h3>Seus Chats</h3>
+                <button onclick="PhantomApp.showNewGroupScreen()">+ Grupo</button>
+            </div>
+            <ul id="groups-list"></ul>
+        </div>
+
+        <!-- Tela Criar Grupo -->
+        <div id="create-group-screen" class="screen">
+            <h3>Novo Grupo</h3>
+            <input type="text" id="group-name" placeholder="Nome do Grupo">
+            <div id="users-selection"></div>
+            <button onclick="PhantomApp.createGroup()">Criar</button>
+            <button onclick="PhantomApp.backToGroups()">Cancelar</button>
+        </div>
+
+        <!-- Tela de Chat -->
+        <div id="chat-screen" class="screen">
+            <div class="header">
+                <button onclick="PhantomApp.backToGroups()">Voltar</button>
+                <h3 id="current-group-name">Grupo</h3>
+            </div>
+            <div id="messages-container"></div>
+            <div class="input-area">
+                <label for="image-upload" class="upload-btn">📷</label>
+                <input type="file" id="image-upload" accept="image/*" onchange="PhantomApp.handleImage(event)" hidden>
+                <input type="text" id="msg-input" placeholder="Mensagem secreta...">
+                <button onclick="PhantomApp.sendTextMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
