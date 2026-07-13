@@ -60,6 +60,10 @@
         }
         .hint-text { margin: -6px 0 0 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
         .hint-text strong { color: var(--accent); font-weight: 600; }
+        .how-box { display: flex; flex-direction: column; gap: 7px; background: rgba(0,242,254,0.06); border: 1px solid rgba(0,242,254,0.2); border-radius: 14px; padding: 14px; }
+        .how-title { font-size: 13px; font-weight: 800; color: var(--accent); }
+        .how-line { font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+        .how-line b { color: var(--text-main); font-weight: 700; }
         .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--text-muted); gap: 10px; }
         .toggle-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
 
@@ -333,9 +337,16 @@
         <div id="login-screen" class="screen active">
             <div class="glass-panel">
                 <h2>PHANTOM</h2>
-                <p class="hint-text">Escolha um <strong>apelido que não te identifique</strong>. Nada de nome real — o anonimato é a regra aqui.</p>
+                <div class="how-box">
+                    <span class="how-title">👻 Como funciona</span>
+                    <span class="how-line">🔒 <b>Anônimo:</b> ninguém usa nome real, só apelido e um avatar.</span>
+                    <span class="how-line">⏳ <b>Efêmero:</b> as mensagens somem sozinhas depois de vistas.</span>
+                    <span class="how-line">📸 <b>Stories 24h:</b> foto/vídeo que expiram, pra amigos ou todos.</span>
+                    <span class="how-line">🤝 <b>Amigos:</b> convide por link ou peça amizade a quem é público.</span>
+                </div>
+                <p class="hint-text" style="color:var(--danger);"><strong>⚠️ NÃO use seu nome real, nem apelidos que amigos/família reconheçam.</strong> Invente um codinome de fantasia (ex: "Raposa Ruiva", "Sombra 47"). Seu apelido é sua máscara — se ele te identifica, o anonimato acaba.</p>
                 <p class="hint-text" id="invite-hint" style="display:none;">🔗 Você chegou por um <strong>convite</strong>. Ao acessar, você vira amigo de quem te convidou.</p>
-                <input type="text" id="username" placeholder="Apelido Anônimo (ex: Raposa Ruiva)">
+                <input type="text" id="username" placeholder="Codinome anônimo (ex: Raposa Ruiva)">
                 <button type="button" class="btn-ghost" onclick="App.suggestName('username')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L19 9l-4.6 1.9L12 15l-1.9-4.1L6 9l4.6-1.4L12 3z"/><path d="M5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9L5 16z"/></svg>
                     Sugerir apelido anônimo
@@ -558,7 +569,9 @@
             <p>Conteúdo protegido. Capturas de tela não são permitidas aqui — respeite o anonimato de todo mundo.</p>
         </div>
 
-        <input type="file" id="story-input" accept="image/*,video/*" onchange="App.handleStoryFile(event)" hidden>
+        <input type="file" id="story-photo" accept="image/*" capture="environment" onchange="App.handleStoryFile(event)" hidden>
+        <input type="file" id="story-video" accept="video/*" capture="environment" onchange="App.handleStoryFile(event)" hidden>
+        <input type="file" id="story-gallery" accept="image/*,video/*" onchange="App.handleStoryFile(event)" hidden>
     </div>
 
     <script>
@@ -576,7 +589,13 @@
             pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>'
         };
         const MEDIA_LABEL = { image: 'a imagem', video: 'o vídeo', audio: 'o áudio' };
-        const EMOJIS = ['😀','😂','🤣','😊','😍','😘','😜','🤔','😎','🥳','😏','😴','😱','😭','😡','🤯','🤗','🤫','🙄','😬','👍','👎','👌','🙏','👏','💪','🙌','🤝','✌️','🤟','❤️','🔥','💯','✨','⭐','🎉','💀','👀','💋','🌹','🦊','🐺','🦉','🐾','🌙','⚡','🕵️','👻','🎭','🔒'];
+        const EMOJIS = [
+            '😀','😃','😄','😁','😆','😅','😂','🤣','🥲','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🥸','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🫣','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👹','👺','🤡','💀','☠️','👻','👽','🤖','🎃','😺','😸','😻','😼','😽','🙀','😿','😾',
+            '👍','👎','👌','🤌','🤏','✌️','🤞','🫰','🤟','🤘','🤙','👈','👉','👆','👇','☝️','✋','🤚','🖐️','🖖','👋','🤝','🙏','✍️','💅','🤳','💪','🦵','🦶','👂','👃','🧠','👀','👁️','👅','👄','💋','🩸',
+            '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','♥️','💯','💢','💥','💫','💦','💨','🕳️','💬','🗨️','💭','🔥','⭐','🌟','✨','⚡','☄️','🌙','☀️','🌈','☁️','❄️','🌊',
+            '🎉','🎊','🎈','🎁','🏆','🥇','🎯','🎮','🎲','🃏','🎭','🎨','🎬','🎤','🎧','🎵','🎶','📸','📷','🎥','💡','🔒','🔓','🔑','🗝️','🛡️','⚔️','💣','🧨','🔞','⚠️','🚫','✅','❌','❓','❗','💤','💰','💎',
+            '🦊','🐺','🐱','🐶','🦁','🐯','🐨','🐼','🐸','🐵','🙈','🙉','🙊','🦉','🦅','🦇','🐍','🐾','🌹','🌸','🌺','🌻','🌴','🍀','🔮','🕯️','🗡️','🏴','🕵️','🥷','👑','💃','🕺']
+        ;
 
         class PhantomCore {
             constructor() {
@@ -609,6 +628,9 @@
                 this.storyItemIdx = 0;
                 this.storyTimer = null;
                 this.pendingStoryFile = null;
+                this._storyRenderToken = 0;
+                try { this.seenStories = new Set(JSON.parse(localStorage.getItem('phantom_seen_stories') || '[]')); }
+                catch (e) { this.seenStories = new Set(); }
 
                 this.setupMessageObserver();
                 this.setupViewport();
@@ -681,7 +703,7 @@
                 const btn = document.querySelector('#login-screen button.btn-primary');
                 btn.innerText = 'PROCESSANDO...';
                 try {
-                    const user = await this.request('auth', { name, emoji, password: pass, isInvisible, visibility: 'all', ref: this.inviteRef });
+                    const user = await this.request('auth', { name, emoji, password: pass, isInvisible, visibility: 'friends', ref: this.inviteRef });
                     this.currentUser = user;
                     localStorage.setItem('phantom_mobile_session', JSON.stringify(user));
                     this.clearRefFromUrl();
@@ -749,6 +771,9 @@
                 this.updateInboxBadge();
                 this.renderOnline(res.online || []);
                 this.updateUnread(res.unread || {});
+                // Atualiza stories a cada ~30s para pegar publicações de outros usuários.
+                this._hbCount = (this._hbCount || 0) + 1;
+                if (this._hbCount % 3 === 0 && !document.getElementById('story-viewer').classList.contains('open')) this.fetchStories();
             }
             updateInboxBadge() {
                 const b = document.getElementById('inbox-badge');
@@ -976,7 +1001,7 @@
                 const root = document.getElementById('messages-container');
                 this.msgObserver = new IntersectionObserver((entries) => {
                     entries.forEach(en => { if (en.isIntersecting && en.target._cdStart) { en.target._cdStart(); this.msgObserver.unobserve(en.target); } });
-                }, { root: root, threshold: 0.6 });
+                }, { root: root, threshold: 0.01 });
             }
             observeCountdown(div, badge, ms, msg) {
                 div._started = false;
@@ -1022,14 +1047,24 @@
                 }
                 return div;
             }
-            revealMedia(div, msg) {
+            async fetchMediaUrl(fileId) {
+                const res = await this.request('getMedia', { fileId });
+                return res.dataUrl;
+            }
+            async revealMedia(div, msg) {
                 if (msg.type === 'image') { this.openImageViewer(div, msg); return; }
                 if (msg.type === 'audio') { this.revealAudio(div, msg); return; }
-                // vídeo nativo
+                // vídeo nativo (carrega a mídia via backend p/ reprodução confiável)
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
+                const loading = document.createElement('div'); loading.className = 'media-lock-row'; loading.textContent = 'Carregando vídeo…';
+                div.appendChild(loading); this.scrollToBottom();
+                let dataUrl;
+                try { dataUrl = await this.fetchMediaUrl(msg.content); }
+                catch (e) { loading.textContent = 'Falha ao carregar o vídeo.'; return; }
+                loading.remove();
                 const el = document.createElement('video');
-                el.className = 'media-frame'; el.src = this.driveMediaUrl(msg.content);
+                el.className = 'media-frame'; el.src = dataUrl;
                 el.controls = true; el.autoplay = true; el.playsInline = true;
                 el.setAttribute('controlsList', 'nodownload noplaybackrate noremoteplayback');
                 el.setAttribute('disablepictureinpicture', ''); el.oncontextmenu = () => false;
@@ -1037,11 +1072,18 @@
                 const badge = document.createElement('span'); badge.className = 'ttl-badge'; footer.appendChild(badge);
                 div.appendChild(el); div.appendChild(footer); this.scrollToBottom();
                 this.startMediaTimer(el, div, badge, msg);
+                el.play().catch(() => {});
             }
-            revealAudio(div, msg) {
+            async revealAudio(div, msg) {
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
-                const audio = new Audio(this.driveMediaUrl(msg.content));
+                const loading = document.createElement('div'); loading.className = 'media-lock-row'; loading.textContent = 'Carregando áudio…';
+                div.appendChild(loading); this.scrollToBottom();
+                let dataUrl;
+                try { dataUrl = await this.fetchMediaUrl(msg.content); }
+                catch (e) { loading.textContent = 'Falha ao carregar o áudio.'; return; }
+                loading.remove();
+                const audio = new Audio(dataUrl);
                 audio.preload = 'metadata';
 
                 const player = document.createElement('div'); player.className = 'audio-player';
@@ -1230,6 +1272,8 @@
             storyBubble(group, idx, label) {
                 const b = document.createElement('button'); b.className = 'story-bubble';
                 const ring = document.createElement('span'); ring.className = 'story-ring';
+                const allSeen = group.items.every(it => this.seenStories.has(it.id));
+                if (allSeen) ring.classList.add('seen');
                 const inner = document.createElement('span'); inner.className = 'inner'; inner.textContent = group.emoji;
                 ring.appendChild(inner); b.appendChild(ring);
                 const nm = document.createElement('span'); nm.className = 'story-name'; nm.textContent = label || group.name;
@@ -1238,8 +1282,16 @@
             }
             openAddStory() {
                 this.pendingStoryFile = null;
-                document.getElementById('story-input').click();
+                this.showModal(
+                    '<h3>Novo story</h3>' +
+                    '<div class="vis-choice">' +
+                    '<button onclick="App.pickStory(\'story-photo\')">📷<span>Foto</span><small>Abrir câmera</small></button>' +
+                    '<button onclick="App.pickStory(\'story-video\')">🎥<span>Vídeo</span><small>Gravar</small></button>' +
+                    '<button onclick="App.pickStory(\'story-gallery\')">🖼️<span>Galeria</span><small>Do aparelho</small></button>' +
+                    '</div>'
+                );
             }
+            pickStory(inputId) { this.closeModal(); document.getElementById(inputId).click(); }
             handleStoryFile(event) {
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file) return;
@@ -1280,13 +1332,18 @@
                 const body = document.getElementById('sv-body');
                 const media = body.querySelector('img,video'); if (media && media.tagName === 'VIDEO') { try { media.pause(); } catch (e) {} }
                 document.getElementById('story-viewer').classList.remove('open');
+                this.renderStoriesBar(); // atualiza anéis vistos/não vistos
             }
             renderStoryItem() {
                 clearTimeout(this.storyTimer);
+                const token = ++this._storyRenderToken;
                 const group = this.storyGroups[this.storyAuthorIdx];
                 if (!group) return this.closeStories();
                 const item = group.items[this.storyItemIdx];
                 if (!item) return this.storyNext();
+
+                this.seenStories.add(item.id);
+                try { localStorage.setItem('phantom_seen_stories', JSON.stringify([...this.seenStories])); } catch (e) {}
 
                 document.getElementById('sv-avatar').textContent = group.emoji;
                 document.getElementById('sv-name').textContent = group.mine ? 'Seu story' : group.name;
@@ -1315,7 +1372,7 @@
                     this.animateStoryProgress(fillEl, duration);
                     this.storyTimer = setTimeout(() => this.storyNext(), duration);
                 } else {
-                    const vid = document.createElement('video'); vid.src = this.driveMediaUrl(item.fileId);
+                    const vid = document.createElement('video');
                     vid.autoplay = true; vid.playsInline = true; vid.oncontextmenu = () => false;
                     vid.setAttribute('controlsList', 'nodownload'); vid.setAttribute('disablepictureinpicture', '');
                     body.insertBefore(vid, body.querySelector('.sv-caption'));
@@ -1324,7 +1381,10 @@
                         this.animateStoryProgress(fillEl, duration);
                     });
                     vid.addEventListener('ended', () => this.storyNext());
-                    vid.play().catch(() => {});
+                    this.fetchMediaUrl(item.fileId).then(url => {
+                        if (token !== this._storyRenderToken) return; // usuário já avançou
+                        vid.src = url; vid.play().catch(() => {});
+                    }).catch(() => this.storyNext());
                 }
 
                 // Botão solicitar amizade (story público de quem não é amigo)
@@ -1373,18 +1433,22 @@
             setupPrivacyGuard() {
                 const guard = document.getElementById('privacy-guard');
                 let hideTimer = null;
-                const show = () => guard.classList.add('show');
-                const hide = () => guard.classList.remove('show');
-                const flash = () => { show(); clearTimeout(hideTimer); hideTimer = setTimeout(hide, 1800); };
-                document.addEventListener('visibilitychange', () => { if (document.hidden) show(); else hide(); });
-                window.addEventListener('blur', show); window.addEventListener('focus', hide);
+                const flash = () => {
+                    guard.classList.add('show');
+                    clearTimeout(hideTimer);
+                    hideTimer = setTimeout(() => guard.classList.remove('show'), 1500);
+                };
+                // Só reage à tecla PrintScreen (desktop). Sem gatilhos de blur/visibilidade,
+                // que disparavam falso-positivo o tempo todo (teclado, câmera, troca de app).
                 const onPrint = (e) => {
                     if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
                         try { if (navigator.clipboard) navigator.clipboard.writeText('🔒 Conteúdo protegido — Phantom'); } catch (err) {}
                         flash();
                     }
                 };
-                document.addEventListener('keyup', onPrint); document.addEventListener('keydown', onPrint);
+                document.addEventListener('keyup', onPrint);
+                document.addEventListener('keydown', onPrint);
+                // Impede menu de contexto (salvar imagem) sem cobrir a tela.
                 document.addEventListener('contextmenu', (e) => e.preventDefault());
             }
             setupGlobalHandlers() {
