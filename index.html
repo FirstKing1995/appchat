@@ -734,15 +734,26 @@
             }
             async request(action, payload) {
                 payload.action = action;
+                // Anexa a sessão (userId + token) em toda ação, menos no login.
+                if (action !== 'auth' && this.currentUser) { payload.userId = this.currentUser.id; payload.token = this.currentUser.token; }
                 try {
                     const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                     const data = await response.json();
                     if (!data.success) throw new Error(data.error);
                     return data.data;
                 } catch (error) {
+                    if (error.message && /Sess[aã]o/.test(error.message)) { this.forceRelogin(); throw error; }
                     this.toast('Falha de comunicação: ' + error.message);
                     throw error;
                 }
+            }
+            forceRelogin() {
+                clearInterval(this.heartbeatInterval); this.heartbeatInterval = null;
+                clearInterval(this.syncInterval);
+                localStorage.removeItem('phantom_mobile_session');
+                this.currentUser = null;
+                this.switchScreen('login-screen');
+                this.toast('Sua sessão expirou. Entre novamente.');
             }
             toast(message) {
                 const el = document.createElement('div');
@@ -1138,8 +1149,6 @@
                 div._cdStart = () => { if (div._started) return; div._started = true; this.startCountdown(div, badge, ms, () => this.finishConsume(msg)); };
                 this.msgObserver.observe(div);
             }
-            driveMediaUrl(fileId) { return `https://drive.google.com/uc?export=download&id=${fileId}`; }
-            driveImageUrl(fileId) { return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600`; }
             renderMessage(msg) {
                 const container = document.getElementById('messages-container');
                 const hint = document.getElementById('chat-empty-hint'); if (hint) hint.remove();
@@ -1178,7 +1187,11 @@
                 return div;
             }
             async fetchMediaUrl(fileId) {
+                if (!this._mediaCache) this._mediaCache = new Map();
+                if (this._mediaCache.has(fileId)) return this._mediaCache.get(fileId);
                 const res = await this.request('getMedia', { fileId });
+                if (this._mediaCache.size > 40) this._mediaCache.clear(); // evita crescer sem limite
+                this._mediaCache.set(fileId, res.dataUrl);
                 return res.dataUrl;
             }
             async revealMedia(div, msg) {
@@ -1260,9 +1273,10 @@
             }
             openImageViewer(div, msg) {
                 const viewer = document.getElementById('media-viewer');
-                document.getElementById('mv-img').src = this.driveImageUrl(msg.content);
+                const img = document.getElementById('mv-img'); img.src = '';
                 const badge = document.getElementById('mv-badge');
                 viewer.classList.add('open'); this._viewerMsg = msg;
+                this.fetchMediaUrl(msg.content).then(u => { if (this._viewerMsg === msg) img.src = u; }).catch(() => {});
                 this.startCountdown(div, badge, this.IMAGE_LIFESPAN, () => { this.finishConsume(msg); if (this._viewerMsg === msg) this.closeImageViewer(); });
             }
             closeImageViewer() { const v = document.getElementById('media-viewer'); v.classList.remove('open'); document.getElementById('mv-img').src = ''; this._viewerMsg = null; }
@@ -1505,9 +1519,9 @@
                 const fillEl = prog.children[this.storyItemIdx].querySelector('.sv-seg-fill');
                 let duration = 5000;
                 if (item.type === 'image') {
-                    const img = document.createElement('img'); img.src = this.driveImageUrl(item.fileId);
-                    img.draggable = false; img.oncontextmenu = () => false;
+                    const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false;
                     body.insertBefore(img, body.querySelector('.sv-caption'));
+                    this.fetchMediaUrl(item.fileId).then(u => { if (token === this._storyRenderToken) img.src = u; }).catch(() => {});
                     this.animateStoryProgress(fillEl, duration);
                     this.storyTimer = setTimeout(() => this.storyNext(), duration);
                 } else {
@@ -1659,8 +1673,8 @@
 
                 const media = document.createElement('div'); media.className = 'feed-media';
                 if (p.type === 'image') {
-                    const img = document.createElement('img'); img.src = this.driveImageUrl(p.fileId);
-                    img.draggable = false; img.oncontextmenu = () => false; media.appendChild(img);
+                    const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false; media.appendChild(img);
+                    this.fetchMediaUrl(p.fileId).then(u => img.src = u).catch(() => {});
                     this.attachDoubleTapLike(media, p, likeBtn); // duplo-toque curte
                 } else {
                     const wrap = document.createElement('div'); wrap.className = 'feed-video-wrap';
