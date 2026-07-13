@@ -68,6 +68,10 @@
         .how-title { font-size: 13px; font-weight: 800; color: var(--accent); }
         .how-line { font-size: 12px; line-height: 1.45; color: var(--text-muted); }
         .how-line b { color: var(--text-main); font-weight: 700; }
+        .emoji-field { display: flex; gap: 8px; align-items: stretch; }
+        .emoji-field input { flex: 1; }
+        .emoji-suggest { width: 54px; flex-shrink: 0; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.08); font-size: 22px; cursor: pointer; }
+        .emoji-suggest:active { background: rgba(255,255,255,0.16); }
         .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--text-muted); gap: 10px; }
         .toggle-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
 
@@ -125,18 +129,27 @@
         .story-add svg { width: 14px; height: 14px; }
         .story-name { font-size: 11px; color: var(--text-muted); max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* === TABS === */
-        .tab-bar { display: flex; gap: 6px; padding: 0 16px 14px; flex-shrink: 0; }
-        .tab-btn {
-            flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 4px;
-            border-radius: 14px; border: 1px solid transparent; cursor: pointer; background: rgba(255,255,255,0.05);
-            color: var(--text-muted); font-size: 12px; font-weight: 700;
+        .invite-cta {
+            display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 16px 12px; padding: 11px;
+            border-radius: 14px; border: 1px solid rgba(0,242,254,0.35); background: linear-gradient(135deg, rgba(0,242,254,0.14), rgba(122,92,255,0.14));
+            color: var(--accent); font-weight: 800; font-size: 13px; cursor: pointer; flex-shrink: 0;
         }
-        .tab-btn svg { width: 17px; height: 17px; }
+        .invite-cta:active { opacity: 0.8; }
+        .invite-cta svg { width: 17px; height: 17px; }
+
+        /* === TABS === */
+        .tab-bar { display: flex; gap: 5px; padding: 0 12px 14px; flex-shrink: 0; }
+        .tab-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 8px 2px;
+            border-radius: 12px; border: 1px solid transparent; cursor: pointer; background: rgba(255,255,255,0.05);
+            color: var(--text-muted); font-size: 10px; font-weight: 700; position: relative;
+        }
+        .tab-btn svg { width: 18px; height: 18px; }
         .tab-btn.active { background: var(--glass-bg); border-color: var(--accent); color: var(--accent); }
         .tab-badge {
-            min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--danger);
-            color: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+            position: absolute; top: 3px; right: 8px;
+            min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--danger);
+            color: #fff; font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 1.5px solid #000;
         }
         .tab-content { display: none; flex: 1; min-height: 0; flex-direction: column; }
         .tab-content.active { display: flex; }
@@ -174,6 +187,34 @@
         .req-btn.pending { background: rgba(255,255,255,0.06); color: var(--text-muted); border-color: var(--glass-border); }
         .online-indicator { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); flex-shrink: 0; }
         .empty-state { padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+        /* === FEED === */
+        .feed-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 18px; margin-bottom: 16px; overflow: hidden; }
+        .feed-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+        .feed-avatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .feed-author { flex: 1; min-width: 0; }
+        .feed-author .fa-name { font-weight: 700; font-size: 14px; }
+        .feed-author .fa-time { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        .feed-media img { width: 100%; display: block; max-height: 70vh; object-fit: cover; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+        .feed-media video { width: 100%; display: block; max-height: 70vh; background: #000; }
+        .feed-video-wrap { position: relative; width: 100%; min-height: 220px; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .feed-video-wrap .feed-play { width: 62px; height: 62px; border-radius: 50%; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .feed-video-wrap .feed-play svg { width: 26px; height: 26px; }
+        .feed-caption { padding: 10px 14px 2px; font-size: 14px; line-height: 1.4; }
+        .feed-actions { display: flex; align-items: center; gap: 20px; padding: 10px 14px 14px; }
+        .feed-act { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 800; padding: 0; }
+        .feed-act.liked { color: var(--danger); }
+        .feed-act svg { width: 21px; height: 21px; }
+        .comment-list { display: flex; flex-direction: column; gap: 12px; margin: 4px 0 14px; }
+        .comment-row { display: flex; gap: 10px; }
+        .comment-row .c-av { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+        .comment-row .c-body { flex: 1; }
+        .comment-row .c-name { font-size: 12px; font-weight: 800; color: var(--accent); }
+        .comment-row .c-text { font-size: 14px; line-height: 1.4; word-break: break-word; }
+        .comment-input-bar { display: flex; gap: 8px; align-items: center; }
+        .comment-input-bar input { flex: 1; padding: 12px; border-radius: 12px; border: none; background: rgba(255,255,255,0.1); color: #fff; font-size: 14px; outline: none; }
+        .comment-input-bar button { flex-shrink: 0; background: var(--accent); color: #000; border: none; border-radius: 12px; padding: 12px 14px; font-weight: 800; cursor: pointer; }
+        .sv-req.small { padding: 8px 14px; font-size: 12px; }
 
         /* === PERFIL === */
         .profile-scroll { flex: 1; overflow-y: auto; padding: 6px 20px 30px; display: flex; flex-direction: column; gap: 14px; }
@@ -356,7 +397,10 @@
                     Sugerir apelido anônimo
                 </button>
                 <input type="password" id="password" placeholder="Chave Secreta">
-                <input type="text" id="emoji" placeholder="Avatar (Ex: 🦊)">
+                <div class="emoji-field">
+                    <input type="text" id="emoji" placeholder="Avatar (Ex: 🦊)">
+                    <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('emoji')" title="Sugerir avatar">🎲</button>
+                </div>
                 <div class="toggle-row">
                     <label for="is-invisible">Operar como Fantasma (Invisível)</label>
                     <input type="checkbox" id="is-invisible">
@@ -385,19 +429,48 @@
 
             <div class="stories-bar" id="stories-bar"></div>
 
+            <button class="invite-cta" onclick="App.copyInvite()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+                Convide um amigo — copiar link
+            </button>
+
             <div class="tab-bar">
+                <button class="tab-btn" id="tab-btn-feed" onclick="App.switchTab('feed')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                    Feed
+                </button>
                 <button class="tab-btn active" id="tab-btn-chats" onclick="App.switchTab('chats')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-                    Conversas <span class="tab-badge hidden" id="chats-count-badge">0</span>
+                    Chats <span class="tab-badge hidden" id="chats-count-badge">0</span>
                 </button>
                 <button class="tab-btn" id="tab-btn-online" onclick="App.switchTab('online')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
                     Online <span class="tab-badge" id="online-count-badge">0</span>
                 </button>
+                <button class="tab-btn" id="tab-btn-amigos" onclick="App.switchTab('amigos')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    Amigos
+                </button>
                 <button class="tab-btn" id="tab-btn-profile" onclick="App.switchTab('profile')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     Perfil
                 </button>
+            </div>
+
+            <div class="tab-content" id="tab-feed">
+                <div class="tab-content-header">
+                    <span>Feed • some em 24h</span>
+                    <button class="btn-mini" onclick="App.openAddFeed()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Publicar
+                    </button>
+                </div>
+                <div class="scroll-list" id="feed-list"></div>
+            </div>
+
+            <div class="tab-content" id="tab-amigos">
+                <div class="tab-content-header"><span id="friends-count-text">Seus amigos</span></div>
+                <ul class="scroll-list" id="friends-list"></ul>
             </div>
 
             <div class="tab-content active" id="tab-chats">
@@ -420,7 +493,10 @@
                 <div class="tab-content-header"><span>Seu perfil</span></div>
                 <div class="profile-scroll">
                     <div class="profile-avatar-preview" id="profile-avatar-preview">🕵️</div>
-                    <input type="text" id="profile-emoji" placeholder="Avatar (Ex: 🦊)">
+                    <div class="emoji-field">
+                        <input type="text" id="profile-emoji" placeholder="Avatar (Ex: 🦊)">
+                        <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('profile-emoji')" title="Sugerir avatar">🎲</button>
+                    </div>
                     <p class="hint-text">Apelido anônimo — evite usar seu nome real.</p>
                     <input type="text" id="profile-name" placeholder="Apelido">
                     <button type="button" class="btn-ghost" onclick="App.suggestName('profile-name')">
@@ -576,6 +652,9 @@
         <input type="file" id="story-photo" accept="image/*" capture="environment" onchange="App.handleStoryFile(event)" hidden>
         <input type="file" id="story-video" accept="video/*" capture="environment" onchange="App.handleStoryFile(event)" hidden>
         <input type="file" id="story-gallery" accept="image/*,video/*" onchange="App.handleStoryFile(event)" hidden>
+        <input type="file" id="feed-photo" accept="image/*" capture="environment" onchange="App.handleFeedFile(event)" hidden>
+        <input type="file" id="feed-video" accept="video/*" capture="environment" onchange="App.handleFeedFile(event)" hidden>
+        <input type="file" id="feed-gallery" accept="image/*,video/*" onchange="App.handleFeedFile(event)" hidden>
     </div>
 
     <script>
@@ -590,7 +669,11 @@
             hash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',
             personPlus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>',
             play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 001.54.84l10.79-6.86a1 1 0 000-1.68L9.54 4.3A1 1 0 008 5.14z"/></svg>',
-            pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>'
+            pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>',
+            heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/></svg>',
+            heartFill: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-7.8-7.6-1-1a5.5 5.5 0 017.8-7.8l1 1 1-1a5.5 5.5 0 017.8 7.8l-1 1z"/></svg>',
+            comment: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>',
+            eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>'
         };
         const MEDIA_LABEL = { image: 'a imagem', video: 'o vídeo', audio: 'o áudio' };
         const EMOJIS = [
@@ -632,6 +715,7 @@
                 this.storyItemIdx = 0;
                 this.storyTimer = null;
                 this.pendingStoryFile = null;
+                this.pendingFeedFile = null;
                 this._storyRenderToken = 0;
                 try { this.seenStories = new Set(JSON.parse(localStorage.getItem('phantom_seen_stories') || '[]')); }
                 catch (e) { this.seenStories = new Set(); }
@@ -667,11 +751,19 @@
                 document.getElementById(screenId).classList.add('active');
             }
             switchTab(tab) {
-                ['chats', 'online', 'profile'].forEach(t => {
+                ['feed', 'chats', 'online', 'amigos', 'profile'].forEach(t => {
                     document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === tab);
                     document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
                 });
                 if (tab === 'profile') this.loadProfileForm();
+                if (tab === 'feed') this.loadFeed();
+                if (tab === 'amigos') this.loadFriends();
+            }
+            suggestEmoji(targetId) {
+                const avatars = ['🦊','🐺','🦉','🐯','🦁','🐨','🐼','🐸','🐵','🦅','🦇','🐍','🦂','🕷️','🦈','🐙','🦖','🐲','👻','👽','🤖','🎭','🥷','🕵️','🃏','💀','☠️','🔮','⚡','🌙','🔥','🌵','🍄','🦩','🦚','🐆','🐅','🦝','🦡','🦔'];
+                const el = document.getElementById(targetId);
+                el.value = avatars[Math.floor(Math.random() * avatars.length)];
+                if (targetId === 'profile-emoji') document.getElementById('profile-avatar-preview').textContent = el.value;
             }
             suggestName(targetId) {
                 const nouns = ['Raposa','Pantera','Coruja','Sombra','Fênix','Lobo','Cometa','Névoa','Aurora','Tempestade','Miragem','Eco'];
@@ -1391,14 +1483,23 @@
                     }).catch(() => this.storyNext());
                 }
 
-                // Botão solicitar amizade (story público de quem não é amigo)
                 const footer = document.getElementById('sv-footer'); footer.innerHTML = '';
-                if (!group.mine && !this.friends.has(group.userId)) {
-                    const btn = document.createElement('button'); btn.className = 'sv-req';
-                    const pending = this.pendingOut.has(group.userId);
-                    btn.innerHTML = pending ? 'Solicitação enviada' : (ICONS.personPlus + '<span>Solicitar amizade</span>');
-                    if (!pending) btn.onclick = () => this.requestFriend(group.userId, null).then(() => { btn.innerHTML = 'Solicitação enviada'; });
-                    footer.appendChild(btn);
+                if (group.mine) {
+                    // Meu story: botão para ver quem visualizou.
+                    const vb = document.createElement('button'); vb.className = 'sv-req';
+                    vb.innerHTML = ICONS.eye + '<span>Quem viu</span>';
+                    vb.onclick = () => this.openStoryViewers(item.id);
+                    footer.appendChild(vb);
+                } else {
+                    // Registra a visualização e mostra botão de amizade se for público de não-amigo.
+                    this.recordStoryView(item.id);
+                    if (!this.friends.has(group.userId)) {
+                        const btn = document.createElement('button'); btn.className = 'sv-req';
+                        const pending = this.pendingOut.has(group.userId);
+                        btn.innerHTML = pending ? 'Solicitação enviada' : (ICONS.personPlus + '<span>Solicitar amizade</span>');
+                        if (!pending) btn.onclick = () => this.requestFriend(group.userId, null).then(() => { btn.innerHTML = 'Solicitação enviada'; });
+                        footer.appendChild(btn);
+                    }
                 }
             }
             animateStoryProgress(fillEl, duration) {
@@ -1419,6 +1520,206 @@
                 if (this.storyItemIdx > 0) { this.storyItemIdx--; this.renderStoryItem(); return; }
                 if (this.storyAuthorIdx > 0) { this.storyAuthorIdx--; this.storyItemIdx = 0; this.renderStoryItem(); return; }
                 this.renderStoryItem();
+            }
+            // === UTIL ===
+            timeAgo(ts) {
+                const s = Math.floor((Date.now() - Number(ts)) / 1000);
+                if (s < 60) return 'agora';
+                const m = Math.floor(s / 60); if (m < 60) return `há ${m} min`;
+                const h = Math.floor(m / 60); if (h < 24) return `há ${h} h`;
+                const d = Math.floor(h / 24); return `há ${d} ${d === 1 ? 'dia' : 'dias'}`;
+            }
+            esc(str) { const d = document.createElement('div'); d.textContent = str == null ? '' : String(str); return d.innerHTML; }
+            recordStoryView(storyId) { this.request('markStoryView', { storyId, userId: this.currentUser.id }).catch(() => {}); }
+            async openStoryViewers(storyId) {
+                clearTimeout(this.storyTimer);
+                this.showModal('<h3>👁 Visualizações</h3><div id="viewers-list"><p class="empty-state">Carregando…</p></div>');
+                let viewers;
+                try { viewers = await this.request('getStoryViewers', { storyId, userId: this.currentUser.id }); } catch (e) { return; }
+                const box = document.getElementById('viewers-list'); if (!box) return;
+                if (!viewers.length) { box.innerHTML = '<p class="empty-state">Ninguém viu ainda.</p>'; return; }
+                box.innerHTML = '';
+                viewers.forEach(v => {
+                    const row = document.createElement('div'); row.className = 'modal-row';
+                    const ic = document.createElement('span'); ic.className = 'r-icon'; ic.textContent = v.emoji;
+                    const nm = document.createElement('span'); nm.className = 'r-name'; nm.textContent = v.name;
+                    const t = document.createElement('span'); t.style.cssText = 'font-size:11px;color:var(--text-muted)'; t.textContent = this.timeAgo(v.timestamp);
+                    row.appendChild(ic); row.appendChild(nm); row.appendChild(t); box.appendChild(row);
+                });
+            }
+            // === AMIGOS ===
+            async loadFriends() {
+                const list = document.getElementById('friends-list');
+                if (!list.querySelector('.list-item')) list.innerHTML = '<li class="empty-state">Carregando…</li>';
+                let friends;
+                try { friends = await this.request('getFriends', { userId: this.currentUser.id }); } catch (e) { return; }
+                this.renderFriends(friends);
+            }
+            renderFriends(friends) {
+                document.getElementById('friends-count-text').textContent = friends.length ? `${friends.length} amigo(s) • ordenados por atividade` : 'Seus amigos';
+                const list = document.getElementById('friends-list');
+                if (!friends.length) { list.innerHTML = '<li class="empty-state">Você ainda não tem amigos. Convide pelo seu link ou adicione usuários públicos na aba Online.</li>'; return; }
+                list.innerHTML = '';
+                friends.forEach(u => {
+                    const li = document.createElement('li'); li.className = 'list-item';
+                    const icon = document.createElement('span'); icon.className = 'list-icon'; icon.textContent = u.emoji;
+                    const title = document.createElement('span'); title.className = 'list-title'; title.textContent = u.name;
+                    const small = document.createElement('small'); small.textContent = u.online ? '● online agora' : `visto ${this.timeAgo(u.lastActive)}`;
+                    if (u.online) small.style.color = 'var(--accent)';
+                    title.appendChild(small);
+                    li.appendChild(icon); li.appendChild(title);
+                    if (u.online) { const dot = document.createElement('span'); dot.className = 'online-indicator'; li.appendChild(dot); }
+                    li.onclick = () => this.openDirectChat(u);
+                    list.appendChild(li);
+                });
+            }
+            // === FEED ===
+            async loadFeed() {
+                const list = document.getElementById('feed-list');
+                if (!list.querySelector('.feed-card')) list.innerHTML = '<p class="empty-state">Carregando feed…</p>';
+                let posts;
+                try { posts = await this.request('getFeed', { userId: this.currentUser.id }); } catch (e) { return; }
+                this.renderFeed(posts);
+            }
+            renderFeed(posts) {
+                const list = document.getElementById('feed-list');
+                if (!posts.length) { list.innerHTML = '<p class="empty-state">Nada no feed ainda.<br>Publique uma foto ou vídeo — some em 24h.</p>'; return; }
+                list.innerHTML = '';
+                posts.forEach(p => list.appendChild(this.feedCard(p)));
+            }
+            feedCard(p) {
+                const card = document.createElement('div'); card.className = 'feed-card';
+                const head = document.createElement('div'); head.className = 'feed-head';
+                const av = document.createElement('div'); av.className = 'feed-avatar'; av.textContent = p.emoji;
+                const author = document.createElement('div'); author.className = 'feed-author';
+                author.innerHTML = `<div class="fa-name">${this.esc(p.name)}</div><div class="fa-time">${this.timeAgo(p.timestamp)}</div>`;
+                head.appendChild(av); head.appendChild(author);
+                if (!p.mine) { const fb = this.friendButton(p.userId, {}); if (fb) head.appendChild(fb); }
+                card.appendChild(head);
+
+                const media = document.createElement('div'); media.className = 'feed-media';
+                if (p.type === 'image') {
+                    const img = document.createElement('img'); img.src = this.driveImageUrl(p.fileId);
+                    img.draggable = false; img.oncontextmenu = () => false; media.appendChild(img);
+                } else {
+                    const wrap = document.createElement('div'); wrap.className = 'feed-video-wrap';
+                    const play = document.createElement('div'); play.className = 'feed-play'; play.innerHTML = ICONS.play;
+                    wrap.appendChild(play); wrap.onclick = () => this.playFeedVideo(wrap, p); media.appendChild(wrap);
+                }
+                card.appendChild(media);
+
+                if (p.caption) { const cap = document.createElement('div'); cap.className = 'feed-caption'; cap.textContent = p.caption; card.appendChild(cap); }
+
+                const actions = document.createElement('div'); actions.className = 'feed-actions';
+                const likeBtn = document.createElement('button'); likeBtn.className = 'feed-act' + (p.liked ? ' liked' : '');
+                likeBtn.innerHTML = (p.liked ? ICONS.heartFill : ICONS.heart) + `<span>${p.likes}</span>`;
+                likeBtn.onclick = () => this.likePost(p, likeBtn);
+                const commentBtn = document.createElement('button'); commentBtn.className = 'feed-act';
+                commentBtn.innerHTML = ICONS.comment + `<span>${p.comments}</span>`;
+                commentBtn.onclick = () => this.openComments(p, commentBtn);
+                actions.appendChild(likeBtn); actions.appendChild(commentBtn);
+                card.appendChild(actions);
+                return card;
+            }
+            async playFeedVideo(wrap, p) {
+                wrap.style.pointerEvents = 'none';
+                wrap.querySelector('.feed-play').innerHTML = '<span style="font-size:13px;">…</span>';
+                let url;
+                try { url = await this.fetchMediaUrl(p.fileId); } catch (e) { wrap.querySelector('.feed-play').innerHTML = '✕'; return; }
+                const v = document.createElement('video'); v.src = url; v.controls = true; v.autoplay = true; v.playsInline = true;
+                v.setAttribute('controlsList', 'nodownload'); v.setAttribute('disablepictureinpicture', ''); v.oncontextmenu = () => false;
+                wrap.replaceWith(v); v.play().catch(() => {});
+            }
+            async likePost(p, btn) {
+                try {
+                    const res = await this.request('toggleLike', { postId: p.id, userId: this.currentUser.id });
+                    p.liked = res.liked; p.likes = res.count;
+                    btn.classList.toggle('liked', res.liked);
+                    btn.innerHTML = (res.liked ? ICONS.heartFill : ICONS.heart) + `<span>${res.count}</span>`;
+                } catch (e) {}
+            }
+            async openComments(p, btn) {
+                this._commentPost = p; this._commentBtn = btn;
+                this.showModal(
+                    '<h3>Comentários</h3>' +
+                    '<div class="comment-list" id="comment-list"><p class="empty-state">Carregando…</p></div>' +
+                    '<div class="comment-input-bar"><input id="comment-input" placeholder="Escreva um comentário..." maxlength="500" autocomplete="off"><button id="comment-send">Enviar</button></div>'
+                );
+                document.getElementById('comment-send').onclick = () => this.submitComment();
+                document.getElementById('comment-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.submitComment(); } });
+                let comments;
+                try { comments = await this.request('getComments', { postId: p.id }); } catch (e) { return; }
+                const box = document.getElementById('comment-list'); if (!box) return;
+                if (!comments.length) { box.innerHTML = '<p class="empty-state">Seja o primeiro a comentar.</p>'; return; }
+                box.innerHTML = ''; comments.forEach(c => box.appendChild(this.commentRow(c)));
+            }
+            commentRow(c) {
+                const row = document.createElement('div'); row.className = 'comment-row';
+                const av = document.createElement('div'); av.className = 'c-av'; av.textContent = c.emoji;
+                const body = document.createElement('div'); body.className = 'c-body';
+                const nm = document.createElement('div'); nm.className = 'c-name'; nm.textContent = c.name;
+                const tx = document.createElement('div'); tx.className = 'c-text'; tx.textContent = c.text;
+                body.appendChild(nm); body.appendChild(tx); row.appendChild(av); row.appendChild(body);
+                return row;
+            }
+            async submitComment() {
+                const input = document.getElementById('comment-input'); if (!input) return;
+                const text = input.value.trim(); if (!text) return;
+                input.value = '';
+                try {
+                    const c = await this.request('addComment', { postId: this._commentPost.id, userId: this.currentUser.id, text });
+                    const box = document.getElementById('comment-list');
+                    if (box.querySelector('.empty-state')) box.innerHTML = '';
+                    box.appendChild(this.commentRow(c)); box.scrollTop = box.scrollHeight;
+                    this._commentPost.comments = (this._commentPost.comments || 0) + 1;
+                    if (this._commentBtn) this._commentBtn.innerHTML = ICONS.comment + `<span>${this._commentPost.comments}</span>`;
+                } catch (e) {}
+            }
+            openAddFeed() {
+                this.pendingFeedFile = null;
+                this.showModal(
+                    '<h3>Publicar no feed</h3>' +
+                    '<div class="vis-choice">' +
+                    '<button onclick="App.pickFeed(\'feed-photo\')">📷<span>Foto</span><small>Câmera</small></button>' +
+                    '<button onclick="App.pickFeed(\'feed-video\')">🎥<span>Vídeo</span><small>Gravar</small></button>' +
+                    '<button onclick="App.pickFeed(\'feed-gallery\')">🖼️<span>Galeria</span><small>Do aparelho</small></button>' +
+                    '</div>'
+                );
+            }
+            pickFeed(inputId) { this.closeModal(); document.getElementById(inputId).click(); }
+            handleFeedFile(event) {
+                const file = event.target.files[0]; event.target.value = '';
+                if (!file) return;
+                if (file.size > 12 * 1024 * 1024) return this.toast('Arquivo excede 12MB.');
+                if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return this.toast('Deve ser foto ou vídeo.');
+                this.pendingFeedFile = file;
+                this.showModal(
+                    '<h3>Detalhes do post</h3>' +
+                    '<input id="feed-caption" placeholder="Legenda (opcional)" maxlength="300" autocomplete="off" style="width:100%;padding:14px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:15px;outline:none;margin-bottom:10px;">' +
+                    '<p class="hint-text" style="margin:0 0 8px;">Quem pode ver?</p>' +
+                    '<div class="vis-choice">' +
+                    '<button onclick="App.confirmFeed(\'friends\')">👥<span>Amigos</span></button>' +
+                    '<button onclick="App.confirmFeed(\'all\')">🌎<span>Todos</span></button>' +
+                    '</div>'
+                );
+            }
+            async confirmFeed(visibility) {
+                const file = this.pendingFeedFile; this.pendingFeedFile = null;
+                const capEl = document.getElementById('feed-caption');
+                const caption = capEl ? capEl.value : '';
+                this.closeModal();
+                if (!file) return;
+                const type = file.type.startsWith('image/') ? 'image' : 'video';
+                this.toast('Publicando…');
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        await this.request('postFeed', { userId: this.currentUser.id, content: e.target.result, type, mimeType: file.type, visibility, caption });
+                        this.toast('Publicado! Some em 24h.');
+                        this.switchTab('feed'); this.loadFeed();
+                    } catch (err) {}
+                };
+                reader.readAsDataURL(file);
             }
             // === MODAL ===
             showModal(html) { document.getElementById('modal-card').innerHTML = html; document.getElementById('modal').classList.add('open'); }
