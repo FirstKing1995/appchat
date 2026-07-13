@@ -30,6 +30,10 @@
             transition: opacity 0.3s ease; z-index: 1;
         }
         .screen.active { opacity: 1; pointer-events: auto; z-index: 10; }
+        /* Tela de login/criar conta: permite rolagem quando o conteúdo é alto (evita travar cortado). */
+        #login-screen { display: block; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 0 40px; }
+        #login-screen::-webkit-scrollbar { display: none; }
+        #login-screen .glass-panel { margin: 0 auto; }
 
         /* === LOGIN & FORMS === */
         .glass-panel {
