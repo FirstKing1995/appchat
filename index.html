@@ -259,6 +259,9 @@
         .media-lock-row svg { width: 22px; height: 22px; }
         .media-frame { width: 100%; display: block; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
         .msg-media video.media-frame { border-radius: 12px; max-height: 320px; background: #000; }
+        .msg-media iframe.media-frame { border: 0; width: 260px; max-width: 74vw; height: 200px; border-radius: 12px; background: #000; }
+        .msg-media iframe.media-audio { height: 62px; }
+        .feed-embed { width: 100%; height: 60vh; max-height: 440px; border: 0; background: #000; display: block; }
         .media-footer { display: flex; justify-content: flex-end; }
         #chat-empty-hint { padding: 60px 30px; }
 
@@ -701,6 +704,8 @@
                 this.heartbeatInterval = null;
                 this.MESSAGE_LIFESPAN = 30000;
                 this.IMAGE_LIFESPAN = 60000;
+                this.VIDEO_LIFESPAN = 90000;  // vídeo: janela fixa (player do Drive não expõe duração)
+                this.AUDIO_LIFESPAN = 60000;  // áudio: janela fixa
                 this.MEDIA_MULTIPLIER = 3;
                 this.MEDIA_FALLBACK = 45000;
                 this.inviteRef = null;
@@ -1199,75 +1204,34 @@
                 }
                 return div;
             }
-            async fetchMediaUrl(fileId) {
-                if (!this._mediaCache) this._mediaCache = new Map();
-                if (this._mediaCache.has(fileId)) return this._mediaCache.get(fileId);
-                const res = await this.request('getMedia', { fileId });
-                if (this._mediaCache.size > 40) this._mediaCache.clear(); // evita crescer sem limite
-                this._mediaCache.set(fileId, res.dataUrl);
-                return res.dataUrl;
-            }
-            async revealMedia(div, msg) {
+            // URLs diretas do Drive (link real) — reprodução/exibição confiável no celular.
+            driveImageUrl(fileId) { return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600`; }
+            drivePreview(fileId) { return `https://drive.google.com/file/d/${fileId}/preview`; }
+            revealMedia(div, msg) {
                 if (msg.type === 'image') { this.openImageViewer(div, msg); return; }
                 if (msg.type === 'audio') { this.revealAudio(div, msg); return; }
-                // vídeo nativo (carrega a mídia via backend p/ reprodução confiável)
+                // vídeo pelo player embutido do Drive (reprodução confiável no celular)
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
-                const loading = document.createElement('div'); loading.className = 'media-lock-row'; loading.textContent = 'Carregando vídeo…';
-                div.appendChild(loading); this.scrollToBottom();
-                let dataUrl;
-                try { dataUrl = await this.fetchMediaUrl(msg.content); }
-                catch (e) { loading.textContent = 'Falha ao carregar o vídeo.'; return; }
-                loading.remove();
-                const el = document.createElement('video');
-                el.className = 'media-frame'; el.src = dataUrl;
-                el.controls = true; el.autoplay = true; el.playsInline = true;
-                el.setAttribute('controlsList', 'nodownload noplaybackrate noremoteplayback');
-                el.setAttribute('disablepictureinpicture', ''); el.oncontextmenu = () => false;
+                const el = document.createElement('iframe');
+                el.className = 'media-frame'; el.src = this.drivePreview(msg.content);
+                el.setAttribute('allow', 'autoplay'); el.setAttribute('allowfullscreen', '');
                 const footer = document.createElement('div'); footer.className = 'media-footer';
                 const badge = document.createElement('span'); badge.className = 'ttl-badge'; footer.appendChild(badge);
                 div.appendChild(el); div.appendChild(footer); this.scrollToBottom();
-                this.startMediaTimer(el, div, badge, msg);
-                el.play().catch(() => {});
+                this.startCountdown(div, badge, this.VIDEO_LIFESPAN, () => this.finishConsume(msg));
             }
-            async revealAudio(div, msg) {
+            revealAudio(div, msg) {
+                // áudio pelo player embutido do Drive
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
-                const loading = document.createElement('div'); loading.className = 'media-lock-row'; loading.textContent = 'Carregando áudio…';
-                div.appendChild(loading); this.scrollToBottom();
-                let dataUrl;
-                try { dataUrl = await this.fetchMediaUrl(msg.content); }
-                catch (e) { loading.textContent = 'Falha ao carregar o áudio.'; return; }
-                loading.remove();
-                const audio = new Audio(dataUrl);
-                audio.preload = 'metadata';
-
-                const player = document.createElement('div'); player.className = 'audio-player';
-                const play = document.createElement('button'); play.className = 'ap-play'; play.innerHTML = ICONS.play;
-                const mid = document.createElement('div'); mid.className = 'ap-mid';
-                const wave = document.createElement('div'); wave.className = 'ap-wave';
-                for (let i = 0; i < 34; i++) { const bar = document.createElement('i'); bar.style.height = (6 + Math.round(Math.abs(Math.sin(i * 1.7)) * 16)) + 'px'; wave.appendChild(bar); }
-                const fill = document.createElement('span'); fill.className = 'ap-fill'; wave.appendChild(fill);
-                const time = document.createElement('span'); time.className = 'ap-time'; time.textContent = '0:00';
-                mid.appendChild(wave); mid.appendChild(time);
-                player.appendChild(play); player.appendChild(mid);
+                const el = document.createElement('iframe');
+                el.className = 'media-frame media-audio'; el.src = this.drivePreview(msg.content);
+                el.setAttribute('allow', 'autoplay');
                 const footer = document.createElement('div'); footer.className = 'media-footer';
                 const badge = document.createElement('span'); badge.className = 'ttl-badge'; footer.appendChild(badge);
-                div.appendChild(player); div.appendChild(footer); this.scrollToBottom();
-
-                const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
-                play.onclick = () => { if (audio.paused) audio.play().catch(() => {}); else audio.pause(); };
-                audio.addEventListener('play', () => play.innerHTML = ICONS.pause);
-                audio.addEventListener('pause', () => play.innerHTML = ICONS.play);
-                audio.addEventListener('timeupdate', () => {
-                    const d = audio.duration || 0;
-                    fill.style.width = d ? Math.min(100, (audio.currentTime / d) * 100) + '%' : '0%';
-                    time.textContent = fmt(audio.currentTime);
-                });
-                audio.addEventListener('ended', () => { play.innerHTML = ICONS.play; fill.style.width = '0%'; time.textContent = fmt(audio.duration); });
-                div._audio = audio;
-                this.startMediaTimer(audio, div, badge, msg, () => { try { audio.pause(); } catch (e) {} });
-                audio.play().catch(() => {});
+                div.appendChild(el); div.appendChild(footer); this.scrollToBottom();
+                this.startCountdown(div, badge, this.AUDIO_LIFESPAN, () => this.finishConsume(msg));
             }
             // Timer de mídia baseado na duração x3 (com fallback)
             startMediaTimer(mediaEl, div, badge, msg, onEnd) {
@@ -1286,10 +1250,10 @@
             }
             openImageViewer(div, msg) {
                 const viewer = document.getElementById('media-viewer');
-                const img = document.getElementById('mv-img'); img.src = '';
+                const img = document.getElementById('mv-img');
                 const badge = document.getElementById('mv-badge');
                 viewer.classList.add('open'); this._viewerMsg = msg;
-                this.fetchMediaUrl(msg.content).then(u => { if (this._viewerMsg === msg) img.src = u; }).catch(() => {});
+                img.src = this.driveImageUrl(msg.content);
                 this.startCountdown(div, badge, this.IMAGE_LIFESPAN, () => { this.finishConsume(msg); if (this._viewerMsg === msg) this.closeImageViewer(); });
             }
             closeImageViewer() { const v = document.getElementById('media-viewer'); v.classList.remove('open'); document.getElementById('mv-img').src = ''; this._viewerMsg = null; }
@@ -1533,24 +1497,19 @@
                 let duration = 5000;
                 if (item.type === 'image') {
                     const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false;
+                    img.src = this.driveImageUrl(item.fileId);
                     body.insertBefore(img, body.querySelector('.sv-caption'));
-                    this.fetchMediaUrl(item.fileId).then(u => { if (token === this._storyRenderToken) img.src = u; }).catch(() => {});
                     this.animateStoryProgress(fillEl, duration);
                     this.storyTimer = setTimeout(() => this.storyNext(), duration);
                 } else {
-                    const vid = document.createElement('video');
-                    vid.autoplay = true; vid.playsInline = true; vid.oncontextmenu = () => false;
-                    vid.setAttribute('controlsList', 'nodownload'); vid.setAttribute('disablepictureinpicture', '');
-                    body.insertBefore(vid, body.querySelector('.sv-caption'));
-                    vid.addEventListener('loadedmetadata', () => {
-                        duration = (isFinite(vid.duration) && vid.duration > 0) ? vid.duration * 1000 : 5000;
-                        this.animateStoryProgress(fillEl, duration);
-                    });
-                    vid.addEventListener('ended', () => this.storyNext());
-                    this.fetchMediaUrl(item.fileId).then(url => {
-                        if (token !== this._storyRenderToken) return; // usuário já avançou
-                        vid.src = url; vid.play().catch(() => {});
-                    }).catch(() => this.storyNext());
+                    const frame = document.createElement('iframe');
+                    frame.src = this.drivePreview(item.fileId);
+                    frame.setAttribute('allow', 'autoplay');
+                    frame.style.cssText = 'width:100%;height:100%;border:0;background:#000;';
+                    body.insertBefore(frame, body.querySelector('.sv-caption'));
+                    duration = 15000; // player do Drive não expõe duração; janela fixa
+                    this.animateStoryProgress(fillEl, duration);
+                    this.storyTimer = setTimeout(() => this.storyNext(), duration);
                 }
 
                 const footer = document.getElementById('sv-footer'); footer.innerHTML = '';
@@ -1686,8 +1645,8 @@
 
                 const media = document.createElement('div'); media.className = 'feed-media';
                 if (p.type === 'image') {
-                    const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false; media.appendChild(img);
-                    this.fetchMediaUrl(p.fileId).then(u => img.src = u).catch(() => {});
+                    const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false;
+                    img.src = this.driveImageUrl(p.fileId); media.appendChild(img);
                     this.attachDoubleTapLike(media, p, likeBtn); // duplo-toque curte
                 } else {
                     const wrap = document.createElement('div'); wrap.className = 'feed-video-wrap';
@@ -1727,14 +1686,11 @@
                 this.request('deleteFeed', { postId: p.id, userId: this.currentUser.id })
                     .then(() => { this.toast('Post excluído.'); card.remove(); }).catch(() => {});
             }
-            async playFeedVideo(wrap, p) {
-                wrap.style.pointerEvents = 'none';
-                wrap.querySelector('.feed-play').innerHTML = '<span style="font-size:13px;">…</span>';
-                let url;
-                try { url = await this.fetchMediaUrl(p.fileId); } catch (e) { wrap.querySelector('.feed-play').innerHTML = '✕'; return; }
-                const v = document.createElement('video'); v.src = url; v.controls = true; v.autoplay = true; v.playsInline = true;
-                v.setAttribute('controlsList', 'nodownload'); v.setAttribute('disablepictureinpicture', ''); v.oncontextmenu = () => false;
-                wrap.replaceWith(v); v.play().catch(() => {});
+            playFeedVideo(wrap, p) {
+                const el = document.createElement('iframe'); el.className = 'feed-embed';
+                el.src = this.drivePreview(p.fileId);
+                el.setAttribute('allow', 'autoplay'); el.setAttribute('allowfullscreen', '');
+                wrap.replaceWith(el);
             }
             async likePost(p, btn) {
                 if (p._liking) return; p._liking = true;
