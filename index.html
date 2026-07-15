@@ -137,6 +137,20 @@
         .invite-cta:active { opacity: 0.8; }
         .invite-cta svg { width: 17px; height: 17px; }
 
+        /* Feed em tela cheia: esconde o "cromo" e deixa só a barra de abas + feed */
+        #dashboard-screen.feed-mode .dash-header,
+        #dashboard-screen.feed-mode .stories-bar,
+        #dashboard-screen.feed-mode .invite-cta,
+        #dashboard-screen.feed-mode #tab-feed .tab-content-header { display: none !important; }
+        #dashboard-screen.feed-mode #feed-list { padding: 8px 10px 96px; }
+        #feed-fab {
+            position: absolute; right: 18px; bottom: 24px; width: 56px; height: 56px; border-radius: 50%;
+            background: var(--accent); color: #000; border: none; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 22px rgba(0,242,254,0.45); cursor: pointer; z-index: 25;
+        }
+        #feed-fab svg { width: 26px; height: 26px; }
+        .link-btn { background: none; border: none; color: var(--accent); font-size: 13px; font-weight: 700; cursor: pointer; padding: 6px; width: 100%; }
+
         /* === TABS === */
         .tab-bar { display: flex; gap: 5px; padding: 0 12px 14px; flex-shrink: 0; }
         .tab-btn {
@@ -411,8 +425,10 @@
                     <input type="text" id="emoji" placeholder="Avatar (Ex: 🦊)">
                     <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('emoji')" title="Sugerir avatar">🎲</button>
                 </div>
+                <input type="email" id="email" placeholder="Email (opcional, para recuperar a senha)" autocomplete="email">
                 <p class="hint-text">Modo Fantasma (invisível) fica no seu perfil, dá pra ativar/desativar quando quiser.</p>
                 <button class="btn-primary" onclick="App.auth()">ACESSAR</button>
+                <button type="button" class="link-btn" onclick="App.forgotPassword()">Esqueci minha chave secreta</button>
             </div>
         </div>
 
@@ -473,6 +489,9 @@
                     </button>
                 </div>
                 <div class="scroll-list" id="feed-list"></div>
+                <button id="feed-fab" onclick="App.openAddFeed()" aria-label="Publicar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
             </div>
 
             <div class="tab-content" id="tab-amigos">
@@ -511,6 +530,7 @@
                         Sugerir apelido
                     </button>
                     <input type="password" id="profile-password" placeholder="Nova chave secreta (opcional)">
+                    <input type="email" id="profile-email" placeholder="Email para recuperar senha" autocomplete="email">
                     <div class="toggle-row">
                         <label for="profile-invisible">Operar como Fantasma (Invisível)</label>
                         <input type="checkbox" id="profile-invisible">
@@ -740,18 +760,23 @@
             }
             async request(action, payload) {
                 payload.action = action;
-                // Anexa a sessão (userId + token) em toda ação, menos no login.
-                if (action !== 'auth' && this.currentUser) { payload.userId = this.currentUser.id; payload.token = this.currentUser.token; }
+                // Anexa a sessão (userId + token) em toda ação, menos nas públicas.
+                const isPublic = (action === 'auth' || action === 'recoverPassword');
+                if (!isPublic && this.currentUser) { payload.userId = this.currentUser.id; payload.token = this.currentUser.token; }
+                let data;
                 try {
                     const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-                    const data = await response.json();
-                    if (!data.success) throw new Error(data.error);
-                    return data.data;
-                } catch (error) {
-                    if (error.message && /Sess[aã]o/.test(error.message)) { this.forceRelogin(); throw error; }
-                    this.toast('Falha de comunicação: ' + error.message);
-                    throw error;
+                    data = await response.json();
+                } catch (networkErr) {
+                    this.toast('Sem conexão. Tente de novo.');
+                    throw networkErr;
                 }
+                if (!data.success) {
+                    const msg = data.error || 'Ocorreu um erro.';
+                    if (/Sess[aã]o/.test(msg)) this.forceRelogin(); else this.toast(msg);
+                    throw new Error(msg);
+                }
+                return data.data;
             }
             forceRelogin() {
                 clearInterval(this.heartbeatInterval); this.heartbeatInterval = null;
@@ -778,6 +803,7 @@
                     document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === tab);
                     document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
                 });
+                document.getElementById('dashboard-screen').classList.toggle('feed-mode', tab === 'feed');
                 if (tab === 'profile') this.loadProfileForm();
                 if (tab === 'feed') this.loadFeed();
                 if (tab === 'amigos') this.loadFriends();
@@ -827,12 +853,13 @@
                 const name = document.getElementById('username').value.trim();
                 const pass = document.getElementById('password').value.trim();
                 const emoji = document.getElementById('emoji').value.trim() || '🕵️';
+                const email = document.getElementById('email').value.trim();
                 const isInvisible = false; // modo fantasma passou a ser configurado só no perfil
                 if (!name || !pass) return this.toast('Preencha apelido e chave secreta.');
                 const btn = document.querySelector('#login-screen button.btn-primary');
                 btn.innerText = 'PROCESSANDO...';
                 try {
-                    const user = await this.request('auth', { name, emoji, password: pass, isInvisible, visibility: 'friends', ref: this.inviteRef });
+                    const user = await this.request('auth', { name, emoji, password: pass, isInvisible, visibility: 'friends', ref: this.inviteRef, email });
                     this.currentUser = user;
                     localStorage.setItem('phantom_mobile_session', JSON.stringify(user));
                     localStorage.setItem('phantom_last_name', user.name); // lembra o apelido pro próximo login
@@ -844,6 +871,25 @@
                 clearInterval(this.heartbeatInterval); this.heartbeatInterval = null;
                 localStorage.removeItem('phantom_mobile_session');
                 location.reload();
+            }
+            forgotPassword() {
+                const guess = document.getElementById('username').value.trim();
+                this.showModal(
+                    '<h3>Recuperar senha</h3>' +
+                    '<p class="hint-text" style="margin:0 0 10px;">Digite seu apelido ou email. Uma nova senha temporária será enviada para o email cadastrado na conta.</p>' +
+                    `<input id="recover-login" placeholder="Apelido ou email" value="${this.esc(guess)}" autocomplete="off" style="width:100%;padding:14px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:15px;outline:none;margin-bottom:10px;">` +
+                    '<button class="btn-primary" onclick="App.submitRecover()">Enviar nova senha</button>'
+                );
+            }
+            async submitRecover() {
+                const el = document.getElementById('recover-login');
+                const login = el ? el.value.trim() : '';
+                if (!login) return this.toast('Digite seu apelido ou email.');
+                try {
+                    const res = await this.request('recoverPassword', { login });
+                    this.closeModal();
+                    this.toast(res.message || 'Se houver conta com email, a nova senha foi enviada.');
+                } catch (e) { /* toast já exibido */ }
             }
             async loadDashboard() {
                 this.switchScreen('dashboard-screen');
@@ -859,6 +905,7 @@
                 document.getElementById('profile-emoji').value = this.currentUser.emoji;
                 document.getElementById('profile-name').value = this.currentUser.name;
                 document.getElementById('profile-password').value = '';
+                document.getElementById('profile-email').value = this.currentUser.email || '';
                 document.getElementById('profile-invisible').checked = !!this.currentUser.isInvisible;
                 document.getElementById('profile-friends-only').checked = this.currentUser.visibility === 'friends';
                 document.getElementById('profile-avatar-preview').textContent = this.currentUser.emoji;
@@ -869,11 +916,12 @@
                 const name = document.getElementById('profile-name').value.trim();
                 const emoji = document.getElementById('profile-emoji').value.trim();
                 const password = document.getElementById('profile-password').value.trim();
+                const email = document.getElementById('profile-email').value.trim();
                 const isInvisible = document.getElementById('profile-invisible').checked;
                 const visibility = document.getElementById('profile-friends-only').checked ? 'friends' : 'all';
                 if (!name || !emoji) return this.toast('Preencha apelido e avatar.');
                 try {
-                    const updated = await this.request('updateProfile', { userId: this.currentUser.id, name, emoji, password: password || null, isInvisible, visibility });
+                    const updated = await this.request('updateProfile', { userId: this.currentUser.id, name, emoji, password: password || null, isInvisible, visibility, email });
                     this.currentUser = { ...this.currentUser, ...updated };
                     localStorage.setItem('phantom_mobile_session', JSON.stringify(this.currentUser));
                     document.getElementById('my-profile').innerText = `${this.currentUser.emoji} ${this.currentUser.name}`;
@@ -1207,6 +1255,7 @@
             // URLs diretas do Drive (link real) — reprodução/exibição confiável no celular.
             driveImageUrl(fileId) { return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600`; }
             drivePreview(fileId) { return `https://drive.google.com/file/d/${fileId}/preview`; }
+            driveDownloadUrl(fileId) { return `https://drive.google.com/uc?export=download&id=${fileId}`; }
             revealMedia(div, msg) {
                 if (msg.type === 'image') { this.openImageViewer(div, msg); return; }
                 if (msg.type === 'audio') { this.revealAudio(div, msg); return; }
@@ -1222,16 +1271,37 @@
                 this.startCountdown(div, badge, this.VIDEO_LIFESPAN, () => this.finishConsume(msg));
             }
             revealAudio(div, msg) {
-                // áudio pelo player embutido do Drive
+                // Player de áudio customizado usando a URL pública do Drive (duração x3).
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
-                const el = document.createElement('iframe');
-                el.className = 'media-frame media-audio'; el.src = this.drivePreview(msg.content);
-                el.setAttribute('allow', 'autoplay');
+                const audio = new Audio(this.driveDownloadUrl(msg.content));
+                audio.preload = 'metadata';
+
+                const player = document.createElement('div'); player.className = 'audio-player';
+                const play = document.createElement('button'); play.className = 'ap-play'; play.innerHTML = ICONS.play;
+                const mid = document.createElement('div'); mid.className = 'ap-mid';
+                const wave = document.createElement('div'); wave.className = 'ap-wave';
+                for (let i = 0; i < 34; i++) { const bar = document.createElement('i'); bar.style.height = (6 + Math.round(Math.abs(Math.sin(i * 1.7)) * 16)) + 'px'; wave.appendChild(bar); }
+                const fill = document.createElement('span'); fill.className = 'ap-fill'; wave.appendChild(fill);
+                const time = document.createElement('span'); time.className = 'ap-time'; time.textContent = '0:00';
+                mid.appendChild(wave); mid.appendChild(time);
+                player.appendChild(play); player.appendChild(mid);
                 const footer = document.createElement('div'); footer.className = 'media-footer';
                 const badge = document.createElement('span'); badge.className = 'ttl-badge'; footer.appendChild(badge);
-                div.appendChild(el); div.appendChild(footer); this.scrollToBottom();
-                this.startCountdown(div, badge, this.AUDIO_LIFESPAN, () => this.finishConsume(msg));
+                div.appendChild(player); div.appendChild(footer); this.scrollToBottom();
+
+                const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+                play.onclick = () => { if (audio.paused) audio.play().catch(() => {}); else audio.pause(); };
+                audio.addEventListener('play', () => play.innerHTML = ICONS.pause);
+                audio.addEventListener('pause', () => play.innerHTML = ICONS.play);
+                audio.addEventListener('timeupdate', () => {
+                    const d = audio.duration || 0;
+                    fill.style.width = d ? Math.min(100, (audio.currentTime / d) * 100) + '%' : '0%';
+                    time.textContent = fmt(audio.currentTime);
+                });
+                audio.addEventListener('ended', () => { play.innerHTML = ICONS.play; fill.style.width = '0%'; time.textContent = fmt(audio.duration); });
+                div._audio = audio;
+                this.startMediaTimer(audio, div, badge, msg, () => { try { audio.pause(); } catch (e) {} });
             }
             // Timer de mídia baseado na duração x3 (com fallback)
             startMediaTimer(mediaEl, div, badge, msg, onEnd) {
@@ -1646,7 +1716,7 @@
                 const media = document.createElement('div'); media.className = 'feed-media';
                 if (p.type === 'image') {
                     const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false;
-                    img.src = this.driveImageUrl(p.fileId); media.appendChild(img);
+                    img.loading = 'lazy'; img.src = this.driveImageUrl(p.fileId); media.appendChild(img);
                     this.attachDoubleTapLike(media, p, likeBtn); // duplo-toque curte
                 } else {
                     const wrap = document.createElement('div'); wrap.className = 'feed-video-wrap';
@@ -1662,8 +1732,28 @@
                 commentBtn.innerHTML = ICONS.comment + `<span>${p.comments}</span>`;
                 commentBtn.onclick = () => this.openComments(p, commentBtn);
                 actions.appendChild(likeBtn); actions.appendChild(commentBtn);
+                if (p.mine) {
+                    const lk = document.createElement('button'); lk.className = 'feed-act';
+                    lk.innerHTML = ICONS.eye + '<span>Curtidas</span>';
+                    lk.onclick = () => this.openLikers(p);
+                    actions.appendChild(lk);
+                }
                 card.appendChild(actions);
                 return card;
+            }
+            async openLikers(p) {
+                this.showModal('<h3>❤️ Quem curtiu</h3><div id="likers-list"><p class="empty-state">Carregando…</p></div>');
+                let likers;
+                try { likers = await this.request('getLikers', { postId: p.id }); } catch (e) { return; }
+                const box = document.getElementById('likers-list'); if (!box) return;
+                if (!likers.length) { box.innerHTML = '<p class="empty-state">Ninguém curtiu ainda.</p>'; return; }
+                box.innerHTML = '';
+                likers.forEach(v => {
+                    const row = document.createElement('div'); row.className = 'modal-row';
+                    const ic = document.createElement('span'); ic.className = 'r-icon'; ic.textContent = v.emoji;
+                    const nm = document.createElement('span'); nm.className = 'r-name'; nm.textContent = v.name;
+                    row.appendChild(ic); row.appendChild(nm); box.appendChild(row);
+                });
             }
             applyLikeUI(p, btn) {
                 btn.classList.toggle('liked', !!p.liked);
