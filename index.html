@@ -220,12 +220,14 @@
         .chip.small { padding: 5px 10px; font-size: 11px; }
         .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
         .chip-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 2px; }
-        .radar-grid { flex: 1; overflow-y: auto; padding: 0 16px 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
+        /* minmax(0,1fr) + min-width:0 impedem que nomes/tags longos estourem a grade no celular */
+        .radar-grid { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 16px 30px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-content: start; }
         .radar-grid::-webkit-scrollbar { display: none; }
         .radar-grid .empty-state, .radar-grid .lives-rail-wrap { grid-column: 1 / -1; }
         .radar-card {
             background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 18px;
             padding: 16px 12px 12px; display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; position: relative;
+            min-width: 0; max-width: 100%; overflow: hidden;
         }
         .radar-card:active { background: rgba(255,255,255,0.12); }
         .radar-av {
@@ -234,17 +236,17 @@
         }
         .radar-card.online .radar-av { background: var(--grad-fire); }
         .radar-av .inner { width: 100%; height: 100%; border-radius: 50%; background: #180a12; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        .radar-name { font-size: 14px; font-weight: 800; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .radar-name { font-size: 14px; font-weight: 800; width: 100%; min-width: 0; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .radar-name small { color: var(--text-muted); font-weight: 600; }
-        .radar-sub { font-size: 10px; color: var(--text-muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 12px; }
-        .radar-tags { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; min-height: 18px; }
-        .radar-tags span { font-size: 9px; font-weight: 700; color: var(--accent-2); border: 1px solid rgba(177,75,255,0.45); border-radius: 8px; padding: 1px 6px; }
+        .radar-sub { font-size: 10px; color: var(--text-muted); width: 100%; min-width: 0; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 12px; }
+        .radar-tags { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; min-height: 18px; max-width: 100%; }
+        .radar-tags span { font-size: 9px; font-weight: 700; color: var(--accent-2); border: 1px solid rgba(177,75,255,0.45); border-radius: 8px; padding: 1px 6px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .radar-actions { display: flex; gap: 8px; margin-top: 4px; width: 100%; }
         .radar-actions button {
-            flex: 1; height: 36px; border-radius: 12px; border: 1px solid var(--glass-border);
+            flex: 1; min-width: 0; height: 36px; border-radius: 12px; border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.07); color: var(--text-main); cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 6px;
-            font-size: 12px; font-weight: 800;
+            font-size: 12px; font-weight: 800; white-space: nowrap;
         }
         .radar-actions button svg { width: 15px; height: 15px; }
         .radar-actions button.crush { background: rgba(255,46,99,0.14); border-color: var(--accent); color: var(--accent); }
@@ -1112,7 +1114,7 @@
         /* ==========================================================
            CONFIG: cole aqui a URL do seu App da Web (Apps Script V2)
            ========================================================== */
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzfM06pBcrwQLtmbE1jwovAhJU2Jfla031iwmBopqUfCG2fVMTVV_1cpB0khSlnCHXwdg/exec';
+        const API_URL = 'COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT';
 
         const ICONS = {
             image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.6"/><path d="M4 17l4.5-4.5a2 2 0 012.8 0L20 20"/></svg>',
@@ -2320,14 +2322,16 @@
                 if (u && u.avatar) {
                     const img = document.createElement('img');
                     img.className = 'av-photo'; img.draggable = false;
+                    img.onerror = () => { el.textContent = (u && u.emoji) || '🕵️'; }; // foto falhou -> emoji
                     img.src = this.avUrl(u.avatar);
                     el.appendChild(img);
                 } else el.textContent = (u && u.emoji) || '🕵️';
             }
             avatarHTML(u) {
+                const fb = this.esc((u && u.emoji) || '🕵️');
                 return (u && u.avatar)
-                    ? `<img class="av-photo" src="${this.avUrl(u.avatar)}" draggable="false">`
-                    : this.esc((u && u.emoji) || '🕵️');
+                    ? `<img class="av-photo" src="${this.avUrl(u.avatar)}" draggable="false" data-fb="${fb}" onerror="this.outerHTML=this.dataset.fb">`
+                    : fb;
             }
             // Clique na foto -> stories da pessoa (se tiver); senão, mini perfil.
             userStoriesIdx(userId) { return this.storyGroups.findIndex(g => g.userId === userId); }
