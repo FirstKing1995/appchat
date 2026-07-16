@@ -1,0 +1,17 @@
+{
+  "name": "Phantom V2",
+  "short_name": "Phantom",
+  "description": "Rede anônima e efêmera de flerte — 18+. Tudo tem prazo de validade.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a0207",
+  "theme_color": "#0a0207",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://em-content.zobj.net/source/apple/391/smiling-face-with-horns_1f608.png",
+      "sizes": "160x160",
+      "type": "image/png"
+    }
+  ]
+}
