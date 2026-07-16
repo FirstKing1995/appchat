@@ -43,7 +43,7 @@
             display: flex; flex-direction: column; gap: 14px;
         }
         .glass-panel h2 { margin: 0 0 4px 0; text-align: center; font-size: 28px; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], input[type="email"] {
             width: 100%; padding: 16px; border-radius: 12px; border: none;
             background: rgba(255,255,255,0.1); color: white; font-size: 16px; outline: none;
         }
@@ -425,7 +425,7 @@
                     <input type="text" id="emoji" placeholder="Avatar (Ex: 🦊)">
                     <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('emoji')" title="Sugerir avatar">🎲</button>
                 </div>
-                <input type="email" id="email" placeholder="Email (opcional, para recuperar a senha)" autocomplete="email">
+                <input type="email" id="email" placeholder="Email (para recuperar a senha)" autocomplete="email">
                 <p class="hint-text">Modo Fantasma (invisível) fica no seu perfil, dá pra ativar/desativar quando quiser.</p>
                 <button class="btn-primary" onclick="App.auth()">ACESSAR</button>
                 <button type="button" class="link-btn" onclick="App.forgotPassword()">Esqueci minha chave secreta</button>
@@ -706,7 +706,9 @@
         };
         const MEDIA_LABEL = { image: 'a imagem', video: 'o vídeo', audio: 'o áudio' };
         const EMOJIS = [
-            '😀','😃','😄','😁','😆','😅','😂','🤣','🥲','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🥸','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🫣','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👹','👺','🤡','💀','☠️','👻','👽','🤖','🎃','😺','😸','😻','😼','😽','🙀','😿','😾',
+            // 🔥 Flerte / hot primeiro
+            '😏','😈','😍','🥰','😘','😗','😙','😚','🤩','🥵','🫦','👅','👄','💋','💄','💅','👠','👙','🩱','🩲','🔥','❤️‍🔥','💘','💝','💖','💗','💓','💞','💕','💟','❣️','♥️','💌','🌹','🥂','🍷','🍸','🍾','🍒','🍓','🍑','🍆','🌶️','🍯','💦','💧','🫧','😳','🤤','😻','😽','🙈','🫣','🤭','😉','😜','😝','😛','🤪','🫠','🥴','😵‍💫','🫶','🖤','💜','🔞','💎','🌙','✨','🎁','🕯️','👑','🌡️',
+            '😀','😃','😄','😁','😆','😅','😂','🤣','🥲','😊','😇','🙂','🙃','😌','😋','😎','🥸','🥳','😒','😞','😔','😟','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😱','😨','😰','😥','😓','🤗','🤔','🤫','🤥','😶','😐','😑','😬','🙄','😯','😴','😪','🥴','🤢','🤮','😷','🤒','🤕','🤑','🤠','👿','👹','👺','🤡','💀','☠️','👻','👽','🤖','🎃','😺','😸','😼','🙀','😿','😾',
             '👍','👎','👌','🤌','🤏','✌️','🤞','🫰','🤟','🤘','🤙','👈','👉','👆','👇','☝️','✋','🤚','🖐️','🖖','👋','🤝','🙏','✍️','💅','🤳','💪','🦵','🦶','👂','👃','🧠','👀','👁️','👅','👄','💋','🩸',
             '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','♥️','💯','💢','💥','💫','💦','💨','🕳️','💬','🗨️','💭','🔥','⭐','🌟','✨','⚡','☄️','🌙','☀️','🌈','☁️','❄️','🌊',
             '🎉','🎊','🎈','🎁','🏆','🥇','🎯','🎮','🎲','🃏','🎭','🎨','🎬','🎤','🎧','🎵','🎶','📸','📷','🎥','💡','🔒','🔓','🔑','🗝️','🛡️','⚔️','💣','🧨','🔞','⚠️','🚫','✅','❌','❓','❗','💤','💰','💎',
@@ -807,6 +809,7 @@
                 if (tab === 'profile') this.loadProfileForm();
                 if (tab === 'feed') this.loadFeed();
                 if (tab === 'amigos') this.loadFriends();
+                if (tab === 'chats') this.fetchGroups();
             }
             suggestEmoji(targetId) {
                 const avatars = ['🦊','🐺','🦉','🐯','🦁','🐨','🐼','🐸','🐵','🦅','🦇','🐍','🦂','🕷️','🦈','🐙','🦖','🐲','👻','👽','🤖','🎭','🥷','🕵️','🃏','💀','☠️','🔮','⚡','🌙','🔥','🌵','🍄','🦩','🦚','🐆','🐅','🦝','🦡','🦔'];
@@ -844,6 +847,8 @@
                 const last = localStorage.getItem('phantom_last_name');
                 if (!last) return;
                 const u = document.getElementById('username'); if (u) u.value = last;
+                const em = localStorage.getItem('phantom_last_email');
+                if (em) { const e = document.getElementById('email'); if (e) e.value = em; }
                 const hint = document.getElementById('welcome-back');
                 if (hint) { hint.textContent = `👋 Bem-vindo de volta, ${last}. Só confirmar a chave secreta.`; hint.style.display = 'block'; }
                 setTimeout(() => { const pass = document.getElementById('password'); if (pass) pass.focus(); }, 150);
@@ -856,6 +861,8 @@
                 const email = document.getElementById('email').value.trim();
                 const isInvisible = false; // modo fantasma passou a ser configurado só no perfil
                 if (!name || !pass) return this.toast('Preencha apelido e chave secreta.');
+                if (!email) return this.toast('Informe um email (é ele que recupera sua senha).');
+                if (!/^\S+@\S+\.\S+$/.test(email)) return this.toast('Email inválido.');
                 const btn = document.querySelector('#login-screen button.btn-primary');
                 btn.innerText = 'PROCESSANDO...';
                 try {
@@ -863,6 +870,7 @@
                     this.currentUser = user;
                     localStorage.setItem('phantom_mobile_session', JSON.stringify(user));
                     localStorage.setItem('phantom_last_name', user.name); // lembra o apelido pro próximo login
+                    localStorage.setItem('phantom_last_email', user.email || email);
                     this.clearRefFromUrl();
                     this.loadDashboard();
                 } catch (e) { btn.innerText = 'ACESSAR'; }
@@ -949,6 +957,9 @@
                 this.updateInboxBadge();
                 this.renderOnline(res.online || []);
                 this.updateUnread(res.unread || {});
+                // Mantém a lista de conversas fresca e na ordem certa enquanto o usuário a olha.
+                if (document.getElementById('dashboard-screen').classList.contains('active') &&
+                    document.getElementById('tab-btn-chats').classList.contains('active')) this.fetchGroups();
                 // Atualiza stories a cada ~30s para pegar publicações de outros usuários.
                 this._hbCount = (this._hbCount || 0) + 1;
                 if (this._hbCount % 3 === 0 && !document.getElementById('story-viewer').classList.contains('open')) this.fetchStories();
@@ -1053,6 +1064,7 @@
             async fetchGroups() {
                 let groups;
                 try { groups = await this.request('getGroups', { userId: this.currentUser.id }); } catch (e) { return; }
+                groups.sort((a, b) => (b.lastActivity || 0) - (a.lastActivity || 0)); // mais recente primeiro
                 const list = document.getElementById('groups-list');
                 if (!groups.length) { list.innerHTML = '<li class="empty-state">Nenhuma sessão ainda. Toque em um usuário na aba Online para começar, ou crie um grupo.</li>'; return; }
                 list.innerHTML = '';
