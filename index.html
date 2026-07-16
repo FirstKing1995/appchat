@@ -239,13 +239,19 @@
         .radar-sub { font-size: 10px; color: var(--text-muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 12px; }
         .radar-tags { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; min-height: 18px; }
         .radar-tags span { font-size: 9px; font-weight: 700; color: var(--accent-2); border: 1px solid rgba(177,75,255,0.45); border-radius: 8px; padding: 1px 6px; }
-        .radar-actions { display: flex; gap: 8px; margin-top: 2px; }
+        .radar-actions { display: flex; gap: 8px; margin-top: 4px; width: 100%; }
         .radar-actions button {
-            width: 42px; height: 36px; border-radius: 12px; border: 1px solid var(--glass-border);
-            background: rgba(255,255,255,0.07); color: var(--text-main); font-size: 16px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            flex: 1; height: 36px; border-radius: 12px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.07); color: var(--text-main); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            font-size: 12px; font-weight: 800;
         }
-        .radar-actions button.crush.sent { background: rgba(255,46,99,0.2); border-color: var(--accent); }
+        .radar-actions button svg { width: 15px; height: 15px; }
+        .radar-actions button.crush { background: rgba(255,46,99,0.14); border-color: var(--accent); color: var(--accent); }
+        .radar-actions button.crush.sent { background: rgba(255,255,255,0.06); border-color: var(--glass-border); color: var(--text-muted); }
+        .radar-av { cursor: pointer; }
+        .radar-av .inner, .story-ring .inner, .match-ring .inner, .live-ring .inner,
+        .pf-av .inner, .vv-av .inner, .match-avs .mav .inner, .ci-av .inner { overflow: hidden; }
         .radar-dot { position: absolute; top: 12px; right: 12px; }
         .radar-count { font-size: 11px; color: var(--text-muted); font-weight: 700; }
 
@@ -280,11 +286,16 @@
         }
         .match-heart { position: absolute; top: -4px; right: -4px; font-size: 14px; filter: drop-shadow(0 0 6px rgba(255,46,99,0.8)); }
 
+        /* === AVATAR (foto ou emoji) === */
+        .av-photo {
+            width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;
+            pointer-events: none; -webkit-user-select: none; user-select: none;
+        }
+        .feed-avatar { overflow: hidden; cursor: pointer; }
+        .feed-avatar.has-story { box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--accent); }
+        .fa-name { cursor: pointer; }
+
         /* === FEED (cards) === */
-        #dashboard-screen.feed-mode .dash-header,
-        #dashboard-screen.feed-mode .stories-bar,
-        #dashboard-screen.feed-mode #tab-feed .tab-content-header { display: none !important; }
-        #dashboard-screen.feed-mode #feed-list { padding: 8px 10px 96px; }
         #feed-fab {
             position: absolute; right: 18px; bottom: 24px; width: 56px; height: 56px; border-radius: 50%;
             background: var(--grad); color: #fff; border: none; display: flex; align-items: center; justify-content: center;
@@ -615,6 +626,8 @@
         .pf-foot { display: flex; justify-content: center; gap: 18px; margin-top: 12px; }
         .pf-foot button { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .pf-foot button svg { width: 14px; height: 14px; }
+        .pf-actions button svg { width: 16px; height: 16px; }
+        .list-item .list-icon, .modal-row .r-icon, .comment-row .c-av, .sv-avatar, .profile-avatar-preview { overflow: hidden; }
 
         /* === VISUALIZADOR DE IMAGEM === */
         .media-viewer { display: none; position: fixed; inset: 0; z-index: 2500; background: rgba(3,0,5,0.98); align-items: center; justify-content: center; }
@@ -728,21 +741,21 @@
             <div class="stories-bar" id="stories-bar"></div>
 
             <div class="tab-bar">
-                <button class="tab-btn active" id="tab-btn-radar" onclick="App.switchTab('radar')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M7.76 16.24a6 6 0 010-8.49"/><path d="M4.93 19.07a10 10 0 010-14.14"/></svg>
-                    Radar <span class="tab-badge hidden" id="online-count-badge">0</span>
-                </button>
-                <button class="tab-btn" id="tab-btn-feed" onclick="App.switchTab('feed')">
+                <button class="tab-btn active" id="tab-btn-feed" onclick="App.switchTab('feed')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
                     Feed
+                </button>
+                <button class="tab-btn" id="tab-btn-chats" onclick="App.switchTab('chats')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                    Chats <span class="tab-badge hidden" id="chats-count-badge">0</span>
                 </button>
                 <button class="tab-btn" id="tab-btn-salas" onclick="App.switchTab('salas')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
                     Salas <span class="tab-badge live hidden" id="rooms-badge">0</span>
                 </button>
-                <button class="tab-btn" id="tab-btn-chats" onclick="App.switchTab('chats')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-                    Chats <span class="tab-badge hidden" id="chats-count-badge">0</span>
+                <button class="tab-btn" id="tab-btn-radar" onclick="App.switchTab('radar')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M7.76 16.24a6 6 0 010-8.49"/><path d="M4.93 19.07a10 10 0 010-14.14"/></svg>
+                    Radar <span class="tab-badge hidden" id="online-count-badge">0</span>
                 </button>
                 <button class="tab-btn" id="tab-btn-profile" onclick="App.switchTab('profile')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -751,19 +764,19 @@
             </div>
 
             <!-- RADAR -->
-            <div class="tab-content active" id="tab-radar">
+            <div class="tab-content" id="tab-radar">
                 <div class="lives-rail hidden" id="lives-rail"></div>
                 <div class="filter-row" id="filter-row">
-                    <button class="chip on" id="chip-all" onclick="App.setRadarFilter('all')">🌎 Todos</button>
-                    <button class="chip" id="chip-online" onclick="App.setRadarFilter('online')">🟢 Online</button>
-                    <button class="chip" id="chip-friends" onclick="App.setRadarFilter('friends')">🤝 Amigos</button>
-                    <button class="chip" id="chip-adv" onclick="App.openFilters()">🎛 Filtros <span id="adv-count"></span></button>
+                    <button class="chip on" id="chip-all" onclick="App.setRadarFilter('all')">Todos</button>
+                    <button class="chip" id="chip-online" onclick="App.setRadarFilter('online')"><span class="online-indicator" style="width:8px;height:8px;box-shadow:none;"></span> Online</button>
+                    <button class="chip" id="chip-friends" onclick="App.setRadarFilter('friends')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Amigos</button>
+                    <button class="chip" id="chip-adv" onclick="App.openFilters()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px;"><line x1="4" y1="7" x2="20" y2="7"/><circle cx="9" cy="7" r="2.4"/><line x1="4" y1="15" x2="20" y2="15"/><circle cx="15" cy="15" r="2.4"/></svg> Filtros <span id="adv-count"></span></button>
                 </div>
                 <div class="radar-grid" id="radar-grid"><p class="empty-state">Carregando o radar…</p></div>
             </div>
 
             <!-- FEED -->
-            <div class="tab-content" id="tab-feed">
+            <div class="tab-content active" id="tab-feed">
                 <div class="tab-content-header">
                     <span>Feed • tudo expira</span>
                     <div style="display:flex; gap:8px;">
@@ -813,8 +826,16 @@
                 <div class="tab-content-header"><span>Seu perfil</span></div>
                 <div class="profile-scroll">
                     <div class="profile-avatar-preview" id="profile-avatar-preview">🕵️</div>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn-ghost" onclick="App.triggerFile('avatar-input')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.2"/></svg>
+                            Usar foto
+                        </button>
+                        <button type="button" class="btn-ghost" onclick="App.removeAvatar()">Voltar ao emoji</button>
+                    </div>
+                    <p class="hint-text">A foto substitui o emoji como sua imagem no app. Evite fotos que revelem quem você é — máscara é estilo. 🎭</p>
                     <div class="emoji-field">
-                        <input type="text" id="profile-emoji" placeholder="Avatar (Ex: 🦊)">
+                        <input type="text" id="profile-emoji" placeholder="Avatar de emoji (Ex: 🦊)">
                         <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('profile-emoji')" title="Sugerir avatar">🎲</button>
                     </div>
                     <input type="text" id="profile-name" placeholder="Codinome anônimo">
@@ -839,11 +860,7 @@
                         <label for="profile-invisible">Operar como Fantasma (invisível)</label>
                         <input type="checkbox" id="profile-invisible">
                     </div>
-                    <div class="toggle-row">
-                        <label for="profile-friends-only">Aparecer só para amigos</label>
-                        <input type="checkbox" id="profile-friends-only">
-                    </div>
-                    <p class="hint-text">Desligado: você aparece no Radar para todos. Ligado: só quem já é seu amigo te vê.</p>
+                    <p class="hint-text">Você aparece no Radar para todo mundo. Quem controla a privacidade é você a cada publicação: todo post e story pergunta se é para <strong>todos</strong> ou <strong>só amigos</strong>.</p>
                     <button class="btn-primary" onclick="App.saveProfile()">Salvar perfil</button>
 
                     <div class="invite-box">
@@ -1088,6 +1105,7 @@
         <input type="file" id="feed-photo" accept="image/*" capture="environment" onchange="App.handleFeedFile(event)" hidden>
         <input type="file" id="feed-video" accept="video/*" capture="environment" onchange="App.handleFeedFile(event)" hidden>
         <input type="file" id="feed-gallery" accept="image/*,video/*" onchange="App.handleFeedFile(event)" hidden>
+        <input type="file" id="avatar-input" accept="image/*" onchange="App.handleAvatarFile(event)" hidden>
     </div>
 
     <script>
@@ -1255,11 +1273,10 @@
                 document.getElementById(screenId).classList.add('active');
             }
             switchTab(tab) {
-                ['radar', 'feed', 'salas', 'chats', 'profile'].forEach(t => {
+                ['feed', 'chats', 'salas', 'radar', 'profile'].forEach(t => {
                     document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === tab);
                     document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
                 });
-                document.getElementById('dashboard-screen').classList.toggle('feed-mode', tab === 'feed');
                 if (tab === 'profile') { this.loadProfileForm(); this.loadFriends(); }
                 if (tab === 'feed') this.loadFeed();
                 if (tab === 'radar') { this.loadRadar(); this.loadLives(); }
@@ -1270,7 +1287,10 @@
                 const avatars = ['🦊','🐺','🦉','🐯','🦁','🐨','🐼','🐸','🐵','🦅','🦇','🐍','🦂','🕷️','🦈','🐙','🦖','🐲','👻','👽','🤖','🎭','🥷','🕵️','🃏','💀','☠️','🔮','⚡','🌙','🔥','😈','🫦','💋','🌹','🍒','🍑','💃','🕺','👑'];
                 const el = document.getElementById(targetId);
                 el.value = avatars[Math.floor(Math.random() * avatars.length)];
-                if (targetId === 'profile-emoji') document.getElementById('profile-avatar-preview').textContent = el.value;
+                if (targetId === 'profile-emoji') {
+                    const prev = document.getElementById('profile-avatar-preview');
+                    if (!prev.querySelector('img')) prev.textContent = el.value; // não sobrescreve a foto
+                }
             }
             suggestName(targetId) {
                 const nouns = ['Raposa','Pantera','Coruja','Sombra','Fênix','Lobo','Cometa','Névoa','Aurora','Tempestade','Miragem','Eco','Vênus','Sereia','Brasa','Pimenta','Feitiço','Veludo','Tentação','Lua'];
@@ -1373,7 +1393,8 @@
                 try { this.knownMatches = new Set(JSON.parse(localStorage.getItem('phantom2_matches_' + this.currentUser.id) || '[]')); }
                 catch (e) { this.knownMatches = new Set(); }
                 this._firstPulse = true;
-                this.loadRadar();
+                this.switchTab('feed');          // aba inicial
+                this.loadRadar();                // dados de perfis usados no app todo
                 this.loadLives();
                 this.fetchStories();
                 this.runPulse();
@@ -1462,7 +1483,8 @@
                 this.matches.forEach(m => {
                     const b = document.createElement('button'); b.className = 'match-bubble';
                     const ring = document.createElement('span'); ring.className = 'match-ring';
-                    const inner = document.createElement('span'); inner.className = 'inner'; inner.textContent = m.emoji;
+                    const inner = document.createElement('span'); inner.className = 'inner';
+                    this.setAv(inner, m);
                     ring.appendChild(inner);
                     if (m.consummated) {
                         const h = document.createElement('span'); h.className = 'match-heart'; h.textContent = '💘'; ring.appendChild(h);
@@ -1479,8 +1501,8 @@
             }
             showMatchPop(m) {
                 this._pendingMatch = m;
-                document.getElementById('mp-me').textContent = this.currentUser.emoji;
-                document.getElementById('mp-other').textContent = m.emoji || '😈';
+                this.setAv(document.getElementById('mp-me'), this.currentUser);
+                this.setAv(document.getElementById('mp-other'), m);
                 document.getElementById('mp-name').textContent = m.name || 'alguém';
                 document.getElementById('match-pop').classList.add('open');
             }
@@ -1520,7 +1542,8 @@
                 box.innerHTML = '';
                 reqs.forEach(r => {
                     const row = document.createElement('div'); row.className = 'modal-row';
-                    const ic = document.createElement('span'); ic.className = 'r-icon'; ic.textContent = r.emoji;
+                    const ic = document.createElement('span'); ic.className = 'r-icon';
+                    this.setAv(ic, r);
                     const nm = document.createElement('span'); nm.className = 'r-name'; nm.textContent = r.name;
                     const acc = document.createElement('button'); acc.className = 'mini-accept'; acc.textContent = 'Aceitar';
                     const dec = document.createElement('button'); dec.className = 'mini-decline'; dec.textContent = 'Recusar';
@@ -1587,8 +1610,8 @@
                 document.getElementById('profile-password').value = '';
                 document.getElementById('profile-email').value = u.email || '';
                 document.getElementById('profile-invisible').checked = !!u.isInvisible;
-                document.getElementById('profile-friends-only').checked = u.visibility === 'friends';
-                document.getElementById('profile-avatar-preview').textContent = u.emoji;
+                this._pendingAvatar = undefined;
+                this.setAv(document.getElementById('profile-avatar-preview'), u);
                 document.getElementById('invite-link-text').textContent = this.inviteLink();
                 this.profileSel.gender = u.gender || '';
                 this.profileSel.orientation = u.orientation || '';
@@ -1613,7 +1636,6 @@
                     password: document.getElementById('profile-password').value.trim() || null,
                     email: document.getElementById('profile-email').value.trim(),
                     isInvisible: document.getElementById('profile-invisible').checked,
-                    visibility: document.getElementById('profile-friends-only').checked ? 'friends' : 'all',
                     bio: document.getElementById('profile-bio').value.trim(),
                     age: ageRaw ? Number(ageRaw) : null,
                     city: document.getElementById('profile-city').value.trim(),
@@ -1624,6 +1646,7 @@
                     tags: [...this.profileSel.tags]
                 };
                 if (fields.age === null) delete fields.age;
+                if (this._pendingAvatar !== undefined) fields.avatar = this._pendingAvatar; // foto nova ou '' (volta ao emoji)
                 try {
                     const updated = await this.request('updateProfile', { fields });
                     this.currentUser = { ...this.currentUser, ...updated };
@@ -1631,8 +1654,27 @@
                     document.getElementById('my-profile').innerText = `${this.currentUser.emoji} ${this.currentUser.name}`;
                     document.getElementById('status-text').innerText = this.currentUser.isInvisible ? '👻 Invisível' : '● No radar';
                     document.getElementById('profile-password').value = '';
+                    this._pendingAvatar = undefined;
+                    this.setAv(document.getElementById('profile-avatar-preview'), this.currentUser);
                     this.toast('Perfil atualizado. 😈');
                 } catch (e) {}
+            }
+            // === FOTO DE PERFIL ===
+            async handleAvatarFile(event) {
+                const file = event.target.files[0]; event.target.value = '';
+                if (!file) return;
+                if (!file.type.startsWith('image/')) return this.toast('Escolha uma imagem.');
+                const c = await this.compressImage(file, 512, 0.85);
+                this._pendingAvatar = c.dataUrl;
+                document.getElementById('profile-avatar-preview').innerHTML =
+                    `<img class="av-photo" src="${c.dataUrl}" draggable="false">`;
+                this.toast('Foto pronta — toque em "Salvar perfil" para aplicar.');
+            }
+            removeAvatar() {
+                this._pendingAvatar = '';
+                const prev = document.getElementById('profile-avatar-preview');
+                prev.textContent = document.getElementById('profile-emoji').value.trim() || this.currentUser.emoji || '🕵️';
+                this.toast('Voltando ao emoji — salve o perfil para aplicar.');
             }
             copyInvite() {
                 const link = this.inviteLink();
@@ -1650,7 +1692,8 @@
                 box.innerHTML = '';
                 list.forEach(u => {
                     const row = document.createElement('div'); row.className = 'modal-row';
-                    const ic = document.createElement('span'); ic.className = 'r-icon'; ic.textContent = u.emoji;
+                    const ic = document.createElement('span'); ic.className = 'r-icon';
+                    this.setAv(ic, u);
                     const nm = document.createElement('span'); nm.className = 'r-name'; nm.textContent = u.name;
                     const un = document.createElement('button'); un.className = 'mini-decline'; un.textContent = 'Desbloquear';
                     un.onclick = async () => { try { await this.request('unblockUser', { targetId: u.id }); row.remove(); this.toast('Desbloqueado.'); } catch (e) {} };
@@ -1669,7 +1712,8 @@
                 list.innerHTML = '';
                 friends.forEach(u => {
                     const li = document.createElement('li'); li.className = 'list-item';
-                    const icon = document.createElement('span'); icon.className = 'list-icon'; icon.textContent = u.emoji;
+                    const icon = document.createElement('span'); icon.className = 'list-icon';
+                    this.setAv(icon, u);
                     const title = document.createElement('span'); title.className = 'list-title'; title.textContent = u.name;
                     const small = document.createElement('small'); small.textContent = u.online ? '● online agora' : `visto ${this.timeAgo(u.lastActive)}`;
                     if (u.online) small.style.color = 'var(--ok)';
@@ -1754,25 +1798,34 @@
                 const card = document.createElement('div');
                 card.className = 'radar-card' + (u.online ? ' online' : '');
                 const av = document.createElement('div'); av.className = 'radar-av';
-                const inner = document.createElement('div'); inner.className = 'inner'; inner.textContent = u.emoji;
+                const inner = document.createElement('div'); inner.className = 'inner';
+                this.setAv(inner, u);
                 av.appendChild(inner); card.appendChild(av);
+                av.onclick = (e) => { e.stopPropagation(); this.openUserStories(u.id); }; // foto abre os stories
                 if (u.online) { const dot = document.createElement('span'); dot.className = 'online-indicator radar-dot'; card.appendChild(dot); }
                 const nm = document.createElement('div'); nm.className = 'radar-name';
                 nm.innerHTML = `${this.esc(u.name)}${u.age ? ` <small>${u.age}</small>` : ''}`;
                 card.appendChild(nm);
                 const sub = document.createElement('div'); sub.className = 'radar-sub';
-                sub.textContent = [u.status, u.city].filter(Boolean).join(' • ') || (u.matched ? '💘 seu match' : '');
+                sub.textContent = [u.status, u.city].filter(Boolean).join(' • ');
                 card.appendChild(sub);
                 const tags = document.createElement('div'); tags.className = 'radar-tags';
+                if (u.matched) { const s = document.createElement('span'); s.className = 'match-tag'; s.textContent = 'MATCH'; tags.appendChild(s); }
                 (u.tags || []).slice(0, 2).forEach(t => { const s = document.createElement('span'); s.textContent = t; tags.appendChild(s); });
                 card.appendChild(tags);
+                // Sem chat livre no radar: a conversa se conquista no match.
                 const actions = document.createElement('div'); actions.className = 'radar-actions';
-                const crush = document.createElement('button'); crush.className = 'crush' + (u.crushSent ? ' sent' : '');
-                crush.textContent = '🔥';
-                crush.onclick = (e) => { e.stopPropagation(); this.sendCrush(u, crush); };
-                const chat = document.createElement('button'); chat.textContent = '💬';
-                chat.onclick = (e) => { e.stopPropagation(); this.openDirectChat(u); };
-                actions.appendChild(crush); actions.appendChild(chat);
+                if (u.matched) {
+                    const go = document.createElement('button');
+                    go.innerHTML = ICONS.comment + '<span>Conversar</span>';
+                    go.onclick = (e) => { e.stopPropagation(); this.openDirectChat(u); };
+                    actions.appendChild(go);
+                } else {
+                    const crush = document.createElement('button'); crush.className = 'crush' + (u.crushSent ? ' sent' : '');
+                    crush.innerHTML = ICONS.flame + `<span>${u.crushSent ? 'Enviado' : 'Crush'}</span>`;
+                    crush.onclick = (e) => { e.stopPropagation(); this.sendCrush(u, crush); };
+                    actions.appendChild(crush);
+                }
                 card.appendChild(actions);
                 card.onclick = () => this.openProfileSheet(u);
                 return card;
@@ -1782,11 +1835,15 @@
                 try {
                     const res = await this.request('sendCrush', { toId: u.id });
                     u.crushSent = true;
-                    if (btn) btn.classList.add('sent');
+                    if (btn) {
+                        btn.classList.add('sent');
+                        const sp = btn.querySelector('span'); if (sp) sp.textContent = 'Enviado';
+                    }
                     if (res.matched) {
                         u.matched = true;
-                        this.showMatchPop({ id: 'now', otherId: u.id, name: u.name, emoji: u.emoji, groupId: res.groupId, createdAt: Date.now() });
+                        this.showMatchPop({ id: 'now', otherId: u.id, name: u.name, emoji: u.emoji, avatar: u.avatar || '', groupId: res.groupId, createdAt: Date.now() });
                         this.runPulse();
+                        this.renderRadar();
                     } else {
                         this.toast('🔥 Crush enviado no sigilo. Se for recíproco… 💥');
                     }
@@ -1798,7 +1855,7 @@
                 const meta = [u.gender, u.orientation, u.status, u.city].filter(Boolean).map(x => this.esc(x)).join(' • ');
                 this.showModal(
                     `<div class="pf-head">
-                        <div class="pf-av"><div class="inner">${u.emoji}</div></div>
+                        <div class="pf-av"><div class="inner">${this.avatarHTML(u)}</div></div>
                         <div class="pf-id">
                             <div class="pf-name">${this.esc(u.name)}${u.age ? `, ${u.age}` : ''}</div>
                             <div class="pf-sub">${u.online ? '<span class="pf-online">● online agora</span>' : 'visto ' + this.timeAgo(u.lastActive)}</div>
@@ -1808,11 +1865,11 @@
                     (u.bio ? `<p class="pf-bio">${this.esc(u.bio)}</p>` : '') +
                     ((u.lookingFor && u.lookingFor.length) ? `<div class="chip-label">Procura por</div>${chips(u.lookingFor)}` : '') +
                     ((u.tags && u.tags.length) ? `<div class="chip-label">Curte</div>${chips(u.tags)}` : '') +
-                    `<div class="pf-actions">
-                        <button class="pf-crush${u.crushSent ? ' sent' : ''}" id="pf-crush-btn" onclick="App.crushFromSheet()">🔥 ${u.crushSent ? 'Crush enviado' : 'Crush'}</button>
-                        <button class="pf-chat" onclick="App.chatFromSheet()">💬 Privado</button>
-                        <button class="pf-chat" onclick="App.callFromSheet()">🎥 Privê</button>
-                    </div>
+                    `<div class="pf-actions">` +
+                    (u.matched
+                        ? `<button class="pf-chat" onclick="App.chatFromSheet()">${ICONS.comment}<span>Conversar</span></button>`
+                        : `<button class="pf-crush${u.crushSent ? ' sent' : ''}" id="pf-crush-btn" onclick="App.crushFromSheet()">${ICONS.flame}<span>${u.crushSent ? 'Crush enviado' : 'Crush'}</span></button>`) +
+                    `</div>
                     <div id="pf-friend-slot"></div>
                     <div class="pf-foot">
                         <button onclick="App.blockFromSheet()">${ICONS.ban} Bloquear</button>
@@ -1828,14 +1885,10 @@
                 const u = this._sheetUser; if (!u) return;
                 this.sendCrush(u, null).then(() => {
                     const b = document.getElementById('pf-crush-btn');
-                    if (b) { b.classList.add('sent'); b.textContent = '🔥 Crush enviado'; }
+                    if (b) { b.classList.add('sent'); b.innerHTML = ICONS.flame + '<span>Crush enviado</span>'; }
                 });
             }
             chatFromSheet() { const u = this._sheetUser; this.closeModal(); if (u) this.openDirectChat(u); }
-            async callFromSheet() {
-                const u = this._sheetUser; this.closeModal();
-                if (u) this.startCall(u);
-            }
             blockFromSheet() {
                 const u = this._sheetUser; if (!u) return;
                 if (!confirm(`Bloquear ${u.name}? Vocês desaparecem um para o outro (radar, feed, stories e chats).`)) return;
@@ -1875,7 +1928,8 @@
                 this.lives.forEach(l => {
                     const b = document.createElement('button'); b.className = 'live-bubble';
                     const ring = document.createElement('span'); ring.className = 'live-ring';
-                    const inner = document.createElement('span'); inner.className = 'inner'; inner.textContent = l.emoji;
+                    const inner = document.createElement('span'); inner.className = 'inner';
+                    this.setAv(inner, l);
                     const flag = document.createElement('span'); flag.className = 'live-flag'; flag.textContent = 'LIVE';
                     ring.appendChild(inner); ring.appendChild(flag); b.appendChild(ring);
                     const nm = document.createElement('span'); nm.className = 'story-name'; nm.textContent = l.name;
@@ -1926,15 +1980,15 @@
                 const container = document.getElementById('users-selection');
                 container.innerHTML = '<p class="empty-state" style="padding:10px 0;">Carregando contatos…</p>';
                 let users;
-                try { users = await this.request('getRadar', {}); }
+                try { users = await this.request('getFriends', {}); } // grupos só com amigos
                 catch (e) { container.innerHTML = '<p class="empty-state">Erro ao carregar.</p>'; return; }
                 container.innerHTML = '';
-                if (!users.length) { container.innerHTML = '<p class="empty-state" style="padding:10px 0;">Nenhum contato visível ainda. Convide amigos pelo seu link no perfil.</p>'; return; }
+                if (!users.length) { container.innerHTML = '<p class="empty-state" style="padding:10px 0;">Grupos são criados com amigos — e você ainda não tem nenhum. Dê match no Radar ou convide pelo seu link no perfil.</p>'; return; }
                 users.forEach(u => {
                     const label = document.createElement('label'); label.className = 'toggle-row';
                     label.style.cssText = 'background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;';
                     const span = document.createElement('span');
-                    span.textContent = `${u.emoji} ${u.name}${u.friend ? '' : ' • público'}`;
+                    span.textContent = `${u.emoji} ${u.name}`;
                     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.value = u.id;
                     label.appendChild(span); label.appendChild(cb); container.appendChild(label);
                 });
@@ -2012,13 +2066,14 @@
                 this.request('getGroupMembers', { groupId: this.currentGroup.id }).then(members => {
                     const box = document.getElementById('gp-list'); if (!box) return;
                     box.innerHTML = '';
-                    box.appendChild(this.memberRow({ id: this.currentUser.id, name: this.currentUser.name + ' (você)', emoji: this.currentUser.emoji, self: true }));
+                    box.appendChild(this.memberRow({ id: this.currentUser.id, name: this.currentUser.name + ' (você)', emoji: this.currentUser.emoji, avatar: this.currentUser.avatar || '', self: true }));
                     members.forEach(m => box.appendChild(this.memberRow(m)));
                 }).catch(() => {});
             }
             memberRow(m) {
                 const row = document.createElement('div'); row.className = 'modal-row';
-                const ic = document.createElement('span'); ic.className = 'r-icon'; ic.textContent = m.emoji;
+                const ic = document.createElement('span'); ic.className = 'r-icon';
+                this.setAv(ic, m);
                 const nm = document.createElement('span'); nm.className = 'r-name'; nm.textContent = m.name;
                 row.appendChild(ic); row.appendChild(nm);
                 if (!m.self) {
@@ -2258,6 +2313,36 @@
             driveImageUrl(fileId) { return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600`; }
             drivePreview(fileId) { return `https://drive.google.com/file/d/${fileId}/preview`; }
             driveDownloadUrl(fileId) { return `https://drive.google.com/uc?export=download&id=${fileId}`; }
+            avUrl(fileId) { return `https://drive.google.com/thumbnail?id=${fileId}&sz=w240`; }
+            // Preenche um círculo de avatar com a FOTO (se houver) ou o emoji.
+            setAv(el, u) {
+                el.innerHTML = '';
+                if (u && u.avatar) {
+                    const img = document.createElement('img');
+                    img.className = 'av-photo'; img.draggable = false;
+                    img.src = this.avUrl(u.avatar);
+                    el.appendChild(img);
+                } else el.textContent = (u && u.emoji) || '🕵️';
+            }
+            avatarHTML(u) {
+                return (u && u.avatar)
+                    ? `<img class="av-photo" src="${this.avUrl(u.avatar)}" draggable="false">`
+                    : this.esc((u && u.emoji) || '🕵️');
+            }
+            // Clique na foto -> stories da pessoa (se tiver); senão, mini perfil.
+            userStoriesIdx(userId) { return this.storyGroups.findIndex(g => g.userId === userId); }
+            openUserStories(userId) {
+                const idx = this.userStoriesIdx(userId);
+                if (idx >= 0) this.openStories(idx);
+                else this.openUserProfile(userId);
+            }
+            // Clique no nome -> mini perfil com botão de crush/match.
+            openUserProfile(userId) {
+                if (userId === this.currentUser.id) { this.switchTab('profile'); return; }
+                const u = this.radar.find(x => x.id === userId);
+                if (u) { this.openProfileSheet(u); return; }
+                this.request('getProfile', { targetId: userId }).then(p => this.openProfileSheet(p)).catch(() => {});
+            }
             revealMedia(div, msg) {
                 if (msg.type === 'image') { this.openImageViewer(div, msg); return; }
                 if (msg.type === 'audio') { this.revealAudio(div, msg); return; }
@@ -2517,7 +2602,8 @@
                 const mine = this.storyGroups.find(g => g.mine);
                 const add = document.createElement('button'); add.className = 'story-bubble';
                 const ring = document.createElement('span'); ring.className = 'story-ring mine';
-                const inner = document.createElement('span'); inner.className = 'inner'; inner.textContent = this.currentUser.emoji;
+                const inner = document.createElement('span'); inner.className = 'inner';
+                this.setAv(inner, this.currentUser);
                 const plus = document.createElement('span'); plus.className = 'story-add';
                 plus.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
                 ring.appendChild(inner); ring.appendChild(plus); add.appendChild(ring);
@@ -2531,7 +2617,8 @@
                 const ring = document.createElement('span'); ring.className = 'story-ring';
                 const allSeen = group.items.every(it => this.seenStories.has(it.id));
                 if (allSeen) ring.classList.add('seen');
-                const inner = document.createElement('span'); inner.className = 'inner'; inner.textContent = group.emoji;
+                const inner = document.createElement('span'); inner.className = 'inner';
+                this.setAv(inner, group);
                 ring.appendChild(inner); b.appendChild(ring);
                 const nm = document.createElement('span'); nm.className = 'story-name'; nm.textContent = label || group.name;
                 b.appendChild(nm); b.onclick = () => this.openStories(idx);
@@ -2609,8 +2696,9 @@
                 this.seenStories.add(item.id);
                 try { localStorage.setItem('phantom2_seen_stories', JSON.stringify([...this.seenStories])); } catch (e) {}
 
-                document.getElementById('sv-avatar').textContent = group.emoji;
+                this.setAv(document.getElementById('sv-avatar'), group);
                 document.getElementById('sv-name').textContent = group.mine ? 'Seu story' : group.name;
+                document.getElementById('sv-name').onclick = group.mine ? null : () => { this.closeStories(); this.openUserProfile(group.userId); };
 
                 const prog = document.getElementById('sv-progress'); prog.innerHTML = '';
                 group.items.forEach((_, i) => {
@@ -2725,7 +2813,8 @@
                 box.innerHTML = '';
                 viewers.forEach(v => {
                     const row = document.createElement('div'); row.className = 'modal-row';
-                    const ic = document.createElement('span'); ic.className = 'r-icon'; ic.textContent = v.emoji;
+                    const ic = document.createElement('span'); ic.className = 'r-icon';
+                    this.setAv(ic, v);
                     const nm = document.createElement('span'); nm.className = 'r-name'; nm.textContent = v.name;
                     const t = document.createElement('span'); t.style.cssText = 'font-size:11px;color:var(--text-muted)'; t.textContent = this.timeAgo(v.timestamp);
                     row.appendChild(ic); row.appendChild(nm); row.appendChild(t); box.appendChild(row);
@@ -2754,9 +2843,13 @@
                 likeBtn.onclick = () => this.likePost(p, likeBtn);
 
                 const head = document.createElement('div'); head.className = 'feed-head';
-                const av = document.createElement('div'); av.className = 'feed-avatar'; av.textContent = p.emoji;
+                const av = document.createElement('div'); av.className = 'feed-avatar';
+                this.setAv(av, p);
+                if (this.userStoriesIdx(p.userId) >= 0) av.classList.add('has-story'); // anel = tem story
+                av.onclick = () => this.openUserStories(p.userId);
                 const author = document.createElement('div'); author.className = 'feed-author';
-                author.innerHTML = `<div class="fa-name">${this.esc(p.name)}</div><div class="fa-time">${this.timeAgo(p.timestamp)} • 💨 some em ${this.timeLeft(p.expiresAt)}</div>`;
+                author.innerHTML = `<div class="fa-name">${this.esc(p.name)}</div><div class="fa-time">${this.timeAgo(p.timestamp)} • some em ${this.timeLeft(p.expiresAt)}</div>`;
+                author.querySelector('.fa-name').onclick = () => this.openUserProfile(p.userId); // nome abre o mini perfil
                 head.appendChild(av); head.appendChild(author);
                 if (p.mine) {
                     const del = document.createElement('button'); del.className = 'feed-act'; del.style.marginLeft = 'auto'; del.style.color = 'var(--danger)';
@@ -2790,7 +2883,7 @@
                 if (!p.mine) {
                     const cr = document.createElement('button'); cr.className = 'feed-act';
                     cr.innerHTML = ICONS.flame + '<span>Crush</span>';
-                    cr.onclick = () => this.sendCrush({ id: p.userId, name: p.name, emoji: p.emoji, crushSent: false }, null);
+                    cr.onclick = () => this.sendCrush({ id: p.userId, name: p.name, emoji: p.emoji, avatar: p.avatar || '', crushSent: false }, null);
                     actions.appendChild(cr);
                 }
                 const vv = document.createElement('button'); vv.className = 'feed-act'; vv.style.marginLeft = 'auto';
@@ -2815,7 +2908,8 @@
                 box.innerHTML = '';
                 likers.forEach(v => {
                     const row = document.createElement('div'); row.className = 'modal-row';
-                    const ic = document.createElement('span'); ic.className = 'r-icon'; ic.textContent = v.emoji;
+                    const ic = document.createElement('span'); ic.className = 'r-icon';
+                    this.setAv(ic, v);
                     const nm = document.createElement('span'); nm.className = 'r-name'; nm.textContent = v.name;
                     row.appendChild(ic); row.appendChild(nm); box.appendChild(row);
                 });
@@ -2878,7 +2972,8 @@
             }
             commentRow(c) {
                 const row = document.createElement('div'); row.className = 'comment-row';
-                const av = document.createElement('div'); av.className = 'c-av'; av.textContent = c.emoji;
+                const av = document.createElement('div'); av.className = 'c-av';
+                this.setAv(av, c);
                 const body = document.createElement('div'); body.className = 'c-body';
                 const nm = document.createElement('div'); nm.className = 'c-name'; nm.textContent = c.name;
                 const tx = document.createElement('div'); tx.className = 'c-text'; tx.textContent = c.text;
@@ -2986,8 +3081,8 @@
                 }
                 const rail = document.createElement('div'); rail.className = 'vv-rail';
                 const av = document.createElement('button');
-                av.innerHTML = `<span class="vv-av"><span class="inner">${p.emoji}</span></span>`;
-                av.onclick = () => this.openVerticalProfile(p);
+                av.innerHTML = `<span class="vv-av"><span class="inner">${this.avatarHTML(p)}</span></span>`;
+                av.onclick = () => this.openUserStories(p.userId);
                 const like = document.createElement('button'); like.className = p.liked ? 'liked' : '';
                 like.innerHTML = (p.liked ? ICONS.heartFill : ICONS.heart) + `<span>${p.likes}</span>`;
                 like.onclick = () => {
@@ -3003,23 +3098,18 @@
                 if (!p.mine) {
                     const cr = document.createElement('button');
                     cr.innerHTML = ICONS.flame + '<span>Crush</span>';
-                    cr.onclick = () => this.sendCrush({ id: p.userId, name: p.name, emoji: p.emoji, crushSent: false }, null);
+                    cr.onclick = () => this.sendCrush({ id: p.userId, name: p.name, emoji: p.emoji, avatar: p.avatar || '', crushSent: false }, null);
                     rail.appendChild(cr);
                 }
                 slide.appendChild(rail);
                 const meta = document.createElement('div'); meta.className = 'vv-meta';
-                meta.innerHTML = `<div class="vv-name">${p.emoji} ${this.esc(p.name)} <span class="ttl-chip">💨 ${this.timeLeft(p.expiresAt)}</span></div>` +
+                meta.innerHTML = `<div class="vv-name">${this.esc(p.name)} <span class="ttl-chip">${this.timeLeft(p.expiresAt)}</span></div>` +
                     (p.caption ? `<div class="vv-cap">${this.esc(p.caption)}</div>` : '');
+                const nmEl = meta.querySelector('.vv-name');
+                nmEl.style.cursor = 'pointer';
+                nmEl.onclick = () => { this.closeVertical(); this.openUserProfile(p.userId); };
                 slide.appendChild(meta);
                 return slide;
-            }
-            openVerticalProfile(p) {
-                const u = this.radar.find(x => x.id === p.userId);
-                if (u) { this.openProfileSheet(u); return; }
-                if (p.mine) { this.toast('Esse é você. 😏'); return; }
-                this.request('getProfile', { targetId: p.userId })
-                    .then(prof => this.openProfileSheet(prof))
-                    .catch(() => {});
             }
             closeVertical() {
                 document.getElementById('vertical-viewer').classList.remove('open');
@@ -3144,7 +3234,7 @@
                 document.getElementById('call-overlay').classList.add('open');
                 document.getElementById('call-incoming').classList.add('open');
                 document.getElementById('call-controls').style.display = 'none';
-                document.getElementById('ci-emoji').textContent = ring.emoji || '😈';
+                this.setAv(document.getElementById('ci-emoji'), ring);
                 document.getElementById('ci-name').textContent = ring.name || 'Alguém';
                 document.getElementById('call-name').textContent = '';
                 document.getElementById('call-status').textContent = '';
