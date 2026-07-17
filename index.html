@@ -43,9 +43,9 @@
             transition: opacity 0.3s ease; z-index: 1;
         }
         .screen.active { opacity: 1; pointer-events: auto; z-index: 10; }
-        #login-screen, #age-screen { display: block; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 0 40px; }
-        #login-screen::-webkit-scrollbar, #age-screen::-webkit-scrollbar { display: none; }
-        #login-screen .glass-panel, #age-screen .glass-panel { margin: 0 auto; }
+        #login-screen, #age-screen, #signup-screen { display: block; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 0 40px; }
+        #login-screen::-webkit-scrollbar, #age-screen::-webkit-scrollbar, #signup-screen::-webkit-scrollbar { display: none; }
+        #login-screen .glass-panel, #age-screen .glass-panel, #signup-screen .glass-panel { margin: 0 auto; }
 
         /* === PAINEIS / FORMS === */
         .glass-panel {
@@ -59,7 +59,7 @@
             background: var(--grad-fire); -webkit-background-clip: text; background-clip: text; color: transparent;
         }
         .brand-sub { text-align: center; font-size: 12px; color: var(--text-muted); margin: -8px 0 4px; letter-spacing: 2px; text-transform: uppercase; }
-        input[type="text"], input[type="password"], input[type="email"], input[type="number"], textarea {
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input:not([type]), textarea {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid transparent;
             background: rgba(255,255,255,0.09); color: white; font-size: 16px; outline: none; font-family: inherit;
         }
@@ -166,6 +166,13 @@
             color: #fff; font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 1.5px solid #0a0207;
         }
         .tab-badge.live { background: var(--hot); }
+        .install-bar {
+            display: flex; align-items: center; gap: 10px; margin: 0 16px 10px; padding: 9px 10px 9px 14px;
+            border-radius: 14px; background: rgba(177,75,255,0.12); border: 1px solid rgba(177,75,255,0.4);
+            font-size: 12px; font-weight: 700; flex-shrink: 0;
+        }
+        .install-bar span { flex: 1; min-width: 0; }
+        .install-bar .icon-btn { width: 32px; height: 32px; font-size: 14px; }
         .tab-content { display: none; flex: 1; min-height: 0; flex-direction: column; }
         .tab-content.active { display: flex; }
         .tab-content-header {
@@ -222,13 +229,13 @@
         .chip.small { padding: 5px 10px; font-size: 11px; }
         .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
         .chip-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 2px; }
-        /* Radar em LISTA: cards horizontais grandes, à prova de tela estreita */
-        .radar-grid { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 16px 30px; display: flex; flex-direction: column; gap: 10px; }
+        /* Radar em LISTA — mesma estrutura das listas que funcionam em qualquer aparelho (.scroll-list) */
+        .radar-grid { flex: 1; overflow-y: auto; padding: 0 20px 30px; }
         .radar-grid::-webkit-scrollbar { display: none; }
         .radar-card {
             background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 18px;
-            padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;
-            min-width: 0; overflow: hidden; flex-shrink: 0;
+            padding: 12px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+            min-width: 0; overflow: hidden;
         }
         .radar-card:active { background: rgba(255,255,255,0.12); }
         .radar-av {
@@ -320,6 +327,8 @@
         .feed-video-wrap .feed-play svg { width: 26px; height: 26px; }
         .feed-embed { width: 100%; height: 60vh; max-height: 440px; border: 0; background: #000; display: block; }
         .feed-caption { padding: 10px 14px 2px; font-size: 14px; line-height: 1.4; }
+        .feed-text { padding: 4px 16px 10px; font-size: 17px; font-weight: 500; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+        .feed-media video { width: 100%; display: block; max-height: 70vh; background: #000; }
         .feed-actions { display: flex; align-items: center; gap: 18px; padding: 10px 14px 14px; }
         .feed-act { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 800; padding: 0; }
         .feed-act.liked { color: var(--accent); }
@@ -341,8 +350,9 @@
         .vv-track { width: 100%; height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; }
         .vv-track::-webkit-scrollbar { display: none; }
         .vv-slide { width: 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .vv-slide img { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+        .vv-slide img, .vv-slide video { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
         .vv-slide iframe { width: 100%; height: 100%; border: 0; background: #000; }
+        .vv-text { padding: 40px 28px; font-size: 22px; font-weight: 600; line-height: 1.55; text-align: center; max-height: 72%; overflow: hidden; white-space: pre-wrap; word-break: break-word; }
         .vv-playwrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; background: radial-gradient(circle at center, rgba(255,46,99,0.12), #000 75%); }
         .vv-playwrap .feed-play { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; color: #fff; }
         .vv-rail { position: absolute; right: 10px; bottom: 110px; display: flex; flex-direction: column; gap: 18px; align-items: center; z-index: 4; }
@@ -686,11 +696,27 @@
             </div>
         </div>
 
-        <!-- LOGIN -->
+        <!-- LOGIN (quem já tem conta) -->
         <div id="login-screen" class="screen">
             <div class="glass-panel">
                 <h2>PHANTOM</h2>
-                <p class="brand-sub">anônimo • efêmero • 18+ • v2.2</p>
+                <p class="brand-sub">anônimo • efêmero • 18+ • v2.3</p>
+                <p class="hint-text" id="welcome-back" style="display:none; color:var(--accent);"></p>
+                <p class="hint-text" id="api-warning" style="display:none; color:var(--hot);">⚙️ <strong>Config pendente:</strong> cole a URL do seu Apps Script no API_URL dentro do index.html.</p>
+                <input type="text" id="username" placeholder="Seu codinome" autocomplete="username">
+                <input type="password" id="password" placeholder="Sua chave secreta">
+                <button class="btn-primary" onclick="App.auth()">ENTRAR</button>
+                <button type="button" class="link-btn" onclick="App.forgotPassword()">Esqueci minha chave secreta</button>
+                <p class="hint-text" style="text-align:center; margin:6px 0 0;">Primeira vez por aqui?</p>
+                <button type="button" class="btn-ghost" onclick="App.showSignup()">😈 Criar conta anônima</button>
+            </div>
+        </div>
+
+        <!-- CADASTRO -->
+        <div id="signup-screen" class="screen">
+            <div class="glass-panel">
+                <h2>PHANTOM</h2>
+                <p class="brand-sub">criar conta anônima • 18+</p>
                 <div class="how-box">
                     <span class="how-title">😈 Como funciona</span>
                     <span class="how-line">🎭 <b>Anônimo:</b> nada de nome real — só um codinome e um avatar.</span>
@@ -700,22 +726,20 @@
                     <span class="how-line">🎥 <b>Privê & Lives:</b> vídeo direto de aparelho a aparelho, sem gravar.</span>
                 </div>
                 <p class="hint-text" style="color:var(--danger);"><strong>⚠️ NÃO use seu nome real</strong> nem apelidos que amigos/família reconheçam. Invente um codinome (ex: "Raposa Ardente", "Sombra 47"). Seu apelido é sua máscara.</p>
-                <p class="hint-text" id="invite-hint" style="display:none;">🔗 Você chegou por um <strong>convite</strong>. Ao acessar, vira amigo de quem te convidou.</p>
-                <p class="hint-text" id="welcome-back" style="display:none; color:var(--accent);"></p>
-                <p class="hint-text" id="api-warning" style="display:none; color:var(--hot);">⚙️ <strong>Config pendente:</strong> cole a URL do seu Apps Script no API_URL dentro do index.html.</p>
-                <input type="text" id="username" placeholder="Codinome anônimo (ex: Raposa Ardente)">
-                <button type="button" class="btn-ghost" onclick="App.suggestName('username')">
+                <p class="hint-text" id="invite-hint" style="display:none;">🔗 Você chegou por um <strong>convite</strong>. Ao criar a conta, vira amigo de quem te convidou.</p>
+                <input type="text" id="su-username" placeholder="Codinome anônimo (ex: Raposa Ardente)">
+                <button type="button" class="btn-ghost" onclick="App.suggestName('su-username')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L19 9l-4.6 1.9L12 15l-1.9-4.1L6 9l4.6-1.4L12 3z"/><path d="M5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9L5 16z"/></svg>
                     Sugerir codinome
                 </button>
-                <input type="password" id="password" placeholder="Chave secreta">
+                <input type="password" id="su-password" placeholder="Crie uma chave secreta">
                 <div class="emoji-field">
-                    <input type="text" id="emoji" placeholder="Avatar (Ex: 🦊)">
-                    <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('emoji')" title="Sugerir avatar">🎲</button>
+                    <input type="text" id="su-emoji" placeholder="Avatar (Ex: 🦊)">
+                    <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('su-emoji')" title="Sugerir avatar">🎲</button>
                 </div>
-                <input type="email" id="email" placeholder="Email (para recuperar a senha)" autocomplete="email">
-                <button class="btn-primary" onclick="App.auth()">ENTRAR NO SIGILO</button>
-                <button type="button" class="link-btn" onclick="App.forgotPassword()">Esqueci minha chave secreta</button>
+                <input type="email" id="su-email" placeholder="Email (para recuperar a senha)" autocomplete="email">
+                <button class="btn-primary" onclick="App.signup()">CRIAR MINHA CONTA</button>
+                <button type="button" class="link-btn" onclick="App.showLogin()">Já tenho conta — entrar</button>
             </div>
         </div>
 
@@ -741,6 +765,12 @@
             </div>
 
             <div class="stories-bar" id="stories-bar"></div>
+
+            <div class="install-bar hidden" id="install-bar">
+                <span>📲 Instale o Phantom — vira um app com atalho no celular</span>
+                <button class="btn-mini" onclick="App.installApp()">Instalar</button>
+                <button class="icon-btn" onclick="App.hideInstallBar(true)" aria-label="Fechar">✕</button>
+            </div>
 
             <div class="tab-bar">
                 <button class="tab-btn active" id="tab-btn-feed" onclick="App.switchTab('feed')">
@@ -879,7 +909,8 @@
 
                     <div class="tab-content-header" style="padding:10px 0 0;"><span id="friends-count-text">Seus amigos</span></div>
                     <ul style="list-style:none; padding:0; margin:0;" id="friends-list"></ul>
-                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.2</p>
+                    <button type="button" class="btn-ghost" onclick="App.installApp()">📲 Instalar app no celular</button>
+                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.3</p>
                 </div>
             </div>
         </div>
@@ -1223,6 +1254,9 @@
                 this.live = null;
                 this.seenRings = new Set();
 
+                // Instalação PWA
+                this.installEvt = null;
+
                 this.profileSel = { gender: '', orientation: '', status: '', looking: new Set(), tags: new Set() };
 
                 this.setupMessageObserver();
@@ -1318,11 +1352,15 @@
                         this.clearRefFromUrl();
                     }
                     this.loadDashboard();
+                } else if (this.inviteRef) {
+                    this.switchScreen('signup-screen'); // convite -> direto pro cadastro
                 } else {
                     this.switchScreen('login-screen');
                     this.prefillLogin();
                 }
             }
+            showLogin() { this.switchScreen('login-screen'); this.prefillLogin(); }
+            showSignup() { this.switchScreen('signup-screen'); }
             init() {
                 const params = new URLSearchParams(location.search);
                 this.inviteRef = params.get('ref');
@@ -1342,26 +1380,42 @@
                 setTimeout(() => { const pass = document.getElementById('password'); if (pass) pass.focus(); }, 150);
             }
             clearRefFromUrl() { try { history.replaceState(null, '', location.pathname); } catch (e) {} this.inviteRef = null; }
+            // Entrar em conta existente
             async auth() {
                 const name = document.getElementById('username').value.trim();
                 const pass = document.getElementById('password').value.trim();
-                const emoji = document.getElementById('emoji').value.trim() || '🕵️';
-                const email = document.getElementById('email').value.trim();
+                if (!name || !pass) return this.toast('Preencha codinome e chave secreta.');
+                const btn = document.querySelector('#login-screen button.btn-primary');
+                btn.innerText = 'ENTRANDO...';
+                try {
+                    const user = await this.request('auth', { name, emoji: '🕵️', password: pass, isInvisible: false, ref: this.inviteRef, email: '', mode: 'login' });
+                    this.finishAuth(user);
+                } catch (e) { btn.innerText = 'ENTRAR'; }
+            }
+            // Criar conta nova
+            async signup() {
+                const name = document.getElementById('su-username').value.trim();
+                const pass = document.getElementById('su-password').value.trim();
+                const emoji = document.getElementById('su-emoji').value.trim() || '🕵️';
+                const email = document.getElementById('su-email').value.trim();
                 if (!name || !pass) return this.toast('Preencha codinome e chave secreta.');
                 if (!email) return this.toast('Informe um email (é ele que recupera sua senha).');
                 if (!/^\S+@\S+\.\S+$/.test(email)) return this.toast('Email inválido.');
-                const btn = document.querySelector('#login-screen button.btn-primary');
-                btn.innerText = 'ABRINDO O SIGILO...';
+                const btn = document.querySelector('#signup-screen button.btn-primary');
+                btn.innerText = 'CRIANDO...';
                 try {
-                    const user = await this.request('auth', { name, emoji, password: pass, isInvisible: false, ref: this.inviteRef, email });
-                    this.currentUser = user;
-                    localStorage.setItem('phantom2_session', JSON.stringify(user));
-                    localStorage.setItem('phantom2_last_name', user.name);
-                    localStorage.setItem('phantom2_last_email', user.email || email);
-                    this.clearRefFromUrl();
-                    this.loadDashboard();
+                    const user = await this.request('auth', { name, emoji, password: pass, isInvisible: false, ref: this.inviteRef, email, mode: 'signup' });
+                    this.finishAuth(user);
                     if (!user.age) setTimeout(() => this.toast('😈 Complete seu perfil pra brilhar no Radar.'), 1800);
-                } catch (e) { btn.innerText = 'ENTRAR NO SIGILO'; }
+                } catch (e) { btn.innerText = 'CRIAR MINHA CONTA'; }
+            }
+            finishAuth(user) {
+                this.currentUser = user;
+                localStorage.setItem('phantom2_session', JSON.stringify(user));
+                localStorage.setItem('phantom2_last_name', user.name);
+                if (user.email) localStorage.setItem('phantom2_last_email', user.email);
+                this.clearRefFromUrl();
+                this.loadDashboard();
             }
             logout() {
                 clearInterval(this.heartbeatInterval); this.heartbeatInterval = null;
@@ -2343,6 +2397,38 @@
                     ? `<img class="av-photo" src="${this.avUrl(u.avatar)}" draggable="false" data-fb="${fb}" onerror="this.outerHTML=this.dataset.fb">`
                     : fb;
             }
+            // Player de vídeo PRÓPRIO (nada de iframe do Drive). Se o arquivo não abrir
+            // direto, cai de volta pro preview do Drive automaticamente.
+            makeVideo(fileId, opts) {
+                opts = opts || {};
+                const v = document.createElement('video');
+                if (opts.className) v.className = opts.className;
+                v.controls = opts.controls !== false;
+                v.setAttribute('playsinline', ''); v.playsInline = true;
+                v.preload = 'metadata';
+                v.controlsList = 'nodownload';
+                v.oncontextmenu = () => false;
+                v.src = this.driveDownloadUrl(fileId);
+                v.onerror = () => {
+                    if (!v.parentNode) return;
+                    const fr = document.createElement('iframe');
+                    fr.className = opts.iframeClass != null ? opts.iframeClass : (opts.className || 'media-frame');
+                    fr.src = this.drivePreview(fileId);
+                    fr.setAttribute('allow', 'autoplay'); fr.setAttribute('allowfullscreen', '');
+                    if (opts.iframeCss) fr.style.cssText = opts.iframeCss;
+                    v.parentNode.replaceChild(fr, v);
+                };
+                return v;
+            }
+            // Toast fixo (para uploads longos) — remova com dropToast().
+            toastSticky(message) {
+                const el = document.createElement('div');
+                el.className = 'toast'; el.textContent = message;
+                document.body.appendChild(el);
+                requestAnimationFrame(() => el.classList.add('show'));
+                return el;
+            }
+            dropToast(el) { if (!el) return; el.classList.remove('show'); setTimeout(() => el.remove(), 300); }
             // Clique na foto -> stories da pessoa (se tiver); senão, mini perfil.
             userStoriesIdx(userId) { return this.storyGroups.findIndex(g => g.userId === userId); }
             openUserStories(userId) {
@@ -2360,15 +2446,15 @@
             revealMedia(div, msg) {
                 if (msg.type === 'image') { this.openImageViewer(div, msg); return; }
                 if (msg.type === 'audio') { this.revealAudio(div, msg); return; }
+                // Vídeo: player nativo com contagem baseada na duração (x3), como o áudio.
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
-                const el = document.createElement('iframe');
-                el.className = 'media-frame'; el.src = this.drivePreview(msg.content);
-                el.setAttribute('allow', 'autoplay'); el.setAttribute('allowfullscreen', '');
+                const el = this.makeVideo(msg.content, { className: 'media-frame' });
                 const footer = document.createElement('div'); footer.className = 'media-footer';
                 const badge = document.createElement('span'); badge.className = 'ttl-badge'; footer.appendChild(badge);
                 div.appendChild(el); div.appendChild(footer); this.scrollToBottom();
-                this.startCountdown(div, badge, this.VIDEO_LIFESPAN, () => this.finishConsume(msg));
+                el.play().catch(() => {});
+                this.startMediaTimer(el, div, badge, msg, () => { try { el.pause(); } catch (e) {} });
             }
             revealAudio(div, msg) {
                 const label = div.querySelector('.msg-sender-row');
@@ -2668,15 +2754,19 @@
                 const file = this.pendingStoryFile; this.pendingStoryFile = null; this.closeModal();
                 if (!file) return;
                 const type = file.type.startsWith('image/') ? 'image' : 'video';
-                this.toast('Publicando story…');
                 let dataUrl, mime = file.type;
                 if (type === 'image') { const c = await this.compressImage(file); dataUrl = c.dataUrl; mime = c.mime; }
                 else dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); });
+                const wait = this.toastSticky(type === 'video' ? '⏫ Enviando vídeo do story… não feche o app.' : '⏫ Publicando story…');
                 try {
                     await this.request('postStory', { content: dataUrl, type, mimeType: mime, visibility, caption: '' });
+                    this.dropToast(wait);
                     this.toast('Story publicado! Some em 24h.');
                     this.fetchStories();
-                } catch (err) {}
+                } catch (err) {
+                    this.dropToast(wait);
+                    if (type === 'video') this.toast('O vídeo não subiu. Tente um mais curto/leve (até ~12MB).');
+                }
             }
             openStories(authorIdx) {
                 if (!this.storyGroups[authorIdx]) return;
@@ -2723,7 +2813,7 @@
                 });
 
                 const body = document.getElementById('sv-body');
-                body.querySelectorAll('img,video,iframe').forEach(el => el.remove());
+                body.querySelectorAll('img,video,iframe').forEach(el => { if (el.tagName === 'VIDEO') { try { el.pause(); } catch (e) {} } el.remove(); });
                 const caption = document.getElementById('sv-caption');
                 caption.classList.toggle('hidden', !item.caption); caption.textContent = item.caption || '';
 
@@ -2733,16 +2823,30 @@
                     const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false;
                     img.src = this.driveImageUrl(item.fileId);
                     body.insertBefore(img, body.querySelector('.sv-caption'));
+                    this.animateStoryProgress(fillEl, duration);
+                    this.storyTimer = setTimeout(() => this.storyNext(), duration);
                 } else {
-                    const frame = document.createElement('iframe');
-                    frame.src = this.drivePreview(item.fileId);
-                    frame.setAttribute('allow', 'autoplay');
-                    frame.style.cssText = 'width:100%;height:100%;border:0;background:#000;';
-                    body.insertBefore(frame, body.querySelector('.sv-caption'));
-                    duration = 15000;
+                    // Vídeo no story: player nativo, progresso pela duração real e avanço no fim.
+                    const vid = this.makeVideo(item.fileId, { controls: false, iframeCss: 'width:100%;height:100%;border:0;background:#000;' });
+                    vid.style.cssText = 'max-width:100%;max-height:100%;';
+                    body.insertBefore(vid, body.querySelector('.sv-caption'));
+                    vid.muted = false;
+                    vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
+                    let started = false;
+                    const startProg = (ms) => {
+                        if (started || !vid.isConnected) return; started = true;
+                        this.animateStoryProgress(fillEl, ms);
+                        clearTimeout(this.storyTimer);
+                        this.storyTimer = setTimeout(() => this.storyNext(), ms);
+                    };
+                    vid.addEventListener('loadedmetadata', () => {
+                        const d = vid.duration;
+                        startProg((isFinite(d) && d > 0 ? Math.min(d, 60) : 15) * 1000);
+                    });
+                    vid.addEventListener('ended', () => { if (vid.isConnected) this.storyNext(); });
+                    vid.addEventListener('error', () => startProg(15000));
+                    setTimeout(() => startProg(15000), 4000);
                 }
-                this.animateStoryProgress(fillEl, duration);
-                this.storyTimer = setTimeout(() => this.storyNext(), duration);
 
                 const footer = document.getElementById('sv-footer'); footer.innerHTML = '';
                 if (group.mine) {
@@ -2875,6 +2979,32 @@
                 }
                 card.appendChild(head);
 
+                // Post de texto: sem mídia, o texto É o conteúdo.
+                if (p.type === 'text') {
+                    const tx = document.createElement('div'); tx.className = 'feed-text';
+                    tx.textContent = p.caption;
+                    card.appendChild(tx);
+                    const actionsT = document.createElement('div'); actionsT.className = 'feed-actions';
+                    const commentBtnT = document.createElement('button'); commentBtnT.className = 'feed-act';
+                    commentBtnT.innerHTML = ICONS.comment + `<span>${p.comments}</span>`;
+                    commentBtnT.onclick = () => this.openComments(p, commentBtnT);
+                    actionsT.appendChild(likeBtn); actionsT.appendChild(commentBtnT);
+                    if (!p.mine) {
+                        const crT = document.createElement('button'); crT.className = 'feed-act';
+                        crT.innerHTML = ICONS.flame + '<span>Crush</span>';
+                        crT.onclick = () => this.sendCrush({ id: p.userId, name: p.name, emoji: p.emoji, avatar: p.avatar || '', crushSent: false }, null);
+                        actionsT.appendChild(crT);
+                    }
+                    if (p.mine) {
+                        const lkT = document.createElement('button'); lkT.className = 'feed-act';
+                        lkT.innerHTML = ICONS.eye + '<span>Curtidas</span>';
+                        lkT.onclick = () => this.openLikers(p);
+                        actionsT.appendChild(lkT);
+                    }
+                    card.appendChild(actionsT);
+                    return card;
+                }
+
                 const media = document.createElement('div'); media.className = 'feed-media';
                 if (p.type === 'image') {
                     const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false;
@@ -2950,10 +3080,9 @@
                     .then(() => { this.toast('Post excluído.'); card.remove(); }).catch(() => {});
             }
             playFeedVideo(wrap, p) {
-                const el = document.createElement('iframe'); el.className = 'feed-embed';
-                el.src = this.drivePreview(p.fileId);
-                el.setAttribute('allow', 'autoplay'); el.setAttribute('allowfullscreen', '');
+                const el = this.makeVideo(p.fileId, { className: '', iframeClass: 'feed-embed' });
                 wrap.replaceWith(el);
+                el.play().catch(() => {});
             }
             async likePost(p, btn) {
                 if (p._liking) return; p._liking = true;
@@ -3012,11 +3141,44 @@
                 this.showModal(
                     '<h3>Publicar no feed</h3>' +
                     '<div class="vis-choice">' +
+                    '<button onclick="App.openTextPost()">✍️<span>Texto</span><small>Só palavras</small></button>' +
                     '<button onclick="App.pickFeed(\'feed-photo\')">📷<span>Foto</span><small>Câmera</small></button>' +
                     '<button onclick="App.pickFeed(\'feed-video\')">🎥<span>Vídeo</span><small>Gravar</small></button>' +
                     '<button onclick="App.pickFeed(\'feed-gallery\')">🖼️<span>Galeria</span><small>Do aparelho</small></button>' +
                     '</div>'
                 );
+            }
+            // Post só de texto (estilo X)
+            openTextPost() {
+                this.closeModal();
+                this.feedTtl = 24;
+                this.showModal(
+                    '<h3>✍️ Post de texto</h3>' +
+                    '<textarea id="text-post-input" rows="5" maxlength="500" placeholder="Solta o pensamento… provoque, confesse, convide. 😈"></textarea>' +
+                    '<p class="hint-text" style="margin:10px 0 8px;">💨 Some em quanto tempo?</p>' +
+                    '<div class="vis-choice" id="ttl-choice">' +
+                    '<button onclick="App.setFeedTtl(1, this)">⚡<span>1h</span></button>' +
+                    '<button onclick="App.setFeedTtl(6, this)">🌙<span>6h</span></button>' +
+                    '<button class="on" onclick="App.setFeedTtl(24, this)">🔥<span>24h</span></button>' +
+                    '</div>' +
+                    '<p class="hint-text" style="margin:10px 0 8px;">Quem pode ver?</p>' +
+                    '<div class="vis-choice">' +
+                    '<button onclick="App.confirmTextPost(\'friends\')">👥<span>Amigos</span></button>' +
+                    '<button onclick="App.confirmTextPost(\'all\')">🌎<span>Todos</span></button>' +
+                    '</div>'
+                );
+                setTimeout(() => { const t = document.getElementById('text-post-input'); if (t) t.focus(); }, 150);
+            }
+            async confirmTextPost(visibility) {
+                const el = document.getElementById('text-post-input');
+                const text = el ? el.value.trim() : '';
+                if (!text) return this.toast('Escreva algo primeiro. 😏');
+                this.closeModal();
+                try {
+                    await this.request('postFeed', { content: '', type: 'text', mimeType: 'text/plain', visibility, caption: text, hours: this.feedTtl });
+                    this.toast(`Postado! Some em ${this.feedTtl}h. 💨`);
+                    this.switchTab('feed');
+                } catch (e) {}
             }
             pickFeed(inputId) { this.closeModal(); document.getElementById(inputId).click(); }
             handleFeedFile(event) {
@@ -3053,15 +3215,19 @@
                 this.closeModal();
                 if (!file) return;
                 const type = file.type.startsWith('image/') ? 'image' : 'video';
-                this.toast('Publicando…');
                 let dataUrl, mime = file.type;
                 if (type === 'image') { const c = await this.compressImage(file); dataUrl = c.dataUrl; mime = c.mime; }
                 else dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); });
+                const wait = this.toastSticky(type === 'video' ? '⏫ Enviando vídeo… não feche o app, pode levar um tempinho.' : '⏫ Publicando…');
                 try {
                     await this.request('postFeed', { content: dataUrl, type, mimeType: mime, visibility, caption, hours: this.feedTtl });
+                    this.dropToast(wait);
                     this.toast(`Publicado! Some em ${this.feedTtl}h. 💨`);
                     this.switchTab('feed');
-                } catch (err) {}
+                } catch (err) {
+                    this.dropToast(wait);
+                    if (type === 'video') this.toast('O vídeo não subiu. Tente um mais curto/leve (até ~12MB).');
+                }
             }
 
             // === FEED VERTICAL (imersivo) ===
@@ -3077,7 +3243,11 @@
             }
             verticalSlide(p, idx) {
                 const slide = document.createElement('div'); slide.className = 'vv-slide';
-                if (p.type === 'image') {
+                if (p.type === 'text') {
+                    const t = document.createElement('div'); t.className = 'vv-text';
+                    t.textContent = p.caption;
+                    slide.appendChild(t);
+                } else if (p.type === 'image') {
                     const img = document.createElement('img'); img.draggable = false; img.oncontextmenu = () => false;
                     img.loading = 'lazy'; img.src = this.driveImageUrl(p.fileId);
                     slide.appendChild(img);
@@ -3086,10 +3256,9 @@
                     const play = document.createElement('div'); play.className = 'feed-play'; play.innerHTML = ICONS.play;
                     wrap.appendChild(play);
                     wrap.onclick = () => {
-                        const fr = document.createElement('iframe');
-                        fr.src = this.drivePreview(p.fileId);
-                        fr.setAttribute('allow', 'autoplay'); fr.setAttribute('allowfullscreen', '');
-                        slide.replaceChild(fr, wrap);
+                        const v = this.makeVideo(p.fileId, { className: '', iframeClass: '' });
+                        slide.replaceChild(v, wrap);
+                        v.play().catch(() => {});
                     };
                     slide.appendChild(wrap);
                 }
@@ -3118,7 +3287,7 @@
                 slide.appendChild(rail);
                 const meta = document.createElement('div'); meta.className = 'vv-meta';
                 meta.innerHTML = `<div class="vv-name">${this.esc(p.name)} <span class="ttl-chip">${this.timeLeft(p.expiresAt)}</span></div>` +
-                    (p.caption ? `<div class="vv-cap">${this.esc(p.caption)}</div>` : '');
+                    (p.caption && p.type !== 'text' ? `<div class="vv-cap">${this.esc(p.caption)}</div>` : '');
                 const nmEl = meta.querySelector('.vv-name');
                 nmEl.style.cursor = 'pointer';
                 nmEl.onclick = () => { this.closeVertical(); this.openUserProfile(p.userId); };
@@ -3692,6 +3861,26 @@
                     if (this.call) this.endCall();
                     if (this.live) this.closeLive(true);
                 });
+                // === INSTALAÇÃO (PWA) ===
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.installEvt = e;
+                    if (!localStorage.getItem('phantom2_install_off')) document.getElementById('install-bar').classList.remove('hidden');
+                });
+                window.addEventListener('appinstalled', () => { this.hideInstallBar(true); this.toast('Phantom instalado! 📲'); });
+                if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js'); } catch (e) {} }
+            }
+            installApp() {
+                if (!this.installEvt) {
+                    this.toast('Se o botão não funcionar: menu do navegador → "Adicionar à tela inicial".');
+                    return;
+                }
+                this.installEvt.prompt();
+                this.installEvt.userChoice.finally(() => { this.installEvt = null; this.hideInstallBar(true); });
+            }
+            hideInstallBar(remember) {
+                document.getElementById('install-bar').classList.add('hidden');
+                if (remember) try { localStorage.setItem('phantom2_install_off', '1'); } catch (e) {}
             }
         }
 
