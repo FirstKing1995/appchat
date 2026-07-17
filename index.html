@@ -328,7 +328,7 @@
         .feed-embed { width: 100%; height: 60vh; max-height: 440px; border: 0; background: #000; display: block; }
         .feed-caption { padding: 10px 14px 2px; font-size: 14px; line-height: 1.4; }
         .feed-text { padding: 4px 16px 10px; font-size: 17px; font-weight: 500; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-        .feed-media video { width: 100%; display: block; max-height: 70vh; background: #000; }
+        .feed-media video { width: 100%; height: auto; display: block; max-height: 80vh; background: #000; }
         .feed-actions { display: flex; align-items: center; gap: 18px; padding: 10px 14px 14px; }
         .feed-act { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 800; padding: 0; }
         .feed-act.liked { color: var(--accent); }
@@ -420,8 +420,10 @@
         .media-lock-row svg { width: 22px; height: 22px; }
         .media-lock-row.once { color: var(--hot); }
         .media-frame { width: 100%; display: block; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-        .msg-media video.media-frame { border-radius: 12px; max-height: 320px; background: #000; }
-        .msg-media iframe.media-frame { border: 0; width: 260px; max-width: 74vw; height: 200px; border-radius: 12px; background: #000; }
+        /* Vídeo no chat: grande, na proporção natural do arquivo */
+        .msg-media video.media-frame { border-radius: 12px; width: min(78vw, 420px); height: auto; max-height: 64vh; background: #000; }
+        .media-loading { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 18px 14px; font-size: 13px; font-weight: 600; min-width: 200px; }
+        .sv-loading { color: var(--text-muted); font-size: 14px; font-weight: 600; }
         .media-footer { display: flex; justify-content: flex-end; }
         #chat-empty-hint { padding: 60px 30px; }
         .room-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; color: var(--hot); flex-shrink: 0; }
@@ -700,7 +702,7 @@
         <div id="login-screen" class="screen">
             <div class="glass-panel">
                 <h2>PHANTOM</h2>
-                <p class="brand-sub">anônimo • efêmero • 18+ • v2.3</p>
+                <p class="brand-sub">anônimo • efêmero • 18+ • v2.4</p>
                 <p class="hint-text" id="welcome-back" style="display:none; color:var(--accent);"></p>
                 <p class="hint-text" id="api-warning" style="display:none; color:var(--hot);">⚙️ <strong>Config pendente:</strong> cole a URL do seu Apps Script no API_URL dentro do index.html.</p>
                 <input type="text" id="username" placeholder="Seu codinome" autocomplete="username">
@@ -910,7 +912,7 @@
                     <div class="tab-content-header" style="padding:10px 0 0;"><span id="friends-count-text">Seus amigos</span></div>
                     <ul style="list-style:none; padding:0; margin:0;" id="friends-list"></ul>
                     <button type="button" class="btn-ghost" onclick="App.installApp()">📲 Instalar app no celular</button>
-                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.3</p>
+                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.4</p>
                 </div>
             </div>
         </div>
@@ -2397,27 +2399,32 @@
                     ? `<img class="av-photo" src="${this.avUrl(u.avatar)}" draggable="false" data-fb="${fb}" onerror="this.outerHTML=this.dataset.fb">`
                     : fb;
             }
-            // Player de vídeo PRÓPRIO (nada de iframe do Drive). Se o arquivo não abrir
-            // direto, cai de volta pro preview do Drive automaticamente.
-            makeVideo(fileId, opts) {
-                opts = opts || {};
+            // Vídeo e áudio saem PELO PRÓPRIO APP: o arquivo fica privado no Drive e os
+            // bytes vêm pela ação getMedia (autenticada). Nada de player nem download do Drive.
+            async fetchMediaBlobUrl(fileId) {
+                if (!this._mediaCache) this._mediaCache = new Map();
+                if (this._mediaCache.has(fileId)) return this._mediaCache.get(fileId);
+                const res = await this.request('getMedia', { fileId });
+                const blob = await (await fetch(res.dataUrl)).blob();
+                const url = URL.createObjectURL(blob);
+                this._mediaCache.set(fileId, url);
+                if (this._mediaCache.size > 8) { // libera memória dos mais antigos
+                    const oldest = this._mediaCache.keys().next().value;
+                    try { URL.revokeObjectURL(this._mediaCache.get(oldest)); } catch (e) {}
+                    this._mediaCache.delete(oldest);
+                }
+                return url;
+            }
+            // <video> do app: proporção natural, sem botão de download, sem PiP.
+            buildVideo(url, className) {
                 const v = document.createElement('video');
-                if (opts.className) v.className = opts.className;
-                v.controls = opts.controls !== false;
+                if (className) v.className = className;
+                v.controls = true;
                 v.setAttribute('playsinline', ''); v.playsInline = true;
-                v.preload = 'metadata';
-                v.controlsList = 'nodownload';
+                v.controlsList = 'nodownload noremoteplayback';
+                v.disablePictureInPicture = true;
                 v.oncontextmenu = () => false;
-                v.src = this.driveDownloadUrl(fileId);
-                v.onerror = () => {
-                    if (!v.parentNode) return;
-                    const fr = document.createElement('iframe');
-                    fr.className = opts.iframeClass != null ? opts.iframeClass : (opts.className || 'media-frame');
-                    fr.src = this.drivePreview(fileId);
-                    fr.setAttribute('allow', 'autoplay'); fr.setAttribute('allowfullscreen', '');
-                    if (opts.iframeCss) fr.style.cssText = opts.iframeCss;
-                    v.parentNode.replaceChild(fr, v);
-                };
+                v.src = url;
                 return v;
             }
             // Toast fixo (para uploads longos) — remova com dropToast().
@@ -2443,23 +2450,47 @@
                 if (u) { this.openProfileSheet(u); return; }
                 this.request('getProfile', { targetId: userId }).then(p => this.openProfileSheet(p)).catch(() => {});
             }
-            revealMedia(div, msg) {
+            async revealMedia(div, msg) {
                 if (msg.type === 'image') { this.openImageViewer(div, msg); return; }
                 if (msg.type === 'audio') { this.revealAudio(div, msg); return; }
-                // Vídeo: player nativo com contagem baseada na duração (x3), como o áudio.
+                // Vídeo: baixa pelo app e toca no player próprio; contagem = duração x3.
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
-                const el = this.makeVideo(msg.content, { className: 'media-frame' });
+                const loading = document.createElement('div'); loading.className = 'media-loading';
+                loading.textContent = '⏳ Baixando vídeo…';
+                div.appendChild(loading); this.scrollToBottom();
+                let url;
+                try { url = await this.fetchMediaBlobUrl(msg.content); }
+                catch (e) {
+                    loading.textContent = '⚠️ Não consegui carregar o vídeo.';
+                    this.startCountdown(div, null, 6000, () => this.finishConsume(msg));
+                    return;
+                }
+                if (!div.isConnected) return;
+                loading.remove();
+                const el = this.buildVideo(url, 'media-frame');
                 const footer = document.createElement('div'); footer.className = 'media-footer';
                 const badge = document.createElement('span'); badge.className = 'ttl-badge'; footer.appendChild(badge);
                 div.appendChild(el); div.appendChild(footer); this.scrollToBottom();
                 el.play().catch(() => {});
                 this.startMediaTimer(el, div, badge, msg, () => { try { el.pause(); } catch (e) {} });
             }
-            revealAudio(div, msg) {
+            async revealAudio(div, msg) {
                 const label = div.querySelector('.msg-sender-row');
                 div.innerHTML = ''; if (label) div.appendChild(label);
-                const audio = new Audio(this.driveDownloadUrl(msg.content));
+                const loading = document.createElement('div'); loading.className = 'media-loading';
+                loading.textContent = '⏳ Carregando áudio…';
+                div.appendChild(loading); this.scrollToBottom();
+                let src;
+                try { src = await this.fetchMediaBlobUrl(msg.content); }
+                catch (e) {
+                    loading.textContent = '⚠️ Áudio indisponível.';
+                    this.startCountdown(div, null, 6000, () => this.finishConsume(msg));
+                    return;
+                }
+                if (!div.isConnected) return;
+                loading.remove();
+                const audio = new Audio(src);
                 audio.preload = 'metadata';
                 const player = document.createElement('div'); player.className = 'audio-player';
                 const play = document.createElement('button'); play.className = 'ap-play'; play.innerHTML = ICONS.play;
@@ -2826,26 +2857,40 @@
                     this.animateStoryProgress(fillEl, duration);
                     this.storyTimer = setTimeout(() => this.storyNext(), duration);
                 } else {
-                    // Vídeo no story: player nativo, progresso pela duração real e avanço no fim.
-                    const vid = this.makeVideo(item.fileId, { controls: false, iframeCss: 'width:100%;height:100%;border:0;background:#000;' });
-                    vid.style.cssText = 'max-width:100%;max-height:100%;';
-                    body.insertBefore(vid, body.querySelector('.sv-caption'));
-                    vid.muted = false;
-                    vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
-                    let started = false;
-                    const startProg = (ms) => {
-                        if (started || !vid.isConnected) return; started = true;
-                        this.animateStoryProgress(fillEl, ms);
+                    // Vídeo no story: baixa pelo app, toca no player próprio, progresso pela duração.
+                    const load = document.createElement('div'); load.className = 'sv-loading';
+                    load.textContent = '⏳ Carregando vídeo…';
+                    body.insertBefore(load, body.querySelector('.sv-caption'));
+                    const myToken = (this._svToken = (this._svToken || 0) + 1);
+                    this.fetchMediaBlobUrl(item.fileId).then(url => {
+                        if (myToken !== this._svToken || !load.isConnected) return;
+                        load.remove();
+                        const vid = this.buildVideo(url, '');
+                        vid.controls = false;
+                        vid.style.cssText = 'max-width:100%;max-height:100%;';
+                        body.insertBefore(vid, body.querySelector('.sv-caption'));
+                        vid.muted = false;
+                        vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
+                        let started = false;
+                        const startProg = (ms) => {
+                            if (started || myToken !== this._svToken) return; started = true;
+                            this.animateStoryProgress(fillEl, ms);
+                            clearTimeout(this.storyTimer);
+                            this.storyTimer = setTimeout(() => this.storyNext(), ms);
+                        };
+                        vid.addEventListener('loadedmetadata', () => {
+                            const d = vid.duration;
+                            startProg((isFinite(d) && d > 0 ? Math.min(d, 60) : 15) * 1000);
+                        });
+                        vid.addEventListener('ended', () => { if (myToken === this._svToken) this.storyNext(); });
+                        vid.addEventListener('error', () => startProg(12000));
+                        setTimeout(() => startProg(20000), 6000);
+                    }).catch(() => {
+                        if (myToken !== this._svToken) return;
+                        load.textContent = '⚠️ Vídeo indisponível.';
                         clearTimeout(this.storyTimer);
-                        this.storyTimer = setTimeout(() => this.storyNext(), ms);
-                    };
-                    vid.addEventListener('loadedmetadata', () => {
-                        const d = vid.duration;
-                        startProg((isFinite(d) && d > 0 ? Math.min(d, 60) : 15) * 1000);
+                        this.storyTimer = setTimeout(() => this.storyNext(), 3000);
                     });
-                    vid.addEventListener('ended', () => { if (vid.isConnected) this.storyNext(); });
-                    vid.addEventListener('error', () => startProg(15000));
-                    setTimeout(() => startProg(15000), 4000);
                 }
 
                 const footer = document.getElementById('sv-footer'); footer.innerHTML = '';
@@ -3079,10 +3124,20 @@
                 this.request('deleteFeed', { postId: p.id })
                     .then(() => { this.toast('Post excluído.'); card.remove(); }).catch(() => {});
             }
-            playFeedVideo(wrap, p) {
-                const el = this.makeVideo(p.fileId, { className: '', iframeClass: 'feed-embed' });
-                wrap.replaceWith(el);
-                el.play().catch(() => {});
+            async playFeedVideo(wrap, p) {
+                if (wrap._loading) return; wrap._loading = true;
+                const play = wrap.querySelector('.feed-play');
+                if (play) play.innerHTML = '<span style="font-size:12px;font-weight:800;">⏳</span>';
+                try {
+                    const url = await this.fetchMediaBlobUrl(p.fileId);
+                    const el = this.buildVideo(url, '');
+                    wrap.replaceWith(el);
+                    el.play().catch(() => {});
+                } catch (e) {
+                    wrap._loading = false;
+                    if (play) play.innerHTML = ICONS.play;
+                    this.toast('Não consegui carregar o vídeo.');
+                }
             }
             async likePost(p, btn) {
                 if (p._liking) return; p._liking = true;
@@ -3255,10 +3310,19 @@
                     const wrap = document.createElement('div'); wrap.className = 'vv-playwrap';
                     const play = document.createElement('div'); play.className = 'feed-play'; play.innerHTML = ICONS.play;
                     wrap.appendChild(play);
-                    wrap.onclick = () => {
-                        const v = this.makeVideo(p.fileId, { className: '', iframeClass: '' });
-                        slide.replaceChild(v, wrap);
-                        v.play().catch(() => {});
+                    wrap.onclick = async () => {
+                        if (wrap._loading) return; wrap._loading = true;
+                        const play = wrap.querySelector('.feed-play');
+                        if (play) play.innerHTML = '<span style="font-size:12px;font-weight:800;">⏳</span>';
+                        try {
+                            const url = await this.fetchMediaBlobUrl(p.fileId);
+                            const v = this.buildVideo(url, '');
+                            slide.replaceChild(v, wrap);
+                            v.play().catch(() => {});
+                        } catch (e) {
+                            wrap._loading = false;
+                            if (play) play.innerHTML = ICONS.play;
+                        }
                     };
                     slide.appendChild(wrap);
                 }
