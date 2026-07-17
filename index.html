@@ -220,41 +220,39 @@
         .chip.small { padding: 5px 10px; font-size: 11px; }
         .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
         .chip-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 2px; }
-        /* minmax(0,1fr) + min-width:0 impedem que nomes/tags longos estourem a grade no celular */
-        .radar-grid { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 16px 30px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-content: start; }
+        /* Radar em LISTA: cards horizontais grandes, à prova de tela estreita */
+        .radar-grid { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 16px 30px; display: flex; flex-direction: column; gap: 10px; }
         .radar-grid::-webkit-scrollbar { display: none; }
-        .radar-grid .empty-state, .radar-grid .lives-rail-wrap { grid-column: 1 / -1; }
         .radar-card {
             background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 18px;
-            padding: 16px 12px 12px; display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; position: relative;
-            min-width: 0; max-width: 100%; overflow: hidden;
+            padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+            min-width: 0; overflow: hidden; flex-shrink: 0;
         }
         .radar-card:active { background: rgba(255,255,255,0.12); }
         .radar-av {
-            width: 64px; height: 64px; border-radius: 50%; padding: 2px; background: rgba(255,255,255,0.15);
-            display: flex; align-items: center; justify-content: center;
+            width: 62px; height: 62px; border-radius: 50%; padding: 2px; background: rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; cursor: pointer;
         }
         .radar-card.online .radar-av { background: var(--grad-fire); }
-        .radar-av .inner { width: 100%; height: 100%; border-radius: 50%; background: #180a12; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        .radar-name { font-size: 14px; font-weight: 800; width: 100%; min-width: 0; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .radar-av .inner { width: 100%; height: 100%; border-radius: 50%; background: #180a12; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .radar-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+        .radar-name { font-size: 15px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .radar-name small { color: var(--text-muted); font-weight: 600; }
-        .radar-sub { font-size: 10px; color: var(--text-muted); width: 100%; min-width: 0; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 12px; }
-        .radar-tags { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; min-height: 18px; max-width: 100%; }
+        .radar-sub { font-size: 11px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .radar-bio { font-size: 12px; color: var(--text-main); opacity: 0.85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .radar-tags { display: flex; gap: 4px; flex-wrap: wrap; max-width: 100%; margin-top: 2px; }
         .radar-tags span { font-size: 9px; font-weight: 700; color: var(--accent-2); border: 1px solid rgba(177,75,255,0.45); border-radius: 8px; padding: 1px 6px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .radar-actions { display: flex; gap: 8px; margin-top: 4px; width: 100%; }
-        .radar-actions button {
-            flex: 1; min-width: 0; height: 36px; border-radius: 12px; border: 1px solid var(--glass-border);
-            background: rgba(255,255,255,0.07); color: var(--text-main); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-            font-size: 12px; font-weight: 800; white-space: nowrap;
+        .radar-act {
+            width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--accent); background: rgba(255,46,99,0.14); color: var(--accent);
         }
-        .radar-actions button svg { width: 15px; height: 15px; }
-        .radar-actions button.crush { background: rgba(255,46,99,0.14); border-color: var(--accent); color: var(--accent); }
-        .radar-actions button.crush.sent { background: rgba(255,255,255,0.06); border-color: var(--glass-border); color: var(--text-muted); }
-        .radar-av { cursor: pointer; }
+        .radar-act svg { width: 21px; height: 21px; }
+        .radar-act.sent { border-color: var(--glass-border); background: rgba(255,255,255,0.06); color: var(--text-muted); }
+        .radar-act.go { border-color: var(--ok); background: rgba(61,255,162,0.12); color: var(--ok); }
         .radar-av .inner, .story-ring .inner, .match-ring .inner, .live-ring .inner,
         .pf-av .inner, .vv-av .inner, .match-avs .mav .inner, .ci-av .inner { overflow: hidden; }
-        .radar-dot { position: absolute; top: 12px; right: 12px; }
+        .radar-dot { position: absolute; bottom: 1px; right: 1px; border: 2px solid #0a0207; }
         .radar-count { font-size: 11px; color: var(--text-muted); font-weight: 700; }
 
         /* === LIVES RAIL === */
@@ -1799,36 +1797,45 @@
             radarCard(u) {
                 const card = document.createElement('div');
                 card.className = 'radar-card' + (u.online ? ' online' : '');
+
+                // Foto/emoji à esquerda — tocar abre os stories da pessoa
                 const av = document.createElement('div'); av.className = 'radar-av';
                 const inner = document.createElement('div'); inner.className = 'inner';
                 this.setAv(inner, u);
-                av.appendChild(inner); card.appendChild(av);
-                av.onclick = (e) => { e.stopPropagation(); this.openUserStories(u.id); }; // foto abre os stories
-                if (u.online) { const dot = document.createElement('span'); dot.className = 'online-indicator radar-dot'; card.appendChild(dot); }
+                av.appendChild(inner);
+                if (u.online) { const dot = document.createElement('span'); dot.className = 'online-indicator radar-dot'; av.appendChild(dot); }
+                av.onclick = (e) => { e.stopPropagation(); this.openUserStories(u.id); };
+                card.appendChild(av);
+
+                // Infos no meio
+                const info = document.createElement('div'); info.className = 'radar-info';
                 const nm = document.createElement('div'); nm.className = 'radar-name';
                 nm.innerHTML = `${this.esc(u.name)}${u.age ? ` <small>${u.age}</small>` : ''}`;
-                card.appendChild(nm);
-                const sub = document.createElement('div'); sub.className = 'radar-sub';
-                sub.textContent = [u.status, u.city].filter(Boolean).join(' • ');
-                card.appendChild(sub);
+                info.appendChild(nm);
+                const subTxt = [u.status, u.city].filter(Boolean).join(' • ');
+                if (subTxt) { const sub = document.createElement('div'); sub.className = 'radar-sub'; sub.textContent = subTxt; info.appendChild(sub); }
+                if (u.bio) { const bio = document.createElement('div'); bio.className = 'radar-bio'; bio.textContent = u.bio; info.appendChild(bio); }
                 const tags = document.createElement('div'); tags.className = 'radar-tags';
                 if (u.matched) { const s = document.createElement('span'); s.className = 'match-tag'; s.textContent = 'MATCH'; tags.appendChild(s); }
-                (u.tags || []).slice(0, 2).forEach(t => { const s = document.createElement('span'); s.textContent = t; tags.appendChild(s); });
-                card.appendChild(tags);
-                // Sem chat livre no radar: a conversa se conquista no match.
-                const actions = document.createElement('div'); actions.className = 'radar-actions';
+                (u.tags || []).slice(0, 3).forEach(t => { const s = document.createElement('span'); s.textContent = t; tags.appendChild(s); });
+                if (tags.children.length) info.appendChild(tags);
+                card.appendChild(info);
+
+                // Ação única à direita: crush — ou conversar, se já deu match. Sem chat livre.
+                const act = document.createElement('button');
                 if (u.matched) {
-                    const go = document.createElement('button');
-                    go.innerHTML = ICONS.comment + '<span>Conversar</span>';
-                    go.onclick = (e) => { e.stopPropagation(); this.openDirectChat(u); };
-                    actions.appendChild(go);
+                    act.className = 'radar-act go';
+                    act.title = 'Conversar';
+                    act.innerHTML = ICONS.comment;
+                    act.onclick = (e) => { e.stopPropagation(); this.openDirectChat(u); };
                 } else {
-                    const crush = document.createElement('button'); crush.className = 'crush' + (u.crushSent ? ' sent' : '');
-                    crush.innerHTML = ICONS.flame + `<span>${u.crushSent ? 'Enviado' : 'Crush'}</span>`;
-                    crush.onclick = (e) => { e.stopPropagation(); this.sendCrush(u, crush); };
-                    actions.appendChild(crush);
+                    act.className = 'radar-act' + (u.crushSent ? ' sent' : '');
+                    act.title = u.crushSent ? 'Crush enviado' : 'Mandar crush';
+                    act.innerHTML = ICONS.flame;
+                    act.onclick = (e) => { e.stopPropagation(); this.sendCrush(u, act); };
                 }
-                card.appendChild(actions);
+                card.appendChild(act);
+
                 card.onclick = () => this.openProfileSheet(u);
                 return card;
             }
