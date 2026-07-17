@@ -702,7 +702,7 @@
         <div id="login-screen" class="screen">
             <div class="glass-panel">
                 <h2>PHANTOM</h2>
-                <p class="brand-sub">anônimo • efêmero • 18+ • v2.4</p>
+                <p class="brand-sub">anônimo • efêmero • 18+ • v2.5</p>
                 <p class="hint-text" id="welcome-back" style="display:none; color:var(--accent);"></p>
                 <p class="hint-text" id="api-warning" style="display:none; color:var(--hot);">⚙️ <strong>Config pendente:</strong> cole a URL do seu Apps Script no API_URL dentro do index.html.</p>
                 <input type="text" id="username" placeholder="Seu codinome" autocomplete="username">
@@ -900,9 +900,10 @@
                     <div class="invite-box">
                         <span class="invite-title">🔗 Seu link de convite</span>
                         <span class="invite-link" id="invite-link-text">—</span>
+                        <button type="button" class="btn-primary" onclick="App.shareInvite()">📲 Compartilhar convite</button>
                         <button type="button" class="btn-ghost" onclick="App.copyInvite()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-                            Copiar / compartilhar link
+                            Copiar link
                         </button>
                         <p class="hint-text">Quem entrar por esse link vira seu amigo automaticamente.</p>
                     </div>
@@ -912,7 +913,7 @@
                     <div class="tab-content-header" style="padding:10px 0 0;"><span id="friends-count-text">Seus amigos</span></div>
                     <ul style="list-style:none; padding:0; margin:0;" id="friends-list"></ul>
                     <button type="button" class="btn-ghost" onclick="App.installApp()">📲 Instalar app no celular</button>
-                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.4</p>
+                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.5</p>
                 </div>
             </div>
         </div>
@@ -1420,6 +1421,7 @@
                 this.loadDashboard();
             }
             logout() {
+                clearTimeout(this._invitePopupTimer); this._invitePopupTimer = null;
                 clearInterval(this.heartbeatInterval); this.heartbeatInterval = null;
                 if (this.call) this.endCall();
                 if (this.live) this.closeLive(true);
@@ -1458,6 +1460,39 @@
                 this.fetchStories();
                 this.runPulse();
                 if (!this.heartbeatInterval) this.heartbeatInterval = setInterval(() => this.runPulse(), 10000);
+                this.scheduleInvitePopup();
+            }
+            // Convite: aparece uns segundos depois de entrar, no máx. 1x por dia.
+            scheduleInvitePopup() {
+                if (this._invitePopupTimer) return;
+                let last = 0;
+                try { last = Number(localStorage.getItem('phantom2_invite_pop') || 0); } catch (e) {}
+                if (Date.now() - last < 24 * 60 * 60 * 1000) return; // já mostrou hoje
+                this._invitePopupTimer = setTimeout(() => this.openInvitePopup(), 12000);
+            }
+            openInvitePopup() {
+                if (!this.currentUser) return;
+                // não interrompe quem está no meio de algo (chat, chamada, live, outro modal)
+                if (this.call || this.live ||
+                    document.getElementById('modal').classList.contains('open') ||
+                    document.getElementById('story-viewer').classList.contains('open') ||
+                    !document.getElementById('dashboard-screen').classList.contains('active')) {
+                    this._invitePopupTimer = setTimeout(() => this.openInvitePopup(), 20000);
+                    return;
+                }
+                try { localStorage.setItem('phantom2_invite_pop', String(Date.now())); } catch (e) {}
+                const link = this.inviteLink();
+                this.showModal(
+                    '<div style="text-align:center;">' +
+                    '<div style="font-size:46px; line-height:1; margin-bottom:6px;">🔥😈</div>' +
+                    '<h3 style="margin:0 0 6px;">Quanto mais gente, mais fogo</h3>' +
+                    '<p class="hint-text" style="margin:0 0 14px; text-align:center;">O Phantom fica muito melhor com o crush certo do outro lado. Chame quem você sabe que ia curtir esse sigilo — é anônimo, sem rastro, e cada convite vira um match em potencial. 🔥</p>' +
+                    '</div>' +
+                    `<div class="invite-link" style="margin-bottom:12px;">${this.esc(link)}</div>` +
+                    '<button class="btn-primary" onclick="App.shareInvite()">📲 Compartilhar convite</button>' +
+                    '<button class="btn-ghost" style="margin-top:8px;" onclick="App.copyInvite()">Copiar link</button>' +
+                    '<button class="link-btn" style="margin-top:6px;" onclick="App.closeModal()">Agora não</button>'
+                );
             }
 
             // === PULSE (batida unificada) ===
@@ -1735,12 +1770,38 @@
                 prev.textContent = document.getElementById('profile-emoji').value.trim() || this.currentUser.emoji || '🕵️';
                 this.toast('Voltando ao emoji — salve o perfil para aplicar.');
             }
+            inviteText() {
+                return 'Entra nesse role comigo no Phantom 😈🔥\nRede anônima, efêmera e +18 — sem nome real, sem rastro. Crush vira match, o resto some sozinho.\n' + this.inviteLink();
+            }
+            // Abre a folha de compartilhar do celular (WhatsApp, Insta, etc.). Cai pra cópia se não houver.
+            shareInvite() {
+                const link = this.inviteLink();
+                if (navigator.share) {
+                    navigator.share({ title: 'Phantom', text: this.inviteText() }).then(() => this.closeModal()).catch(() => {});
+                    return;
+                }
+                this.copyInvite();
+            }
+            // Copia o link, com fallback manual para navegadores sem clipboard/https.
             copyInvite() {
                 const link = this.inviteLink();
-                const done = () => this.toast('Link de convite copiado!');
-                if (navigator.share) { navigator.share({ title: 'Entre no Phantom', text: 'Fala comigo no Phantom (rede anônima e efêmera, 18+):', url: link }).catch(() => {}); return; }
-                if (navigator.clipboard) navigator.clipboard.writeText(link).then(done).catch(() => this.toast(link));
-                else this.toast(link);
+                const done = () => this.toast('🔗 Link copiado! Cola pra quem você quer chamar.');
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(link).then(done).catch(() => this.legacyCopy(link, done));
+                } else {
+                    this.legacyCopy(link, done);
+                }
+            }
+            legacyCopy(text, done) {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = text; ta.setAttribute('readonly', '');
+                    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+                    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+                    const ok = document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    ok ? done() : this.toast(text);
+                } catch (e) { this.toast(text); }
             }
             async openBlocked() {
                 this.showModal('<h3>🚫 Bloqueados</h3><div id="blocked-list"><p class="empty-state">Carregando…</p></div>');
