@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0207">
+    <meta name="color-scheme" content="dark">
     <link rel="manifest" href="manifest.json">
     <title>Phantom V2 — anônimo & efêmero</title>
     <style>
         :root {
+            color-scheme: dark; /* impede o "modo escuro forçado" do Chrome Android de inverter as cores */
             --bg-color: #0a0207;
             --bg-soft: #16070f;
             --text-main: #ffffff;
@@ -688,7 +690,7 @@
         <div id="login-screen" class="screen">
             <div class="glass-panel">
                 <h2>PHANTOM</h2>
-                <p class="brand-sub">anônimo • efêmero • 18+</p>
+                <p class="brand-sub">anônimo • efêmero • 18+ • v2.2</p>
                 <div class="how-box">
                     <span class="how-title">😈 Como funciona</span>
                     <span class="how-line">🎭 <b>Anônimo:</b> nada de nome real — só um codinome e um avatar.</span>
@@ -877,6 +879,7 @@
 
                     <div class="tab-content-header" style="padding:10px 0 0;"><span id="friends-count-text">Seus amigos</span></div>
                     <ul style="list-style:none; padding:0; margin:0;" id="friends-list"></ul>
+                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.2</p>
                 </div>
             </div>
         </div>
