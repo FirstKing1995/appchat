@@ -597,6 +597,136 @@
         .field-duo { display: flex; gap: 10px; }
         .field-duo > * { flex: 1; min-width: 0; }
 
+        /* === PERFIL ESTILO INSTAGRAM === */
+        .ig-top { display: flex; align-items: center; gap: 18px; padding: 6px 0 2px; }
+        .ig-av {
+            width: 86px; height: 86px; border-radius: 50%; flex-shrink: 0; cursor: pointer; overflow: hidden;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center; font-size: 40px; position: relative;
+        }
+        .ig-av.has-story { box-shadow: 0 0 0 3px var(--bg-color), 0 0 0 6px var(--accent); }
+        .ig-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .ig-stats { flex: 1; display: flex; justify-content: space-around; gap: 6px; }
+        .ig-stats > * {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            background: none; border: none; color: var(--text-main); cursor: pointer; padding: 4px 2px; font-family: inherit;
+        }
+        .ig-stats b { font-size: 19px; font-weight: 900; }
+        .ig-stats small { font-size: 11px; color: var(--text-muted); }
+        .ig-id { display: flex; flex-direction: column; gap: 3px; }
+        .ig-name { font-size: 16px; font-weight: 800; }
+        .ig-meta { font-size: 12px; color: var(--text-muted); }
+        .ig-bio { font-size: 13.5px; line-height: 1.5; white-space: pre-wrap; }
+        .ig-actions { display: flex; gap: 8px; }
+        .ig-btn {
+            flex: 1; padding: 10px 6px; border-radius: 10px; cursor: pointer; font-family: inherit;
+            background: rgba(255,255,255,0.09); color: var(--text-main);
+            border: 1px solid var(--glass-border); font-size: 13px; font-weight: 700;
+        }
+        .ig-btn:active { transform: scale(0.97); }
+        .pg-head { display: flex; align-items: baseline; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; margin-top: 4px; }
+        .pg-head > span:first-child { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .pg-hint { font-size: 10.5px; color: var(--text-muted); }
+        .pg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+        .pg-cell {
+            position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 4px; cursor: pointer;
+            background: rgba(255,255,255,0.05); border: none; padding: 0;
+        }
+        .pg-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .pg-cell .pg-txt {
+            width: 100%; height: 100%; padding: 8px; display: flex; align-items: center; justify-content: center; text-align: center;
+            font-size: 11px; line-height: 1.35; color: #fff; overflow: hidden;
+            background: linear-gradient(135deg, rgba(255,46,99,0.35), rgba(177,75,255,0.35));
+        }
+        .pg-cell .pg-vid {
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 26px;
+            background: linear-gradient(135deg, rgba(122,43,255,0.3), rgba(0,0,0,0.55));
+        }
+        .pg-cell .pg-badge {
+            position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.62); border-radius: 20px;
+            padding: 2px 6px; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; gap: 2px;
+        }
+        .pg-cell .pg-badge.eternal { background: rgba(177,75,255,0.8); }
+        .pg-cell .pg-type { position: absolute; top: 4px; left: 4px; font-size: 12px; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+        .pg-cell .pg-lock { position: absolute; bottom: 4px; left: 4px; font-size: 11px; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+
+        /* === EDITOR DE IMAGEM === */
+        .img-editor { display: none; position: fixed; inset: 0; z-index: 4200; background: #08040a; flex-direction: column; }
+        .img-editor.open { display: flex; }
+        .ie-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; padding-top: calc(12px + env(safe-area-inset-top)); flex-shrink: 0; }
+        .ie-bar button { background: none; border: none; color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; padding: 6px 4px; font-family: inherit; }
+        .ie-bar .ie-done { color: var(--accent); }
+        .ie-stage-wrap { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px 10px; min-height: 0; }
+        .ie-stage { position: relative; overflow: hidden; background: #000; touch-action: none; border-radius: 6px; }
+        .ie-stage img { position: absolute; left: 50%; top: 50%; transform-origin: center center; will-change: transform; user-select: none; -webkit-user-drag: none; max-width: none; }
+        .ie-stage::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background:
+                linear-gradient(to right, transparent 33.33%, rgba(255,255,255,0.22) 33.33%, rgba(255,255,255,0.22) calc(33.33% + 1px), transparent calc(33.33% + 1px)),
+                linear-gradient(to right, transparent 66.66%, rgba(255,255,255,0.22) 66.66%, rgba(255,255,255,0.22) calc(66.66% + 1px), transparent calc(66.66% + 1px)),
+                linear-gradient(to bottom, transparent 33.33%, rgba(255,255,255,0.22) 33.33%, rgba(255,255,255,0.22) calc(33.33% + 1px), transparent calc(33.33% + 1px)),
+                linear-gradient(to bottom, transparent 66.66%, rgba(255,255,255,0.22) 66.66%, rgba(255,255,255,0.22) calc(66.66% + 1px), transparent calc(66.66% + 1px));
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .ie-stage.grid::after { opacity: 1; }
+        .ie-panel { flex-shrink: 0; padding: 8px 14px calc(14px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; background: #0e0710; border-top: 1px solid rgba(255,255,255,0.07); }
+        .ie-tabs { display: flex; gap: 6px; }
+        .ie-tabs button {
+            flex: 1; padding: 9px 4px; border-radius: 10px; border: 1px solid var(--glass-border); cursor: pointer; font-family: inherit;
+            background: rgba(255,255,255,0.05); color: #fff; font-size: 12px; font-weight: 700;
+        }
+        .ie-tabs button.on { border-color: var(--accent); background: rgba(255,46,99,0.16); }
+        .ie-pane { display: none; flex-direction: column; gap: 10px; }
+        .ie-pane.on { display: flex; }
+        .ie-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+        .ie-row::-webkit-scrollbar { display: none; }
+        .ie-row button {
+            flex-shrink: 0; padding: 8px 12px; border-radius: 20px; border: 1px solid var(--glass-border); cursor: pointer; font-family: inherit;
+            background: rgba(255,255,255,0.05); color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap;
+        }
+        .ie-row button.on { border-color: var(--accent); background: rgba(255,46,99,0.16); }
+        .ie-slider { display: flex; align-items: center; gap: 10px; }
+        .ie-slider label { font-size: 11.5px; color: var(--text-muted); width: 74px; flex-shrink: 0; font-weight: 700; }
+        .ie-slider span { font-size: 11px; color: var(--text-muted); width: 34px; text-align: right; flex-shrink: 0; }
+        input[type="range"] { flex: 1; accent-color: var(--accent); background: transparent; min-width: 0; }
+
+        /* === COMPOSITOR DE STORY (texto) === */
+        .story-comp { display: none; position: fixed; inset: 0; z-index: 4300; background: #08040a; flex-direction: column; }
+        .story-comp.open { display: flex; }
+        .sc-canvas {
+            flex: 1; position: relative; overflow: hidden; margin: 0 auto; width: 100%; touch-action: none;
+            display: flex; align-items: center; justify-content: center; background: #000; min-height: 0;
+        }
+        .sc-media { position: relative; overflow: hidden; background: #000; border-radius: 6px; flex-shrink: 0; }
+        .sc-media img, .sc-media video { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+        .sc-layer { position: absolute; inset: 0; pointer-events: none; }
+        .sc-text {
+            position: absolute; transform: translate(-50%, -50%); pointer-events: auto; cursor: move; max-width: 88%;
+            text-align: center; font-weight: 900; line-height: 1.15; white-space: pre-wrap; word-break: break-word;
+            padding: 4px 8px; border-radius: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.55); touch-action: none;
+        }
+        .sc-text.sel { outline: 2px dashed rgba(255,255,255,0.55); }
+        .sc-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px; padding-top: calc(12px + env(safe-area-inset-top)); flex-shrink: 0; }
+        .sc-bar button { background: none; border: none; color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; padding: 6px 4px; font-family: inherit; }
+        .sc-tools { display: flex; gap: 8px; align-items: center; }
+        .sc-tools .sc-icon {
+            width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.13); border: none; color: #fff;
+            font-size: 17px; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .sc-panel { flex-shrink: 0; padding: 10px 14px calc(14px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; background: #0e0710; border-top: 1px solid rgba(255,255,255,0.07); }
+        .sc-swatches { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0; }
+        .sc-swatches::-webkit-scrollbar { display: none; }
+        .sc-sw { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35); flex-shrink: 0; cursor: pointer; padding: 0; }
+        .sc-sw.on { border-color: #fff; transform: scale(1.12); }
+        .sc-input {
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.09); color: #fff; font-size: 16px; font-family: inherit; resize: none;
+        }
+        .sc-bgrow { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0; }
+        .sc-bgrow::-webkit-scrollbar { display: none; }
+        .sc-bg { width: 36px; height: 36px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; cursor: pointer; padding: 0; }
+        .sc-bg.on { border-color: #fff; }
+
         /* === TOAST / MODAL / VIEWERS / GUARD === */
         .toast {
             position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(20px); background: rgba(29,13,22,0.97);
@@ -664,6 +794,8 @@
         .sv-caption { position: absolute; bottom: 20px; left: 16px; right: 16px; text-align: center; font-size: 15px; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
         .sv-nav { position: absolute; top: 0; bottom: 0; width: 40%; z-index: 3; }
         .sv-nav.left { left: 0; } .sv-nav.right { right: 0; }
+        .sv-overlay { z-index: 2; }
+        .sv-overlay .sc-text { pointer-events: none; cursor: default; }
         .sv-footer { padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 10px; }
         .sv-btn-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .sv-req { display: flex; align-items: center; gap: 6px; background: rgba(255,46,99,0.14); color: var(--accent); border: 1px solid var(--accent); border-radius: 22px; padding: 10px 18px; font-weight: 800; font-size: 13px; cursor: pointer; }
@@ -855,66 +987,120 @@
                 <ul class="scroll-list" id="groups-list"></ul>
             </div>
 
-            <!-- PERFIL -->
+            <!-- PERFIL (estilo Instagram) -->
             <div class="tab-content" id="tab-profile">
-                <div class="tab-content-header"><span>Seu perfil</span></div>
-                <div class="profile-scroll">
-                    <div class="profile-avatar-preview" id="profile-avatar-preview">🕵️</div>
-                    <div style="display:flex; gap:8px;">
-                        <button type="button" class="btn-ghost" onclick="App.triggerFile('avatar-input')">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.2"/></svg>
-                            Usar foto
-                        </button>
-                        <button type="button" class="btn-ghost" onclick="App.removeAvatar()">Voltar ao emoji</button>
-                    </div>
-                    <p class="hint-text">A foto substitui o emoji como sua imagem no app. Evite fotos que revelem quem você é — máscara é estilo. 🎭</p>
-                    <div class="emoji-field">
-                        <input type="text" id="profile-emoji" placeholder="Avatar de emoji (Ex: 🦊)">
-                        <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('profile-emoji')" title="Sugerir avatar">🎲</button>
-                    </div>
-                    <input type="text" id="profile-name" placeholder="Codinome anônimo">
-                    <div class="field-duo">
-                        <input type="number" id="profile-age" placeholder="Idade (18+)" min="18" max="99">
-                        <input type="text" id="profile-city" placeholder="Cidade (opcional)" maxlength="40">
-                    </div>
-                    <textarea id="profile-bio" rows="3" maxlength="240" placeholder="Bio provocante (o que te acende, o que procura…)"></textarea>
-                    <div class="chip-label">Eu sou</div>
-                    <div class="chip-group" id="chips-gender"></div>
-                    <div class="chip-label">Orientação</div>
-                    <div class="chip-group" id="chips-orientation"></div>
-                    <div class="chip-label">Status</div>
-                    <div class="chip-group" id="chips-status"></div>
-                    <div class="chip-label">Procuro por (até 6)</div>
-                    <div class="chip-group" id="chips-looking"></div>
-                    <div class="chip-label">Me acende (até 12)</div>
-                    <div class="chip-group" id="chips-tags"></div>
-                    <input type="password" id="profile-password" placeholder="Nova chave secreta (opcional)">
-                    <input type="email" id="profile-email" placeholder="Email para recuperar senha" autocomplete="email">
-                    <div class="toggle-row">
-                        <label for="profile-invisible">Operar como Fantasma (invisível)</label>
-                        <input type="checkbox" id="profile-invisible">
-                    </div>
-                    <p class="hint-text">Você aparece no Radar para todo mundo. Quem controla a privacidade é você a cada publicação: todo post e story pergunta se é para <strong>todos</strong> ou <strong>só amigos</strong>.</p>
-                    <button class="btn-primary" onclick="App.saveProfile()">Salvar perfil</button>
-
-                    <div class="invite-box">
-                        <span class="invite-title">🔗 Seu link de convite</span>
-                        <span class="invite-link" id="invite-link-text">—</span>
-                        <button type="button" class="btn-primary" onclick="App.shareInvite()">📲 Compartilhar convite</button>
-                        <button type="button" class="btn-ghost" onclick="App.copyInvite()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-                            Copiar link
-                        </button>
-                        <p class="hint-text">Quem entrar por esse link vira seu amigo automaticamente.</p>
-                    </div>
-
-                    <button type="button" class="btn-ghost" onclick="App.openBlocked()">🚫 Usuários bloqueados</button>
-
-                    <div class="tab-content-header" style="padding:10px 0 0;"><span id="friends-count-text">Seus amigos</span></div>
-                    <ul style="list-style:none; padding:0; margin:0;" id="friends-list"></ul>
-                    <button type="button" class="btn-ghost" onclick="App.installApp()">📲 Instalar app no celular</button>
-                    <p class="hint-text" style="text-align:center; opacity:0.55;">Phantom V2 — build v2.5</p>
+                <div class="tab-content-header">
+                    <span>Seu perfil</span>
+                    <button class="btn-mini ghost" onclick="App.openEditProfile()">✏️ Editar perfil</button>
                 </div>
+                <div class="profile-scroll">
+                    <div class="ig-top">
+                        <div class="ig-av" id="ig-avatar" onclick="App.openMyStories()">🕵️</div>
+                        <div class="ig-stats">
+                            <div><b id="ig-posts-count">0</b><small>posts</small></div>
+                            <button type="button" onclick="App.openFriendsScreen()"><b id="ig-friends-count">0</b><small>amigos</small></button>
+                            <div><b id="ig-likes-count">0</b><small>curtidas</small></div>
+                        </div>
+                    </div>
+                    <div class="ig-id">
+                        <div class="ig-name" id="ig-name">—</div>
+                        <div class="ig-meta" id="ig-meta"></div>
+                        <div class="ig-bio" id="ig-bio"></div>
+                        <div class="chip-group" id="ig-chips" style="margin-top:8px;"></div>
+                    </div>
+                    <div class="ig-actions">
+                        <button class="ig-btn" onclick="App.openEditProfile()">Editar perfil</button>
+                        <button class="ig-btn" onclick="App.openFriendsScreen()">Amigos</button>
+                        <button class="ig-btn" onclick="App.shareInvite()">Convidar</button>
+                    </div>
+                    <div class="pg-head">
+                        <span>Publicações</span>
+                        <span class="pg-hint">♾️ eterno · ⏳ temporário</span>
+                    </div>
+                    <div class="pg-grid" id="profile-grid"></div>
+                    <p class="hint-text" style="text-align:center; opacity:0.55; margin-top:14px;">Phantom V2 — build v2.6</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDITAR PERFIL (oculto — abre pelo botão) -->
+        <div id="edit-profile-screen" class="screen">
+            <div class="top-bar">
+                <button class="back-btn" onclick="App.closeEditProfile()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    Voltar
+                </button>
+                <h3>Editar perfil</h3>
+            </div>
+            <div class="profile-scroll">
+                <div class="profile-avatar-preview" id="profile-avatar-preview">🕵️</div>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" class="btn-ghost" onclick="App.triggerFile('avatar-input')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.2"/></svg>
+                        Usar foto
+                    </button>
+                    <button type="button" class="btn-ghost" onclick="App.removeAvatar()">Voltar ao emoji</button>
+                </div>
+                <p class="hint-text">A foto substitui o emoji como sua imagem no app. Evite fotos que revelem quem você é — máscara é estilo. 🎭</p>
+                <div class="emoji-field">
+                    <input type="text" id="profile-emoji" placeholder="Avatar de emoji (Ex: 🦊)">
+                    <button type="button" class="emoji-suggest" onclick="App.suggestEmoji('profile-emoji')" title="Sugerir avatar">🎲</button>
+                </div>
+                <input type="text" id="profile-name" placeholder="Codinome anônimo">
+                <div class="field-duo">
+                    <input type="number" id="profile-age" placeholder="Idade (18+)" min="18" max="99">
+                    <input type="text" id="profile-city" placeholder="Cidade (opcional)" maxlength="40">
+                </div>
+                <textarea id="profile-bio" rows="3" maxlength="240" placeholder="Bio provocante (o que te acende, o que procura…)"></textarea>
+                <div class="chip-label">Eu sou</div>
+                <div class="chip-group" id="chips-gender"></div>
+                <div class="chip-label">Orientação</div>
+                <div class="chip-group" id="chips-orientation"></div>
+                <div class="chip-label">Status</div>
+                <div class="chip-group" id="chips-status"></div>
+                <div class="chip-label">Procuro por (até 6)</div>
+                <div class="chip-group" id="chips-looking"></div>
+                <div class="chip-label">Me acende (até 12)</div>
+                <div class="chip-group" id="chips-tags"></div>
+                <input type="password" id="profile-password" placeholder="Nova chave secreta (opcional)">
+                <div class="chip-label">Email de recuperação</div>
+                <input type="email" id="profile-email" placeholder="Email para recuperar a conta" autocomplete="email">
+                <p class="hint-text">Sem email, uma senha esquecida = conta perdida pra sempre. O email nunca aparece pra ninguém.</p>
+                <div class="toggle-row">
+                    <label for="profile-invisible">Operar como Fantasma (invisível)</label>
+                    <input type="checkbox" id="profile-invisible">
+                </div>
+                <p class="hint-text">Você aparece no Radar para todo mundo. Quem controla a privacidade é você a cada publicação: todo post e story pergunta se é para <strong>todos</strong> ou <strong>só amigos</strong>.</p>
+                <button class="btn-primary" onclick="App.saveProfile()">Salvar perfil</button>
+
+                <div class="invite-box">
+                    <span class="invite-title">🔗 Seu link de convite</span>
+                    <span class="invite-link" id="invite-link-text">—</span>
+                    <button type="button" class="btn-primary" onclick="App.shareInvite()">📲 Compartilhar convite</button>
+                    <button type="button" class="btn-ghost" onclick="App.copyInvite()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                        Copiar link
+                    </button>
+                    <p class="hint-text">Quem entrar por esse link vira seu amigo automaticamente.</p>
+                </div>
+
+                <button type="button" class="btn-ghost" onclick="App.openBlocked()">🚫 Usuários bloqueados</button>
+                <button type="button" class="btn-ghost" onclick="App.installApp()">📲 Instalar app no celular</button>
+                <button type="button" class="btn-ghost" style="color:var(--danger);" onclick="App.logout()">Sair da conta</button>
+            </div>
+        </div>
+
+        <!-- AMIGOS (oculto — abre pelo botão) -->
+        <div id="friends-screen" class="screen">
+            <div class="top-bar">
+                <button class="back-btn" onclick="App.switchScreen('dashboard-screen')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    Voltar
+                </button>
+                <h3 id="friends-count-text">Seus amigos</h3>
+            </div>
+            <div class="profile-scroll">
+                <ul style="list-style:none; padding:0; margin:0;" id="friends-list"></ul>
             </div>
         </div>
 
@@ -1039,11 +1225,76 @@
                 </button>
             </div>
             <div class="sv-body" id="sv-body">
+                <div class="sv-overlay sc-layer" id="sv-overlay"></div>
                 <div class="sv-nav left" onclick="App.storyPrev()"></div>
                 <div class="sv-nav right" onclick="App.storyNext()"></div>
                 <div class="sv-caption hidden" id="sv-caption"></div>
             </div>
             <div class="sv-footer" id="sv-footer"></div>
+        </div>
+
+        <!-- EDITOR DE IMAGEM (cortar / zoom / girar / ajustes / filtros) -->
+        <div id="img-editor" class="img-editor">
+            <div class="ie-bar">
+                <button onclick="App.ieCancel()">Cancelar</button>
+                <button onclick="App.ieReset()" style="font-size:13px;color:var(--text-muted);">Restaurar</button>
+                <button class="ie-done" onclick="App.ieApply()">Avançar →</button>
+            </div>
+            <div class="ie-stage-wrap" id="ie-stage-wrap">
+                <div class="ie-stage" id="ie-stage"><img id="ie-img" draggable="false" alt=""></div>
+            </div>
+            <div class="ie-panel">
+                <div class="ie-tabs">
+                    <button class="on" onclick="App.iePane('crop', this)">✂️ Cortar</button>
+                    <button onclick="App.iePane('adj', this)">🎚️ Ajustes</button>
+                    <button onclick="App.iePane('fil', this)">✨ Filtros</button>
+                </div>
+                <div class="ie-pane on" id="ie-pane-crop">
+                    <div class="ie-row" id="ie-ratios"></div>
+                    <div class="ie-slider">
+                        <label>Zoom</label>
+                        <input type="range" id="ie-zoom" min="100" max="400" value="100" oninput="App.ieZoom(this.value)">
+                        <span id="ie-zoom-val">1.0x</span>
+                    </div>
+                    <div class="ie-row">
+                        <button onclick="App.ieRotate()">↻ Girar 90°</button>
+                        <button onclick="App.ieFlip()">⇄ Espelhar</button>
+                    </div>
+                </div>
+                <div class="ie-pane" id="ie-pane-adj">
+                    <div class="ie-slider"><label>Brilho</label><input type="range" id="ie-b" min="50" max="150" value="100" oninput="App.ieAdj()"><span id="ie-b-val">0</span></div>
+                    <div class="ie-slider"><label>Contraste</label><input type="range" id="ie-c" min="50" max="150" value="100" oninput="App.ieAdj()"><span id="ie-c-val">0</span></div>
+                    <div class="ie-slider"><label>Saturação</label><input type="range" id="ie-s" min="0" max="200" value="100" oninput="App.ieAdj()"><span id="ie-s-val">0</span></div>
+                </div>
+                <div class="ie-pane" id="ie-pane-fil">
+                    <div class="ie-row" id="ie-filters"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPOSITOR DE STORY (texto por cima / story só de texto) -->
+        <div id="story-comp" class="story-comp">
+            <div class="sc-bar">
+                <button onclick="App.scCancel()">Cancelar</button>
+                <div class="sc-tools">
+                    <button class="sc-icon" onclick="App.scAddText()" title="Adicionar texto">Aa</button>
+                    <button class="sc-icon" id="sc-del-btn" onclick="App.scDeleteText()" title="Apagar texto" style="display:none;">🗑️</button>
+                </div>
+                <button class="ie-done" style="color:var(--accent);" onclick="App.scNext()">Avançar →</button>
+            </div>
+            <div class="sc-canvas" id="sc-canvas">
+                <div class="sc-media" id="sc-media"><div class="sc-layer" id="sc-layer"></div></div>
+            </div>
+            <div class="sc-panel" id="sc-panel">
+                <div class="sc-bgrow hidden" id="sc-bgrow"></div>
+                <textarea class="sc-input" id="sc-input" rows="2" maxlength="220" placeholder="Escreva algo… 😈" oninput="App.scTextInput(this.value)"></textarea>
+                <div class="sc-swatches" id="sc-swatches"></div>
+                <div class="ie-slider">
+                    <label>Tamanho</label>
+                    <input type="range" id="sc-size" min="14" max="60" value="30" oninput="App.scSize(this.value)">
+                    <span id="sc-size-val">30</span>
+                </div>
+            </div>
         </div>
 
         <!-- FEED VERTICAL -->
@@ -1194,6 +1445,49 @@
         const ROOM_HOURS = [1, 3, 6, 12, 24];
         const RTC_CONFIG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] };
 
+        // === EDITOR DE IMAGEM ===
+        const IE_RATIOS = [
+            { label: 'Original', value: 0 },
+            { label: '1:1', value: 1 },
+            { label: '4:5', value: 4 / 5 },
+            { label: '9:16', value: 9 / 16 },
+            { label: '16:9', value: 16 / 9 }
+        ];
+        const IE_STORY_RATIOS = [
+            { label: '9:16', value: 9 / 16 },
+            { label: 'Original', value: 0 },
+            { label: '1:1', value: 1 },
+            { label: '4:5', value: 4 / 5 }
+        ];
+        const IE_FILTERS = [
+            { label: 'Original', css: '' },
+            { label: 'P&B',      css: 'grayscale(1)' },
+            { label: 'Sépia',    css: 'sepia(0.7)' },
+            { label: 'Quente',   css: 'sepia(0.32) saturate(1.45) hue-rotate(-12deg)' },
+            { label: 'Frio',     css: 'saturate(1.15) hue-rotate(16deg) brightness(1.04)' },
+            { label: 'Vintage',  css: 'sepia(0.4) contrast(1.14) saturate(0.85) brightness(1.05)' },
+            { label: 'Drama',    css: 'contrast(1.38) saturate(1.2) brightness(0.94)' },
+            { label: 'Neon',     css: 'saturate(1.9) contrast(1.15) hue-rotate(-8deg)' },
+            { label: 'Desbotado',css: 'saturate(0.6) contrast(0.9) brightness(1.12)' }
+        ];
+        // === COMPOSITOR DE STORY ===
+        const SC_COLORS = ['#ffffff', '#000000', '#ff2e63', '#b14bff', '#ff8a00', '#3dffa2', '#00d4ff', '#ffe600', '#ff6ec7'];
+        const SC_BGS = [
+            'linear-gradient(135deg,#ff2e63,#b14bff)',
+            'linear-gradient(135deg,#ff8a00,#ff0050)',
+            'linear-gradient(135deg,#7a2bff,#00d4ff)',
+            'linear-gradient(135deg,#0f2027,#2c5364)',
+            'linear-gradient(135deg,#3dffa2,#00b4a0)',
+            'linear-gradient(135deg,#1a0b14,#4a1030)',
+            'linear-gradient(135deg,#ffe600,#ff8a00)',
+            'linear-gradient(135deg,#141e30,#243b55)'
+        ];
+        // As mesmas cores acima, em pares — usadas para pintar o fundo no canvas.
+        const SC_GRAD_STOPS = [
+            ['#ff2e63', '#b14bff'], ['#ff8a00', '#ff0050'], ['#7a2bff', '#00d4ff'], ['#0f2027', '#2c5364'],
+            ['#3dffa2', '#00b4a0'], ['#1a0b14', '#4a1030'], ['#ffe600', '#ff8a00'], ['#141e30', '#243b55']
+        ];
+
         class PhantomCore {
             constructor() {
                 this.currentUser = null;
@@ -1232,6 +1526,16 @@
                 this.knownMatches = new Set();
                 this.lives = [];
                 this._pendingMatch = null;
+
+                // Perfil / editor de imagem / compositor de story
+                this.myPosts = [];
+                this.ie = null;             // estado do editor de imagem
+                this.sc = null;             // estado do compositor de story
+                this.scColor = '#ffffff';
+                this.pendingStory = null;
+                this.pendingFeedImage = null;
+                this.vvFromFeed = true;
+                this.feedTtl = 0;
 
                 // Resposta / reação
                 this.replyingTo = null;
@@ -1317,7 +1621,7 @@
                     document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === tab);
                     document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
                 });
-                if (tab === 'profile') { this.loadProfileForm(); this.loadFriends(); }
+                if (tab === 'profile') this.renderProfileTab();
                 if (tab === 'feed') this.loadFeed();
                 if (tab === 'radar') { this.loadRadar(); this.loadLives(); }
                 if (tab === 'salas') this.loadRooms();
@@ -1460,7 +1764,57 @@
                 this.fetchStories();
                 this.runPulse();
                 if (!this.heartbeatInterval) this.heartbeatInterval = setInterval(() => this.runPulse(), 10000);
+                this.scheduleEmailPopup();
                 this.scheduleInvitePopup();
+            }
+            // === COMPLETE O PERFIL: sem email, a conta não tem volta ===
+            // Aparece toda vez que entra, até a pessoa cadastrar (ou dispensar nesta sessão).
+            scheduleEmailPopup() {
+                if (this._emailPopupDone) return;
+                if (this.currentUser && String(this.currentUser.email || '').trim()) return;
+                this._emailPopupTimer = setTimeout(() => this.openEmailPopup(), 3500);
+            }
+            openEmailPopup() {
+                if (!this.currentUser || String(this.currentUser.email || '').trim()) return;
+                // não atropela quem está no meio de outra coisa
+                if (this.call || this.live ||
+                    document.getElementById('modal').classList.contains('open') ||
+                    document.getElementById('story-viewer').classList.contains('open') ||
+                    document.getElementById('img-editor').classList.contains('open') ||
+                    document.getElementById('story-comp').classList.contains('open') ||
+                    !document.getElementById('dashboard-screen').classList.contains('active')) {
+                    this._emailPopupTimer = setTimeout(() => this.openEmailPopup(), 15000);
+                    return;
+                }
+                this.showModal(
+                    '<div style="text-align:center;">' +
+                    '<div style="font-size:44px; line-height:1; margin-bottom:6px;">🔐</div>' +
+                    '<h3 style="margin:0 0 6px;">Complete seu perfil</h3>' +
+                    '<p class="hint-text" style="margin:0 0 14px;">Sua conta é anônima — e por isso frágil. <strong>Sem email, esqueceu a senha, perdeu tudo:</strong> conversas, matches e posts. Um email resolve, e ele nunca aparece pra ninguém.</p>' +
+                    '</div>' +
+                    '<input type="email" id="pop-email" placeholder="seu@email.com" autocomplete="email" inputmode="email">' +
+                    '<button class="btn-primary" style="margin-top:12px;" onclick="App.saveEmailFromPopup()">Salvar e proteger minha conta</button>' +
+                    '<button class="btn-ghost" style="margin-top:8px;" onclick="App.dismissEmailPopup()">Agora não</button>'
+                );
+                setTimeout(() => { const i = document.getElementById('pop-email'); if (i) i.focus(); }, 150);
+            }
+            dismissEmailPopup() {
+                this._emailPopupDone = true; // volta na próxima vez que abrir o app
+                this.closeModal();
+                this.toast('Beleza. Dá pra cadastrar depois em Perfil → Editar perfil.');
+            }
+            async saveEmailFromPopup() {
+                const el = document.getElementById('pop-email');
+                const email = el ? el.value.trim() : '';
+                if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return this.toast('Esse email não parece válido. 🤔');
+                try {
+                    const updated = await this.request('updateProfile', { fields: { email } });
+                    this.currentUser = { ...this.currentUser, ...updated };
+                    localStorage.setItem('phantom2_session', JSON.stringify(this.currentUser));
+                    this._emailPopupDone = true;
+                    this.closeModal();
+                    this.toast('Conta protegida. 🔐');
+                } catch (e) {}
             }
             // Convite: aparece uns segundos depois de entrar, no máx. 1x por dia.
             scheduleInvitePopup() {
@@ -1694,6 +2048,83 @@
                     else c.classList.toggle('on', this.profileSel[key].has(c.textContent));
                 });
             }
+            // ==========================================================
+            // === PERFIL ESTILO INSTAGRAM (cabeçalho + grade de posts)
+            // ==========================================================
+            renderProfileTab() {
+                const u = this.currentUser;
+                const av = document.getElementById('ig-avatar');
+                this.setAv(av, u);
+                av.classList.toggle('has-story', this.userStoriesIdx(u.id) >= 0);
+                document.getElementById('ig-name').textContent = u.name + (u.age ? `, ${u.age}` : '');
+                const meta = [u.gender, u.orientation, u.status, u.city].filter(Boolean).join(' • ');
+                document.getElementById('ig-meta').textContent = meta || (u.isInvisible ? '👻 modo fantasma' : '');
+                document.getElementById('ig-bio').textContent = u.bio || '';
+                const tags = [...(u.lookingFor || []), ...(u.tags || [])].slice(0, 8);
+                document.getElementById('ig-chips').innerHTML = tags
+                    .map(t => `<span class="chip small" style="pointer-events:none;">${this.esc(t)}</span>`).join('');
+                document.getElementById('ig-friends-count').textContent = this.friends ? this.friends.size : 0;
+                this.loadProfileGrid();
+                this.loadFriends();
+            }
+            async loadProfileGrid() {
+                const grid = document.getElementById('profile-grid');
+                if (!grid.querySelector('.pg-cell')) grid.innerHTML = '<p class="empty-state" style="grid-column:1/-1;">Carregando…</p>';
+                let posts;
+                try { posts = await this.request('getUserPosts', { targetId: this.currentUser.id }); } catch (e) { return; }
+                this.myPosts = posts || [];
+                document.getElementById('ig-posts-count').textContent = this.myPosts.length;
+                document.getElementById('ig-likes-count').textContent = this.myPosts.reduce((a, p) => a + (p.likes || 0), 0);
+                this.paintGrid(grid, this.myPosts, 'Nada publicado ainda. Toque no ➕ do feed pra estrear. 😈');
+            }
+            paintGrid(grid, posts, emptyMsg) {
+                grid.innerHTML = '';
+                if (!posts.length) { grid.innerHTML = `<p class="empty-state" style="grid-column:1/-1;">${emptyMsg}</p>`; return; }
+                posts.forEach((p, i) => grid.appendChild(this.gridCell(p, posts, i)));
+            }
+            gridCell(p, list, idx) {
+                const cell = document.createElement('button'); cell.className = 'pg-cell'; cell.type = 'button';
+                if (p.type === 'image') {
+                    const img = document.createElement('img'); img.loading = 'lazy'; img.draggable = false;
+                    img.oncontextmenu = () => false; img.src = this.driveImageUrl(p.fileId);
+                    cell.appendChild(img);
+                } else if (p.type === 'video') {
+                    // Vídeo fica privado no Drive: se a miniatura não vier, mostra o cartão escuro.
+                    const ph = document.createElement('div'); ph.className = 'pg-vid'; ph.textContent = '🎬';
+                    cell.appendChild(ph);
+                    const img = document.createElement('img'); img.loading = 'lazy'; img.draggable = false;
+                    img.oncontextmenu = () => false; img.src = this.driveImageUrl(p.fileId);
+                    img.style.position = 'absolute'; img.style.inset = '0';
+                    img.onerror = () => img.remove();
+                    cell.appendChild(img);
+                    const t = document.createElement('span'); t.className = 'pg-type'; t.textContent = '▶️';
+                    cell.appendChild(t);
+                } else {
+                    const tx = document.createElement('div'); tx.className = 'pg-txt';
+                    tx.textContent = (p.caption || '').slice(0, 110);
+                    cell.appendChild(tx);
+                }
+                const badge = document.createElement('span');
+                badge.className = 'pg-badge' + (p.eternal ? ' eternal' : '');
+                badge.textContent = p.eternal ? '♾️' : '⏳ ' + this.timeLeft(p.expiresAt);
+                cell.appendChild(badge);
+                if (p.visibility === 'friends') {
+                    const lock = document.createElement('span'); lock.className = 'pg-lock'; lock.textContent = '👥';
+                    lock.title = 'Só amigos';
+                    cell.appendChild(lock);
+                }
+                cell.onclick = () => this.openVertical(idx, list);
+                return cell;
+            }
+            openEditProfile() { this.loadProfileForm(); this.switchScreen('edit-profile-screen'); }
+            closeEditProfile() { this.switchScreen('dashboard-screen'); this.renderProfileTab(); }
+            openFriendsScreen() { this.switchScreen('friends-screen'); this.loadFriends(); }
+            openMyStories() {
+                const idx = this.userStoriesIdx(this.currentUser.id);
+                if (idx >= 0) this.openStories(idx);
+                else this.openAddStory();
+            }
+
             loadProfileForm() {
                 const u = this.currentUser;
                 document.getElementById('profile-emoji').value = u.emoji;
@@ -1758,7 +2189,9 @@
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file) return;
                 if (!file.type.startsWith('image/')) return this.toast('Escolha uma imagem.');
-                const c = await this.compressImage(file, 512, 0.85);
+                // Foto de perfil passa pelo editor, recortada em 1:1.
+                const c = await this.editImage(file, { ratios: [{ label: '1:1', value: 1 }], maxOut: 512, quality: 0.85 });
+                if (!c) return;
                 this._pendingAvatar = c.dataUrl;
                 document.getElementById('profile-avatar-preview').innerHTML =
                     `<img class="av-photo" src="${c.dataUrl}" draggable="false">`;
@@ -1828,6 +2261,7 @@
                 let friends;
                 try { friends = await this.request('getFriends', {}); } catch (e) { return; }
                 document.getElementById('friends-count-text').textContent = friends.length ? `${friends.length} amigo(s)` : 'Seus amigos';
+                const cnt = document.getElementById('ig-friends-count'); if (cnt) cnt.textContent = friends.length;
                 if (!friends.length) { list.innerHTML = '<li class="empty-state">Você ainda não tem amigos. Convide pelo seu link ou adicione gente pelo Radar.</li>'; return; }
                 list.innerHTML = '';
                 friends.forEach(u => {
@@ -2000,6 +2434,8 @@
                         : `<button class="pf-crush${u.crushSent ? ' sent' : ''}" id="pf-crush-btn" onclick="App.crushFromSheet()">${ICONS.flame}<span>${u.crushSent ? 'Crush enviado' : 'Crush'}</span></button>`) +
                     `</div>
                     <div id="pf-friend-slot"></div>
+                    <div class="pg-head" style="margin-top:12px;"><span>Publicações</span><span class="pg-hint">♾️ eterno · ⏳ temporário</span></div>
+                    <div class="pg-grid" id="pf-grid"><p class="empty-state" style="grid-column:1/-1;">Carregando…</p></div>
                     <div class="pf-foot">
                         <button onclick="App.blockFromSheet()">${ICONS.ban} Bloquear</button>
                         <button onclick="App.reportFromSheet()">${ICONS.alert} Denunciar</button>
@@ -2009,6 +2445,17 @@
                 const slot = document.getElementById('pf-friend-slot');
                 const fb = this.friendButton(u.id, {});
                 if (fb) { fb.style.margin = '4px auto 0'; slot.appendChild(fb); }
+                this.loadSheetPosts(u.id);
+            }
+            async loadSheetPosts(targetId) {
+                let posts;
+                try { posts = await this.request('getUserPosts', { targetId }); } catch (e) { posts = []; }
+                const grid = document.getElementById('pf-grid');
+                if (!grid || !this._sheetUser || this._sheetUser.id !== targetId) return;
+                this.paintGrid(grid, posts || [], 'Nada publicado por aqui ainda. 👻');
+                grid.querySelectorAll('.pg-cell').forEach((cell, i) => {
+                    cell.onclick = () => { this.closeModal(); this.openVertical(i, posts); };
+                });
             }
             crushFromSheet() {
                 const u = this._sheetUser; if (!u) return;
@@ -2684,6 +3131,244 @@
                     img.src = url;
                 });
             }
+
+            // ==========================================================
+            // === EDITOR DE IMAGEM (cortar, zoom, girar, ajustes, filtros)
+            // Abre um editor em tela cheia e devolve um dataURL já editado.
+            // ==========================================================
+            editImage(file, opts) {
+                opts = opts || {};
+                return new Promise((resolve) => {
+                    const url = URL.createObjectURL(file);
+                    const img = new Image();
+                    img.onload = () => {
+                        this.ie = {
+                            img: img, url: url, resolve: resolve,
+                            ratios: opts.ratios || IE_RATIOS,
+                            ratioIdx: 0, rot: 0, flip: 1, zoom: 1, tx: 0, ty: 0,
+                            b: 1, c: 1, s: 1, filter: '', maxOut: opts.maxOut || 1440,
+                            quality: opts.quality || 0.86
+                        };
+                        this.ieBuildChips();
+                        document.getElementById('ie-zoom').value = 100;
+                        document.getElementById('ie-b').value = 100;
+                        document.getElementById('ie-c').value = 100;
+                        document.getElementById('ie-s').value = 100;
+                        document.getElementById('ie-img').src = url;
+                        document.getElementById('img-editor').classList.add('open');
+                        this.iePane('crop', document.querySelector('.ie-tabs button'));
+                        requestAnimationFrame(() => { this.ieLayout(); this.ieBindDrag(); });
+                    };
+                    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+                    img.src = url;
+                });
+            }
+            ieBuildChips() {
+                const rr = document.getElementById('ie-ratios');
+                rr.innerHTML = this.ie.ratios.map((r, i) =>
+                    `<button class="${i === 0 ? 'on' : ''}" onclick="App.ieRatio(${i}, this)">${r.label}</button>`).join('');
+                const ff = document.getElementById('ie-filters');
+                ff.innerHTML = IE_FILTERS.map((f, i) =>
+                    `<button class="${i === 0 ? 'on' : ''}" onclick="App.ieFilter(${i}, this)">${f.label}</button>`).join('');
+            }
+            iePane(which, btn) {
+                ['crop', 'adj', 'fil'].forEach(p => document.getElementById('ie-pane-' + p).classList.toggle('on', p === which));
+                document.querySelectorAll('.ie-tabs button').forEach(b => b.classList.toggle('on', b === btn));
+                document.getElementById('ie-stage').classList.toggle('grid', which === 'crop');
+            }
+            // Calcula o tamanho do quadro de recorte e a escala-base (cobrir o quadro).
+            ieLayout() {
+                const ie = this.ie; if (!ie) return;
+                const wrap = document.getElementById('ie-stage-wrap');
+                const stage = document.getElementById('ie-stage');
+                const availW = wrap.clientWidth - 4, availH = wrap.clientHeight - 4;
+                const r = ie.ratios[ie.ratioIdx];
+                let ar = r.value;
+                if (!ar) { // "Original" segue a proporção da foto (já rotacionada)
+                    const rw = (ie.rot % 180 === 0) ? ie.img.naturalWidth : ie.img.naturalHeight;
+                    const rh = (ie.rot % 180 === 0) ? ie.img.naturalHeight : ie.img.naturalWidth;
+                    ar = rw / rh;
+                }
+                let vw = availW, vh = vw / ar;
+                if (vh > availH) { vh = availH; vw = vh * ar; }
+                ie.vw = Math.round(vw); ie.vh = Math.round(vh);
+                stage.style.width = ie.vw + 'px'; stage.style.height = ie.vh + 'px';
+                const rw = (ie.rot % 180 === 0) ? ie.img.naturalWidth : ie.img.naturalHeight;
+                const rh = (ie.rot % 180 === 0) ? ie.img.naturalHeight : ie.img.naturalWidth;
+                ie.base = Math.max(ie.vw / rw, ie.vh / rh); // "cover": nunca deixa borda vazia
+                this.ieClamp();
+                this.ieRender();
+            }
+            // Impede que a foto saia do quadro (sempre cobrindo tudo).
+            ieClamp() {
+                const ie = this.ie; if (!ie) return;
+                const s = ie.base * ie.zoom;
+                const rw = (ie.rot % 180 === 0) ? ie.img.naturalWidth : ie.img.naturalHeight;
+                const rh = (ie.rot % 180 === 0) ? ie.img.naturalHeight : ie.img.naturalWidth;
+                const maxX = Math.max(0, (rw * s - ie.vw) / 2);
+                const maxY = Math.max(0, (rh * s - ie.vh) / 2);
+                ie.tx = Math.max(-maxX, Math.min(maxX, ie.tx));
+                ie.ty = Math.max(-maxY, Math.min(maxY, ie.ty));
+            }
+            ieFilterString() {
+                const ie = this.ie;
+                return `brightness(${ie.b}) contrast(${ie.c}) saturate(${ie.s})${ie.filter ? ' ' + ie.filter : ''}`;
+            }
+            ieRender() {
+                const ie = this.ie; if (!ie) return;
+                const el = document.getElementById('ie-img');
+                const s = ie.base * ie.zoom;
+                el.style.width = ie.img.naturalWidth + 'px';
+                el.style.height = ie.img.naturalHeight + 'px';
+                el.style.transform =
+                    `translate(-50%, -50%) translate(${ie.tx}px, ${ie.ty}px) rotate(${ie.rot}deg) scale(${ie.flip * s}, ${s})`;
+                el.style.filter = this.ieFilterString();
+            }
+            ieRatio(i, btn) {
+                this.ie.ratioIdx = i;
+                document.querySelectorAll('#ie-ratios button').forEach(b => b.classList.toggle('on', b === btn));
+                this.ieLayout();
+            }
+            ieZoom(v) {
+                this.ie.zoom = Number(v) / 100;
+                document.getElementById('ie-zoom-val').textContent = this.ie.zoom.toFixed(1) + 'x';
+                this.ieClamp(); this.ieRender();
+            }
+            ieRotate() { this.ie.rot = (this.ie.rot + 90) % 360; this.ie.tx = 0; this.ie.ty = 0; this.ieLayout(); }
+            ieFlip() { this.ie.flip *= -1; this.ieRender(); }
+            ieAdj() {
+                const g = (id) => Number(document.getElementById(id).value);
+                this.ie.b = g('ie-b') / 100; this.ie.c = g('ie-c') / 100; this.ie.s = g('ie-s') / 100;
+                document.getElementById('ie-b-val').textContent = (g('ie-b') - 100 > 0 ? '+' : '') + (g('ie-b') - 100);
+                document.getElementById('ie-c-val').textContent = (g('ie-c') - 100 > 0 ? '+' : '') + (g('ie-c') - 100);
+                document.getElementById('ie-s-val').textContent = (g('ie-s') - 100 > 0 ? '+' : '') + (g('ie-s') - 100);
+                this.ieRender();
+            }
+            ieFilter(i, btn) {
+                this.ie.filter = IE_FILTERS[i].css;
+                document.querySelectorAll('#ie-filters button').forEach(b => b.classList.toggle('on', b === btn));
+                this.ieRender();
+            }
+            ieReset() {
+                const ie = this.ie; if (!ie) return;
+                ie.rot = 0; ie.flip = 1; ie.zoom = 1; ie.tx = 0; ie.ty = 0; ie.b = 1; ie.c = 1; ie.s = 1; ie.filter = ''; ie.ratioIdx = 0;
+                document.getElementById('ie-zoom').value = 100; document.getElementById('ie-zoom-val').textContent = '1.0x';
+                ['ie-b', 'ie-c', 'ie-s'].forEach(id => document.getElementById(id).value = 100);
+                this.ieAdj();
+                this.ieBuildChips();
+                this.ieLayout();
+            }
+            // Arrastar com 1 dedo, pinçar com 2.
+            ieBindDrag() {
+                const stage = document.getElementById('ie-stage');
+                if (stage._bound) return; stage._bound = true;
+                let pts = new Map(), startTx = 0, startTy = 0, startDist = 0, startZoom = 1, cx = 0, cy = 0;
+                const dist = () => {
+                    const a = [...pts.values()];
+                    return Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
+                };
+                stage.addEventListener('pointerdown', (e) => {
+                    if (!this.ie) return;
+                    stage.setPointerCapture(e.pointerId);
+                    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+                    startTx = this.ie.tx; startTy = this.ie.ty; startZoom = this.ie.zoom;
+                    cx = e.clientX; cy = e.clientY;
+                    if (pts.size === 2) startDist = dist();
+                });
+                stage.addEventListener('pointermove', (e) => {
+                    if (!this.ie || !pts.has(e.pointerId)) return;
+                    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+                    if (pts.size >= 2) {
+                        if (!startDist) { startDist = dist(); return; }
+                        const z = Math.max(1, Math.min(4, startZoom * (dist() / startDist)));
+                        this.ie.zoom = z;
+                        document.getElementById('ie-zoom').value = Math.round(z * 100);
+                        document.getElementById('ie-zoom-val').textContent = z.toFixed(1) + 'x';
+                    } else {
+                        this.ie.tx = startTx + (e.clientX - cx);
+                        this.ie.ty = startTy + (e.clientY - cy);
+                    }
+                    this.ieClamp(); this.ieRender();
+                });
+                const up = (e) => {
+                    pts.delete(e.pointerId);
+                    if (pts.size < 2) startDist = 0;
+                    if (pts.size === 1) {
+                        const p = [...pts.values()][0];
+                        cx = p.x; cy = p.y; startTx = this.ie ? this.ie.tx : 0; startTy = this.ie ? this.ie.ty : 0;
+                    }
+                };
+                stage.addEventListener('pointerup', up);
+                stage.addEventListener('pointercancel', up);
+            }
+            // Desenha no canvas exatamente a mesma transformação do preview.
+            ieToDataUrl() {
+                const ie = this.ie;
+                const long = Math.max(ie.vw, ie.vh);
+                const k = Math.min(ie.maxOut / long, 4);
+                const outW = Math.max(1, Math.round(ie.vw * k));
+                const outH = Math.max(1, Math.round(ie.vh * k));
+                const cv = document.createElement('canvas');
+                cv.width = outW; cv.height = outH;
+                const ctx = cv.getContext('2d');
+                ctx.fillStyle = '#000'; ctx.fillRect(0, 0, outW, outH);
+                const wanted = this.ieFilterString();
+                let native = false;
+                try { ctx.filter = wanted; native = (ctx.filter && ctx.filter !== 'none'); } catch (e) { native = false; }
+                const s = ie.base * ie.zoom;
+                ctx.save();
+                ctx.translate(outW / 2, outH / 2);
+                ctx.translate(ie.tx * k, ie.ty * k);
+                ctx.rotate(ie.rot * Math.PI / 180);
+                ctx.scale(ie.flip * s * k, s * k);
+                ctx.drawImage(ie.img, -ie.img.naturalWidth / 2, -ie.img.naturalHeight / 2);
+                ctx.restore();
+                if (!native) this.iePixelFilter(ctx, outW, outH);
+                return cv.toDataURL('image/jpeg', ie.quality);
+            }
+            // Navegadores antigos não têm ctx.filter — aplica brilho/contraste/saturação
+            // (e P&B/sépia) na unha, pixel a pixel, para o resultado não sair "cru".
+            iePixelFilter(ctx, w, h) {
+                const ie = this.ie;
+                const gray = /grayscale/.test(ie.filter);
+                const sep = /sepia/.test(ie.filter);
+                if (ie.b === 1 && ie.c === 1 && ie.s === 1 && !gray && !sep) return;
+                let d;
+                try { d = ctx.getImageData(0, 0, w, h); } catch (e) { return; }
+                const px = d.data, b = ie.b, c = ie.c, sat = ie.s, ic = 128 * (1 - c);
+                for (let i = 0; i < px.length; i += 4) {
+                    let r = px[i], g = px[i + 1], bl = px[i + 2];
+                    if (gray) { const y = 0.2126 * r + 0.7152 * g + 0.0722 * bl; r = g = bl = y; }
+                    else if (sep) {
+                        const nr = r * 0.393 + g * 0.769 + bl * 0.189;
+                        const ng = r * 0.349 + g * 0.686 + bl * 0.168;
+                        const nb = r * 0.272 + g * 0.534 + bl * 0.131;
+                        r = nr; g = ng; bl = nb;
+                    }
+                    if (sat !== 1) { const y = 0.2126 * r + 0.7152 * g + 0.0722 * bl; r = y + (r - y) * sat; g = y + (g - y) * sat; bl = y + (bl - y) * sat; }
+                    r = r * b * c + ic; g = g * b * c + ic; bl = bl * b * c + ic;
+                    px[i] = r < 0 ? 0 : r > 255 ? 255 : r;
+                    px[i + 1] = g < 0 ? 0 : g > 255 ? 255 : g;
+                    px[i + 2] = bl < 0 ? 0 : bl > 255 ? 255 : bl;
+                }
+                ctx.putImageData(d, 0, 0);
+            }
+            ieApply() {
+                const ie = this.ie; if (!ie) return;
+                let out = null;
+                try { out = this.ieToDataUrl(); } catch (e) { this.toast('Não consegui editar essa imagem.'); }
+                this.ieClose();
+                ie.resolve(out ? { dataUrl: out, mime: 'image/jpeg' } : null);
+            }
+            ieCancel() { const ie = this.ie; this.ieClose(); if (ie) ie.resolve(null); }
+            ieClose() {
+                document.getElementById('img-editor').classList.remove('open');
+                const el = document.getElementById('ie-img');
+                el.removeAttribute('src'); el.style.filter = '';
+                if (this.ie && this.ie.url) { try { URL.revokeObjectURL(this.ie.url); } catch (e) {} }
+                this.ie = null;
+            }
+
             async handleMedia(event) {
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file || !this.currentGroup) return;
@@ -2817,10 +3502,11 @@
                 return b;
             }
             openAddStory() {
-                this.pendingStoryFile = null;
+                this.pendingStory = null;
                 this.showModal(
                     '<h3>Novo story</h3>' +
                     '<div class="vis-choice">' +
+                    '<button onclick="App.startTextStory()">✍️<span>Texto</span><small>Fundo colorido</small></button>' +
                     '<button onclick="App.pickStory(\'story-photo\')">📷<span>Foto</span><small>Abrir câmera</small></button>' +
                     '<button onclick="App.pickStory(\'story-video\')">🎥<span>Vídeo</span><small>Gravar</small></button>' +
                     '<button onclick="App.pickStory(\'story-gallery\')">🖼️<span>Galeria</span><small>Do aparelho</small></button>' +
@@ -2828,12 +3514,22 @@
                 );
             }
             pickStory(inputId) { this.closeModal(); document.getElementById(inputId).click(); }
-            handleStoryFile(event) {
+            startTextStory() { this.closeModal(); this.scOpen({ mode: 'text' }); }
+            async handleStoryFile(event) {
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file) return;
                 if (file.size > 12 * 1024 * 1024) return this.toast('Arquivo excede 12MB.');
                 if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return this.toast('Story deve ser foto ou vídeo.');
-                this.pendingStoryFile = file;
+                if (file.type.startsWith('image/')) {
+                    // Foto: edita (cortar/ajustar) e depois escreve por cima.
+                    const edited = await this.editImage(file, { ratios: IE_STORY_RATIOS, maxOut: 1440, quality: 0.86 });
+                    if (!edited) return;
+                    this.scOpen({ mode: 'image', dataUrl: edited.dataUrl });
+                } else {
+                    this.scOpen({ mode: 'video', file: file });
+                }
+            }
+            askStoryVisibility() {
                 this.showModal(
                     '<h3>Quem pode ver seu story?</h3>' +
                     '<div class="vis-choice">' +
@@ -2843,22 +3539,279 @@
                 );
             }
             async confirmStory(visibility) {
-                const file = this.pendingStoryFile; this.pendingStoryFile = null; this.closeModal();
-                if (!file) return;
-                const type = file.type.startsWith('image/') ? 'image' : 'video';
-                let dataUrl, mime = file.type;
-                if (type === 'image') { const c = await this.compressImage(file); dataUrl = c.dataUrl; mime = c.mime; }
-                else dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); });
-                const wait = this.toastSticky(type === 'video' ? '⏫ Enviando vídeo do story… não feche o app.' : '⏫ Publicando story…');
+                const pend = this.pendingStory; this.pendingStory = null; this.closeModal();
+                if (!pend) return;
+                const isVideo = pend.type === 'video';
+                let dataUrl = pend.dataUrl, mime = pend.mime || 'image/jpeg';
+                if (isVideo) {
+                    mime = pend.file.type;
+                    dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(pend.file); });
+                }
+                const wait = this.toastSticky(isVideo ? '⏫ Enviando vídeo do story… não feche o app.' : '⏫ Publicando story…');
                 try {
-                    await this.request('postStory', { content: dataUrl, type, mimeType: mime, visibility, caption: '' });
+                    await this.request('postStory', {
+                        content: dataUrl, type: isVideo ? 'video' : 'image', mimeType: mime,
+                        visibility, caption: pend.caption || ''
+                    });
                     this.dropToast(wait);
                     this.toast('Story publicado! Some em 24h.');
                     this.fetchStories();
                 } catch (err) {
                     this.dropToast(wait);
-                    if (type === 'video') this.toast('O vídeo não subiu. Tente um mais curto/leve (até ~12MB).');
+                    if (isVideo) this.toast('O vídeo não subiu. Tente um mais curto/leve (até ~12MB).');
                 }
+            }
+
+            // ==========================================================
+            // === COMPOSITOR DE STORY (escrever por cima / só texto)
+            // ==========================================================
+            scOpen(opts) {
+                this.sc = { mode: opts.mode, dataUrl: opts.dataUrl || null, file: opts.file || null, texts: [], sel: null, bgIdx: 0, seq: 0 };
+                const media = document.getElementById('sc-media');
+                const layer = document.getElementById('sc-layer');
+                media.querySelectorAll('img,video').forEach(el => el.remove());
+                layer.innerHTML = '';
+                document.getElementById('sc-input').value = '';
+                document.getElementById('sc-size').value = 30;
+                document.getElementById('sc-size-val').textContent = '30';
+                this.scColor = SC_COLORS[0];
+                document.getElementById('sc-swatches').innerHTML = SC_COLORS.map((c, i) =>
+                    `<button class="sc-sw ${i === 0 ? 'on' : ''}" data-c="${c}" style="background:${c}" onclick="App.scPickColor('${c}', this)"></button>`).join('');
+                const bgrow = document.getElementById('sc-bgrow');
+                bgrow.classList.toggle('hidden', opts.mode !== 'text');
+                if (opts.mode === 'text') {
+                    bgrow.innerHTML = SC_BGS.map((g, i) =>
+                        `<button class="sc-bg ${i === 0 ? 'on' : ''}" style="background:${g}" onclick="App.scPickBg(${i}, this)"></button>`).join('');
+                    media.style.background = SC_BGS[0];
+                } else {
+                    media.style.background = '#000';
+                }
+
+                if (opts.mode === 'image') {
+                    const img = document.createElement('img'); img.src = opts.dataUrl; img.draggable = false;
+                    media.insertBefore(img, layer);
+                    img.onload = () => this.scLayout(img.naturalWidth / img.naturalHeight);
+                    this.scLayout(9 / 16);
+                } else if (opts.mode === 'video') {
+                    const v = document.createElement('video');
+                    v.src = URL.createObjectURL(opts.file); v.muted = true; v.playsInline = true; v.loop = true;
+                    this.sc.objUrl = v.src;
+                    media.insertBefore(v, layer);
+                    v.onloadedmetadata = () => { if (!this.sc) return; this.scLayout(v.videoWidth / v.videoHeight); v.play().catch(() => {}); };
+                    this.scLayout(9 / 16);
+                } else {
+                    this.scLayout(9 / 16);
+                }
+                document.getElementById('story-comp').classList.add('open');
+                requestAnimationFrame(() => {
+                    if (!this.sc) return; // já fechou antes de desenhar
+                    this.scLayout(this.sc.ar || 9 / 16);
+                    if (opts.mode === 'text') this.scAddText();
+                });
+            }
+            scLayout(ar) {
+                if (!this.sc) return;
+                this.sc.ar = ar || 9 / 16;
+                const box = document.getElementById('sc-canvas');
+                const media = document.getElementById('sc-media');
+                const availW = box.clientWidth - 8, availH = box.clientHeight - 8;
+                if (availW <= 0 || availH <= 0) return;
+                let w = availW, h = w / this.sc.ar;
+                if (h > availH) { h = availH; w = h * this.sc.ar; }
+                media.style.width = Math.round(w) + 'px';
+                media.style.height = Math.round(h) + 'px';
+                this.sc.w = Math.round(w); this.sc.h = Math.round(h);
+                this.sc.texts.forEach(t => this.scPaint(t));
+            }
+            scPickColor(c, btn) {
+                this.scColor = c;
+                document.querySelectorAll('#sc-swatches .sc-sw').forEach(b => b.classList.toggle('on', b === btn));
+                const t = this.scSelected(); if (t) { t.color = c; this.scPaint(t); }
+            }
+            scPickBg(i, btn) {
+                this.sc.bgIdx = i;
+                document.querySelectorAll('#sc-bgrow .sc-bg').forEach(b => b.classList.toggle('on', b === btn));
+                document.getElementById('sc-media').style.background = SC_BGS[i];
+            }
+            scSelected() { return this.sc ? this.sc.texts.find(t => t.id === this.sc.sel) : null; }
+            scAddText() {
+                if (!this.sc) return;
+                const t = {
+                    id: ++this.sc.seq, text: '', x: 0.5, y: this.sc.mode === 'text' ? 0.5 : 0.72,
+                    color: this.scColor, sizeRel: Number(document.getElementById('sc-size').value) / 400
+                };
+                const el = document.createElement('div'); el.className = 'sc-text';
+                t.el = el;
+                document.getElementById('sc-layer').appendChild(el);
+                this.sc.texts.push(t);
+                this.scBindText(t);
+                this.scSelect(t.id);
+                this.scPaint(t);
+                setTimeout(() => document.getElementById('sc-input').focus(), 120);
+            }
+            scSelect(id) {
+                this.sc.sel = id;
+                this.sc.texts.forEach(t => t.el.classList.toggle('sel', t.id === id));
+                const t = this.scSelected();
+                document.getElementById('sc-del-btn').style.display = t ? 'flex' : 'none';
+                if (t) {
+                    document.getElementById('sc-input').value = t.text;
+                    const px = Math.round(t.sizeRel * 400);
+                    document.getElementById('sc-size').value = px;
+                    document.getElementById('sc-size-val').textContent = px;
+                    this.scColor = t.color;
+                    document.querySelectorAll('#sc-swatches .sc-sw').forEach(b =>
+                        b.classList.toggle('on', b.dataset.c === t.color));
+                }
+            }
+            scTextInput(v) { const t = this.scSelected(); if (!t) return; t.text = v; this.scPaint(t); }
+            scSize(v) {
+                document.getElementById('sc-size-val').textContent = v;
+                const t = this.scSelected(); if (!t) return;
+                t.sizeRel = Number(v) / 400; this.scPaint(t);
+            }
+            scDeleteText() {
+                const t = this.scSelected(); if (!t) return;
+                t.el.remove();
+                this.sc.texts = this.sc.texts.filter(x => x.id !== t.id);
+                this.sc.sel = null;
+                document.getElementById('sc-input').value = '';
+                document.getElementById('sc-del-btn').style.display = 'none';
+            }
+            scPaint(t) {
+                const w = this.sc.w || 300;
+                t.el.textContent = t.text || 'Escreva…';
+                t.el.style.opacity = t.text ? '1' : '0.45';
+                t.el.style.left = (t.x * 100) + '%';
+                t.el.style.top = (t.y * 100) + '%';
+                t.el.style.color = t.color;
+                t.el.style.fontSize = Math.max(10, t.sizeRel * w) + 'px';
+            }
+            scBindText(t) {
+                let sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
+                t.el.addEventListener('pointerdown', (e) => {
+                    e.stopPropagation();
+                    t.el.setPointerCapture(e.pointerId);
+                    sx = e.clientX; sy = e.clientY; ox = t.x; oy = t.y; moved = false;
+                    this.scSelect(t.id);
+                });
+                t.el.addEventListener('pointermove', (e) => {
+                    if (!t.el.hasPointerCapture || !t.el.hasPointerCapture(e.pointerId)) return;
+                    const dx = (e.clientX - sx) / (this.sc.w || 1);
+                    const dy = (e.clientY - sy) / (this.sc.h || 1);
+                    if (Math.abs(e.clientX - sx) > 3 || Math.abs(e.clientY - sy) > 3) moved = true;
+                    t.x = Math.max(0.06, Math.min(0.94, ox + dx));
+                    t.y = Math.max(0.05, Math.min(0.95, oy + dy));
+                    this.scPaint(t);
+                });
+                t.el.addEventListener('pointerup', () => { if (!moved) document.getElementById('sc-input').focus(); });
+            }
+            scCancel() { this.scClose(); }
+            scClose() {
+                document.getElementById('story-comp').classList.remove('open');
+                if (this.sc && this.sc.objUrl) { try { URL.revokeObjectURL(this.sc.objUrl); } catch (e) {} }
+                const media = document.getElementById('sc-media');
+                media.querySelectorAll('img,video').forEach(el => { if (el.tagName === 'VIDEO') try { el.pause(); } catch (e) {} el.remove(); });
+                document.getElementById('sc-layer').innerHTML = '';
+                this.sc = null;
+            }
+            // "Avançar": foto e texto viram imagem com o texto queimado;
+            // vídeo guarda as camadas em JSON pra desenhar na hora de assistir.
+            async scNext() {
+                const sc = this.sc; if (!sc) return;
+                const live = sc.texts.filter(t => (t.text || '').trim());
+                if (sc.mode === 'text' && !live.length) return this.toast('Escreva algo primeiro. 😏');
+                if (sc.mode === 'video') {
+                    this.pendingStory = {
+                        type: 'video', file: sc.file,
+                        caption: live.length ? JSON.stringify({ ov: 1, t: live.map(t => ({ x: +t.x.toFixed(4), y: +t.y.toFixed(4), s: +t.sizeRel.toFixed(4), c: t.color, w: t.text })) }) : ''
+                    };
+                    this.scClose(); this.askStoryVisibility(); return;
+                }
+                const wait = this.toastSticky('🎨 Montando o story…');
+                try {
+                    const dataUrl = await this.scRender(live);
+                    this.dropToast(wait);
+                    this.pendingStory = { type: 'image', dataUrl: dataUrl, mime: 'image/jpeg', caption: '' };
+                    this.scClose(); this.askStoryVisibility();
+                } catch (e) {
+                    this.dropToast(wait);
+                    this.toast('Não consegui montar o story. Tente outra foto.');
+                }
+            }
+            // Desenha a imagem (ou o fundo gradiente) + os textos num canvas.
+            scRender(texts) {
+                const sc = this.sc;
+                return new Promise((resolve, reject) => {
+                    const draw = (img) => {
+                        const outW = 1080;
+                        const outH = Math.round(outW / (sc.ar || 9 / 16));
+                        const cv = document.createElement('canvas');
+                        cv.width = outW; cv.height = outH;
+                        const ctx = cv.getContext('2d');
+                        if (img) {
+                            ctx.drawImage(img, 0, 0, outW, outH);
+                        } else {
+                            const g = ctx.createLinearGradient(0, 0, outW, outH);
+                            const stops = SC_GRAD_STOPS[sc.bgIdx] || SC_GRAD_STOPS[0];
+                            g.addColorStop(0, stops[0]); g.addColorStop(1, stops[1]);
+                            ctx.fillStyle = g; ctx.fillRect(0, 0, outW, outH);
+                        }
+                        texts.forEach(t => {
+                            const fs = Math.max(12, t.sizeRel * outW);
+                            ctx.font = `900 ${fs}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`;
+                            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                            const lines = this.scWrap(ctx, t.text, outW * 0.86);
+                            const lh = fs * 1.18;
+                            const top = t.y * outH - ((lines.length - 1) * lh) / 2;
+                            ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = fs * 0.28; ctx.shadowOffsetY = fs * 0.05;
+                            ctx.fillStyle = t.color;
+                            lines.forEach((ln, i) => ctx.fillText(ln, t.x * outW, top + i * lh));
+                            ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+                        });
+                        resolve(cv.toDataURL('image/jpeg', 0.88));
+                    };
+                    if (sc.mode === 'image' && sc.dataUrl) {
+                        const im = new Image();
+                        im.onload = () => draw(im);
+                        im.onerror = reject;
+                        im.src = sc.dataUrl;
+                    } else draw(null);
+                });
+            }
+            scWrap(ctx, text, maxW) {
+                const out = [];
+                String(text).split('\n').forEach(para => {
+                    const words = para.split(' ');
+                    let line = '';
+                    words.forEach(w => {
+                        const test = line ? line + ' ' + w : w;
+                        if (ctx.measureText(test).width > maxW && line) { out.push(line); line = w; }
+                        else line = test;
+                    });
+                    out.push(line);
+                });
+                return out.length ? out : [''];
+            }
+            // Camadas de texto salvas (stories de vídeo) -> desenha por cima do player.
+            renderStoryOverlay(caption, mediaEl) {
+                const layer = document.getElementById('sv-overlay');
+                layer.innerHTML = ''; layer.style.cssText = '';
+                let data = null;
+                try { const p = JSON.parse(caption); if (p && p.ov && Array.isArray(p.t)) data = p.t; } catch (e) {}
+                if (!data || !mediaEl) return false;
+                const place = () => {
+                    const body = document.getElementById('sv-body').getBoundingClientRect();
+                    const r = mediaEl.getBoundingClientRect();
+                    if (!r.width || !r.height) return;
+                    layer.style.cssText = `position:absolute;left:${r.left - body.left}px;top:${r.top - body.top}px;width:${r.width}px;height:${r.height}px;inset:auto;`;
+                    layer.innerHTML = data.map(t =>
+                        `<div class="sc-text" style="left:${t.x * 100}%;top:${t.y * 100}%;color:${this.esc(t.c)};font-size:${Math.max(10, t.s * r.width)}px;">${this.esc(t.w)}</div>`
+                    ).join('');
+                };
+                place();
+                setTimeout(place, 220);
+                return true;
             }
             openStories(authorIdx) {
                 if (!this.storyGroups[authorIdx]) return;
@@ -2906,8 +3859,12 @@
 
                 const body = document.getElementById('sv-body');
                 body.querySelectorAll('img,video,iframe').forEach(el => { if (el.tagName === 'VIDEO') { try { el.pause(); } catch (e) {} } el.remove(); });
+                document.getElementById('sv-overlay').innerHTML = '';
                 const caption = document.getElementById('sv-caption');
-                caption.classList.toggle('hidden', !item.caption); caption.textContent = item.caption || '';
+                // Caption pode ser um JSON de camadas de texto (story de vídeo) — aí não vira legenda.
+                const hasLayers = /^\s*\{\s*"ov"/.test(String(item.caption || ''));
+                const plainCap = hasLayers ? '' : (item.caption || '');
+                caption.classList.toggle('hidden', !plainCap); caption.textContent = plainCap;
 
                 const fillEl = prog.children[this.storyItemIdx].querySelector('.sv-seg-fill');
                 let duration = 5000;
@@ -2932,6 +3889,7 @@
                         body.insertBefore(vid, body.querySelector('.sv-caption'));
                         vid.muted = false;
                         vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
+                        if (hasLayers) this.renderStoryOverlay(item.caption, vid);
                         let started = false;
                         const startProg = (ms) => {
                             if (started || myToken !== this._svToken) return; started = true;
@@ -3072,7 +4030,7 @@
                 if (this.userStoriesIdx(p.userId) >= 0) av.classList.add('has-story'); // anel = tem story
                 av.onclick = () => this.openUserStories(p.userId);
                 const author = document.createElement('div'); author.className = 'feed-author';
-                author.innerHTML = `<div class="fa-name">${this.esc(p.name)}</div><div class="fa-time">${this.timeAgo(p.timestamp)} • some em ${this.timeLeft(p.expiresAt)}</div>`;
+                author.innerHTML = `<div class="fa-name">${this.esc(p.name)}</div><div class="fa-time">${this.timeAgo(p.timestamp)} • ${p.eternal ? '♾️ eterno' : 'some em ' + this.timeLeft(p.expiresAt)}</div>`;
                 author.querySelector('.fa-name').onclick = () => this.openUserProfile(p.userId); // nome abre o mini perfil
                 head.appendChild(av); head.appendChild(author);
                 if (p.mine) {
@@ -3183,7 +4141,12 @@
             deleteFeedPost(p, card) {
                 if (!confirm('Excluir este post? Não dá pra desfazer.')) return;
                 this.request('deleteFeed', { postId: p.id })
-                    .then(() => { this.toast('Post excluído.'); card.remove(); }).catch(() => {});
+                    .then(() => {
+                        this.toast('Post excluído.');
+                        card.remove();
+                        this.feedPosts = (this.feedPosts || []).filter(x => x.id !== p.id);
+                        this.myPosts = (this.myPosts || []).filter(x => x.id !== p.id);
+                    }).catch(() => {});
             }
             async playFeedVideo(wrap, p) {
                 if (wrap._loading) return; wrap._loading = true;
@@ -3264,19 +4227,25 @@
                     '</div>'
                 );
             }
-            // Post só de texto (estilo X)
-            openTextPost() {
-                this.closeModal();
-                this.feedTtl = 24;
-                this.showModal(
-                    '<h3>✍️ Post de texto</h3>' +
-                    '<textarea id="text-post-input" rows="5" maxlength="500" placeholder="Solta o pensamento… provoque, confesse, convide. 😈"></textarea>' +
-                    '<p class="hint-text" style="margin:10px 0 8px;">💨 Some em quanto tempo?</p>' +
+            // Linha de duração compartilhada pelos posts (inclui a opção ETERNO)
+            ttlRowHTML() {
+                return '<p class="hint-text" style="margin:10px 0 8px;">Quanto tempo esse post fica de pé?</p>' +
                     '<div class="vis-choice" id="ttl-choice">' +
                     '<button onclick="App.setFeedTtl(1, this)">⚡<span>1h</span></button>' +
                     '<button onclick="App.setFeedTtl(6, this)">🌙<span>6h</span></button>' +
-                    '<button class="on" onclick="App.setFeedTtl(24, this)">🔥<span>24h</span></button>' +
-                    '</div>' +
+                    '<button onclick="App.setFeedTtl(24, this)">🔥<span>24h</span></button>' +
+                    '<button class="on" onclick="App.setFeedTtl(0, this)">♾️<span>Eterno</span><small>fica no perfil</small></button>' +
+                    '</div>';
+            }
+            ttlLabel() { return this.feedTtl === 0 ? 'Fica no seu perfil. ♾️' : `Some em ${this.feedTtl}h. 💨`; }
+            // Post só de texto (estilo X)
+            openTextPost() {
+                this.closeModal();
+                this.feedTtl = 0;
+                this.showModal(
+                    '<h3>✍️ Post de texto</h3>' +
+                    '<textarea id="text-post-input" rows="5" maxlength="500" placeholder="Solta o pensamento… provoque, confesse, convide. 😈"></textarea>' +
+                    this.ttlRowHTML() +
                     '<p class="hint-text" style="margin:10px 0 8px;">Quem pode ver?</p>' +
                     '<div class="vis-choice">' +
                     '<button onclick="App.confirmTextPost(\'friends\')">👥<span>Amigos</span></button>' +
@@ -3292,27 +4261,30 @@
                 this.closeModal();
                 try {
                     await this.request('postFeed', { content: '', type: 'text', mimeType: 'text/plain', visibility, caption: text, hours: this.feedTtl });
-                    this.toast(`Postado! Some em ${this.feedTtl}h. 💨`);
+                    this.toast('Postado! ' + this.ttlLabel());
                     this.switchTab('feed');
                 } catch (e) {}
             }
             pickFeed(inputId) { this.closeModal(); document.getElementById(inputId).click(); }
-            handleFeedFile(event) {
+            async handleFeedFile(event) {
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file) return;
                 if (file.size > 12 * 1024 * 1024) return this.toast('Arquivo excede 12MB.');
                 if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return this.toast('Deve ser foto ou vídeo.');
-                this.pendingFeedFile = file;
-                this.feedTtl = 24;
+                this.pendingFeedFile = null; this.pendingFeedImage = null;
+                if (file.type.startsWith('image/')) {
+                    // Foto vai pro editor antes de virar post.
+                    const edited = await this.editImage(file, { ratios: IE_RATIOS, maxOut: 1440, quality: 0.86 });
+                    if (!edited) return;
+                    this.pendingFeedImage = edited;
+                } else {
+                    this.pendingFeedFile = file;
+                }
+                this.feedTtl = 0;
                 this.showModal(
                     '<h3>Detalhes do post</h3>' +
                     '<input id="feed-caption" placeholder="Legenda (opcional)" maxlength="300" autocomplete="off" style="margin-bottom:10px;">' +
-                    '<p class="hint-text" style="margin:0 0 8px;">💨 Some em quanto tempo?</p>' +
-                    '<div class="vis-choice" id="ttl-choice">' +
-                    '<button onclick="App.setFeedTtl(1, this)">⚡<span>1h</span></button>' +
-                    '<button onclick="App.setFeedTtl(6, this)">🌙<span>6h</span></button>' +
-                    '<button class="on" onclick="App.setFeedTtl(24, this)">🔥<span>24h</span></button>' +
-                    '</div>' +
+                    this.ttlRowHTML() +
                     '<p class="hint-text" style="margin:10px 0 8px;">Quem pode ver?</p>' +
                     '<div class="vis-choice">' +
                     '<button onclick="App.confirmFeed(\'friends\')">👥<span>Amigos</span></button>' +
@@ -3325,20 +4297,21 @@
                 document.querySelectorAll('#ttl-choice button').forEach(b => b.classList.toggle('on', b === btn));
             }
             async confirmFeed(visibility) {
-                const file = this.pendingFeedFile; this.pendingFeedFile = null;
+                const file = this.pendingFeedFile; const edited = this.pendingFeedImage;
+                this.pendingFeedFile = null; this.pendingFeedImage = null;
                 const capEl = document.getElementById('feed-caption');
                 const caption = capEl ? capEl.value : '';
                 this.closeModal();
-                if (!file) return;
-                const type = file.type.startsWith('image/') ? 'image' : 'video';
-                let dataUrl, mime = file.type;
-                if (type === 'image') { const c = await this.compressImage(file); dataUrl = c.dataUrl; mime = c.mime; }
-                else dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); });
+                if (!file && !edited) return;
+                const type = edited ? 'image' : 'video';
+                let dataUrl, mime;
+                if (edited) { dataUrl = edited.dataUrl; mime = edited.mime; }
+                else { mime = file.type; dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); }); }
                 const wait = this.toastSticky(type === 'video' ? '⏫ Enviando vídeo… não feche o app, pode levar um tempinho.' : '⏫ Publicando…');
                 try {
                     await this.request('postFeed', { content: dataUrl, type, mimeType: mime, visibility, caption, hours: this.feedTtl });
                     this.dropToast(wait);
-                    this.toast(`Publicado! Some em ${this.feedTtl}h. 💨`);
+                    this.toast('Publicado! ' + this.ttlLabel());
                     this.switchTab('feed');
                 } catch (err) {
                     this.dropToast(wait);
@@ -3347,12 +4320,14 @@
             }
 
             // === FEED VERTICAL (imersivo) ===
-            openVertical(startIdx) {
-                if (!this.feedPosts.length) { this.toast('Nada no feed pra mergulhar ainda.'); return; }
+            openVertical(startIdx, list) {
+                const posts = list || this.feedPosts;
+                if (!posts.length) { this.toast('Nada no feed pra mergulhar ainda.'); return; }
+                this.vvFromFeed = !list;
                 const viewer = document.getElementById('vertical-viewer');
                 const track = document.getElementById('vv-track');
                 track.innerHTML = '';
-                this.feedPosts.forEach((p, i) => track.appendChild(this.verticalSlide(p, i)));
+                posts.forEach((p, i) => track.appendChild(this.verticalSlide(p, i)));
                 viewer.classList.add('open');
                 const idx = Math.max(0, startIdx || 0);
                 requestAnimationFrame(() => { track.scrollTop = idx * track.clientHeight; });
@@ -3408,10 +4383,15 @@
                     cr.innerHTML = ICONS.flame + '<span>Crush</span>';
                     cr.onclick = () => this.sendCrush({ id: p.userId, name: p.name, emoji: p.emoji, avatar: p.avatar || '', crushSent: false }, null);
                     rail.appendChild(cr);
+                } else {
+                    const del = document.createElement('button'); del.style.color = 'var(--danger)';
+                    del.innerHTML = ICONS.trash + '<span>Excluir</span>';
+                    del.onclick = () => this.deleteFeedPost(p, slide);
+                    rail.appendChild(del);
                 }
                 slide.appendChild(rail);
                 const meta = document.createElement('div'); meta.className = 'vv-meta';
-                meta.innerHTML = `<div class="vv-name">${this.esc(p.name)} <span class="ttl-chip">${this.timeLeft(p.expiresAt)}</span></div>` +
+                meta.innerHTML = `<div class="vv-name">${this.esc(p.name)} <span class="ttl-chip">${p.eternal ? '♾️' : this.timeLeft(p.expiresAt)}</span></div>` +
                     (p.caption && p.type !== 'text' ? `<div class="vv-cap">${this.esc(p.caption)}</div>` : '');
                 const nmEl = meta.querySelector('.vv-name');
                 nmEl.style.cursor = 'pointer';
@@ -3422,7 +4402,8 @@
             closeVertical() {
                 document.getElementById('vertical-viewer').classList.remove('open');
                 document.getElementById('vv-track').innerHTML = '';
-                if (document.getElementById('tab-btn-feed').classList.contains('active')) this.renderFeed(this.feedPosts);
+                if (this.vvFromFeed && document.getElementById('tab-btn-feed').classList.contains('active')) this.renderFeed(this.feedPosts);
+                if (!this.vvFromFeed && document.getElementById('tab-btn-profile').classList.contains('active')) this.loadProfileGrid();
             }
 
             // === SALAS ===
@@ -3939,6 +4920,11 @@
 
             // === VIEWPORT / TECLADO ===
             setupViewport() {
+                // Editor e compositor precisam recalcular o quadro quando a tela gira.
+                window.addEventListener('resize', () => {
+                    if (this.ie) this.ieLayout();
+                    if (this.sc) this.scLayout(this.sc.ar);
+                });
                 const vv = window.visualViewport; if (!vv) return;
                 const apply = () => {
                     const chat = document.getElementById('chat-screen');
