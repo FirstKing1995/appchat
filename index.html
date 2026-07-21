@@ -323,7 +323,8 @@
         @keyframes heartpop { 0% { transform: scale(0); opacity: 0; } 30% { transform: scale(1.15); opacity: 0.95; } 100% { transform: scale(1); opacity: 0; } }
         .feed-media img { width: 100%; display: block; max-height: 70vh; object-fit: cover; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
         .feed-video-wrap { position: relative; width: 100%; min-height: 220px; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .feed-video-wrap .feed-play { width: 62px; height: 62px; border-radius: 50%; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .fv-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .feed-video-wrap .feed-play { position: relative; z-index: 1; width: 62px; height: 62px; border-radius: 50%; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; color: #fff; }
         .feed-video-wrap .feed-play svg { width: 26px; height: 26px; }
         .feed-embed { width: 100%; height: 60vh; max-height: 440px; border: 0; background: #000; display: block; }
         .feed-caption { padding: 10px 14px 2px; font-size: 14px; line-height: 1.4; }
@@ -354,7 +355,7 @@
         .vv-slide iframe { width: 100%; height: 100%; border: 0; background: #000; }
         .vv-text { padding: 40px 28px; font-size: 22px; font-weight: 600; line-height: 1.55; text-align: center; max-height: 72%; overflow: hidden; white-space: pre-wrap; word-break: break-word; }
         .vv-playwrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; background: radial-gradient(circle at center, rgba(255,46,99,0.12), #000 75%); }
-        .vv-playwrap .feed-play { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .vv-playwrap .feed-play { position: relative; z-index: 1; width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; color: #fff; }
         .vv-rail { position: absolute; right: 10px; bottom: 110px; display: flex; flex-direction: column; gap: 18px; align-items: center; z-index: 4; }
         .vv-rail button { background: none; border: none; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-size: 11px; font-weight: 800; }
         .vv-rail button svg { width: 30px; height: 30px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7)); }
@@ -409,6 +410,18 @@
         .msg.received .msg-quote { background: rgba(255,255,255,0.07); }
         .msg-quote b { font-size: 10px; color: var(--accent-2); }
         .msg.sent .msg-quote b { color: rgba(255,255,255,0.85); }
+        /* Resposta a story: miniatura do story respondido + texto */
+        .story-reply { display: flex; align-items: stretch; gap: 8px; flex: 1; }
+        .sr-thumb {
+            width: 40px; height: 56px; border-radius: 8px; flex-shrink: 0; overflow: hidden;
+            background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.18);
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+        }
+        .sr-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .sr-thumb.vid { background: linear-gradient(135deg, rgba(122,43,255,0.5), rgba(0,0,0,0.5)); }
+        .sr-col { display: flex; flex-direction: column; justify-content: center; gap: 3px; min-width: 0; }
+        .sr-label { font-size: 10px; font-weight: 800; opacity: 0.7; }
+        .sr-text { font-size: 14px; line-height: 1.35; word-break: break-word; }
         .msg-reactions { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
         .msg-reactions span {
             background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border); border-radius: 12px;
@@ -797,6 +810,8 @@
         .sv-overlay { z-index: 2; }
         .sv-overlay .sc-text { pointer-events: none; cursor: default; }
         .sv-footer { padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 10px; }
+        /* Segurar para pausar: some com a interface, deixa só a mídia (estilo Insta) */
+        .story-viewer.paused .sv-progress, .story-viewer.paused .sv-header, .story-viewer.paused .sv-footer, .story-viewer.paused .sv-caption { opacity: 0; transition: opacity 0.2s ease; }
         .sv-btn-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .sv-req { display: flex; align-items: center; gap: 6px; background: rgba(255,46,99,0.14); color: var(--accent); border: 1px solid var(--accent); border-radius: 22px; padding: 10px 18px; font-weight: 800; font-size: 13px; cursor: pointer; }
         .sv-req.danger { background: rgba(255,0,80,0.14); color: var(--danger); border-color: var(--danger); }
@@ -1018,7 +1033,7 @@
                         <span class="pg-hint">♾️ eterno · ⏳ temporário</span>
                     </div>
                     <div class="pg-grid" id="profile-grid"></div>
-                    <p class="hint-text" style="text-align:center; opacity:0.55; margin-top:14px;">Phantom V2 — build v2.6</p>
+                    <p class="hint-text" style="text-align:center; opacity:0.55; margin-top:14px;">Phantom V2 — build v2.7</p>
                 </div>
             </div>
         </div>
@@ -1272,6 +1287,31 @@
             </div>
         </div>
 
+        <!-- EDITOR DE VÍDEO (cortar duração + compactar) -->
+        <div id="vid-editor" class="img-editor">
+            <div class="ie-bar">
+                <button onclick="App.veCancel()">Cancelar</button>
+                <span style="font-size:13px;font-weight:800;opacity:.7;">Ajustar vídeo</span>
+                <button class="ie-done" onclick="App.veApply()">Avançar →</button>
+            </div>
+            <div class="ie-stage-wrap">
+                <video id="ve-video" playsinline muted loop style="max-width:100%;max-height:100%;border-radius:8px;background:#000;"></video>
+            </div>
+            <div class="ie-panel">
+                <div id="ve-trim-wrap">
+                    <div class="ie-slider"><label>Início</label><input type="range" id="ve-start" min="0" max="100" value="0" step="1" oninput="App.veTrim('start')"><span id="ve-start-val">0s</span></div>
+                    <div class="ie-slider"><label>Fim</label><input type="range" id="ve-end" min="0" max="100" value="100" step="1" oninput="App.veTrim('end')"><span id="ve-end-val">0s</span></div>
+                </div>
+                <div class="chip-label" style="margin:2px 0 0;">Qualidade</div>
+                <div class="ie-row" id="ve-quality">
+                    <button onclick="App.veQuality('alta', this)">🎬 Alta</button>
+                    <button class="on" onclick="App.veQuality('media', this)">⚖️ Média</button>
+                    <button onclick="App.veQuality('leve', this)">🪶 Leve</button>
+                </div>
+                <p class="hint-text" id="ve-estimate" style="margin:2px 0 0;text-align:center;">—</p>
+            </div>
+        </div>
+
         <!-- COMPOSITOR DE STORY (texto por cima / story só de texto) -->
         <div id="story-comp" class="story-comp">
             <div class="sc-bar">
@@ -1291,7 +1331,7 @@
                 <div class="sc-swatches" id="sc-swatches"></div>
                 <div class="ie-slider">
                     <label>Tamanho</label>
-                    <input type="range" id="sc-size" min="14" max="60" value="30" oninput="App.scSize(this.value)">
+                    <input type="range" id="sc-size" min="14" max="90" value="30" oninput="App.scSize(this.value)">
                     <span id="sc-size-val">30</span>
                 </div>
             </div>
@@ -1470,6 +1510,13 @@
             { label: 'Neon',     css: 'saturate(1.9) contrast(1.15) hue-rotate(-8deg)' },
             { label: 'Desbotado',css: 'saturate(0.6) contrast(0.9) brightness(1.12)' }
         ];
+        // === EDITOR DE VÍDEO ===
+        const MAX_VIDEO_BYTES = 12 * 1024 * 1024;
+        const VE_PRESETS = {
+            alta:  { dim: 1080, mbps: 2.5 },
+            media: { dim: 720,  mbps: 1.4 },
+            leve:  { dim: 480,  mbps: 0.8 }
+        };
         // === COMPOSITOR DE STORY ===
         const SC_COLORS = ['#ffffff', '#000000', '#ff2e63', '#b14bff', '#ff8a00', '#3dffa2', '#00d4ff', '#ffe600', '#ff6ec7'];
         const SC_BGS = [
@@ -1530,10 +1577,12 @@
                 // Perfil / editor de imagem / compositor de story
                 this.myPosts = [];
                 this.ie = null;             // estado do editor de imagem
+                this.ve = null;             // estado do editor de vídeo
                 this.sc = null;             // estado do compositor de story
                 this.scColor = '#ffffff';
                 this.pendingStory = null;
                 this.pendingFeedImage = null;
+                this.pendingFeedPoster = null;
                 this.vvFromFeed = true;
                 this.feedTtl = 0;
 
@@ -2089,14 +2138,16 @@
                     img.oncontextmenu = () => false; img.src = this.driveImageUrl(p.fileId);
                     cell.appendChild(img);
                 } else if (p.type === 'video') {
-                    // Vídeo fica privado no Drive: se a miniatura não vier, mostra o cartão escuro.
+                    // Usa a capa (frame público) do vídeo; sem capa, cartão escuro.
                     const ph = document.createElement('div'); ph.className = 'pg-vid'; ph.textContent = '🎬';
                     cell.appendChild(ph);
-                    const img = document.createElement('img'); img.loading = 'lazy'; img.draggable = false;
-                    img.oncontextmenu = () => false; img.src = this.driveImageUrl(p.fileId);
-                    img.style.position = 'absolute'; img.style.inset = '0';
-                    img.onerror = () => img.remove();
-                    cell.appendChild(img);
+                    if (p.cover) {
+                        const img = document.createElement('img'); img.loading = 'lazy'; img.draggable = false;
+                        img.oncontextmenu = () => false; img.src = this.driveImageUrl(p.cover);
+                        img.style.position = 'absolute'; img.style.inset = '0';
+                        img.onerror = () => img.remove();
+                        cell.appendChild(img);
+                    }
                     const t = document.createElement('span'); t.className = 'pg-type'; t.textContent = '▶️';
                     cell.appendChild(t);
                 } else {
@@ -2742,7 +2793,10 @@
             }
             // Guarda um resumo da mensagem para citações de resposta.
             rememberMsg(msg, senderName) {
-                const snip = msg.type === 'text' ? String(msg.content).slice(0, 70) : (MEDIA_LABEL[msg.type] ? '📎 ' + MEDIA_LABEL[msg.type] : '📎 mídia');
+                let snip;
+                if (msg.type === 'text') snip = String(msg.content).slice(0, 70);
+                else if (msg.type === 'storyreply') { let r = {}; try { r = JSON.parse(msg.content) || {}; } catch (e) {} snip = '↪️ ' + String(r.text || 'resposta ao story').slice(0, 60); }
+                else snip = (MEDIA_LABEL[msg.type] ? '📎 ' + MEDIA_LABEL[msg.type] : '📎 mídia');
                 this.msgMeta[msg.id] = { snippet: snip, name: senderName };
             }
             renderMessage(msg, opts) {
@@ -2794,6 +2848,29 @@
                         container.appendChild(div);
                         if (!opts.history) this.scrollToBottom();
                     }
+                } else if (msg.type === 'storyreply') {
+                    // Resposta a um story: mostra a miniatura do story respondido + o texto.
+                    let ref = {}; try { ref = JSON.parse(msg.content) || {}; } catch (e) {}
+                    const sr = document.createElement('div'); sr.className = 'story-reply';
+                    const thumb = document.createElement('div'); thumb.className = 'sr-thumb';
+                    if (ref.mtype === 'image' && ref.fileId) {
+                        const im = document.createElement('img'); im.draggable = false; im.src = this.driveImageUrl(ref.fileId);
+                        im.onerror = () => { thumb.classList.add('gone'); thumb.textContent = '👻'; };
+                        thumb.appendChild(im);
+                    } else { thumb.classList.add('vid'); thumb.textContent = '🎬'; }
+                    const col = document.createElement('div'); col.className = 'sr-col';
+                    const label = document.createElement('div'); label.className = 'sr-label';
+                    label.textContent = isMine ? '↪️ Você respondeu ao story' : '↪️ Respondeu ao seu story';
+                    const txt = document.createElement('div'); txt.className = 'sr-text'; txt.innerText = ref.text || '';
+                    col.appendChild(label); col.appendChild(txt);
+                    sr.appendChild(thumb); sr.appendChild(col);
+                    const row = document.createElement('div'); row.className = 'msg-row';
+                    row.appendChild(sr);
+                    const badge = document.createElement('span'); badge.className = 'ttl-badge'; row.appendChild(badge);
+                    div.appendChild(row);
+                    container.appendChild(div); this.scrollToBottom();
+                    if (isMine) this.startCountdown(div, badge, this.MESSAGE_LIFESPAN, () => this.finishConsume(msg));
+                    else this.observeCountdown(div, badge, this.MESSAGE_LIFESPAN, msg);
                 } else {
                     div.classList.add('msg-media');
                     if (isMine && msg.viewOnce) {
@@ -3369,6 +3446,207 @@
                 this.ie = null;
             }
 
+            // ==========================================================
+            // === EDITOR DE VÍDEO (cortar duração + compactar p/ caber em 12MB)
+            // Devolve { file: Blob, poster: dataURL } ou null (cancelado).
+            // ==========================================================
+            canCompressVideo() {
+                return typeof MediaRecorder !== 'undefined' &&
+                    !!HTMLCanvasElement.prototype.captureStream &&
+                    (!!HTMLVideoElement.prototype.captureStream || !!HTMLVideoElement.prototype.mozCaptureStream);
+            }
+            editVideo(file) {
+                // Sem suporte a gravação: mantém o limite de 12MB e segue como antes (com capa gerada depois).
+                if (!this.canCompressVideo()) {
+                    if (file.size <= MAX_VIDEO_BYTES) return Promise.resolve({ file: file, poster: null });
+                    this.toast('Vídeo grande demais e seu navegador não deixa compactar aqui. Escolha um mais curto (até 12MB).');
+                    return Promise.resolve(null);
+                }
+                return new Promise((resolve) => {
+                    const url = URL.createObjectURL(file);
+                    const v = document.getElementById('ve-video');
+                    v.src = url; v.muted = true;
+                    this.ve = { file: file, url: url, resolve: resolve, dur: 0, start: 0, end: 0, quality: 'media' };
+                    const onMeta = () => {
+                        v.removeEventListener('loadedmetadata', onMeta);
+                        const d = (isFinite(v.duration) && v.duration > 0) ? v.duration : 0;
+                        this.ve.dur = d; this.ve.end = d;
+                        const trim = document.getElementById('ve-trim-wrap');
+                        trim.style.display = d > 0 ? '' : 'none'; // sem duração conhecida, sem corte
+                        if (d > 0) {
+                            const s = document.getElementById('ve-start'), e = document.getElementById('ve-end');
+                            s.max = String(Math.floor(d)); s.value = '0';
+                            e.max = String(Math.ceil(d)); e.value = String(Math.ceil(d));
+                        }
+                        document.querySelectorAll('#ve-quality button').forEach(b => b.classList.toggle('on', b.textContent.indexOf('Média') > -1));
+                        this.veEstimate();
+                        document.getElementById('vid-editor').classList.add('open');
+                        v.play().catch(() => {});
+                    };
+                    v.addEventListener('loadedmetadata', onMeta);
+                    v.onerror = () => { try { URL.revokeObjectURL(url); } catch (e) {} resolve({ file: file, poster: null }); };
+                });
+            }
+            veTrim(which) {
+                const ve = this.ve; if (!ve) return;
+                let s = Number(document.getElementById('ve-start').value);
+                let e = Number(document.getElementById('ve-end').value);
+                if (e - s < 1) { if (which === 'start') s = Math.max(0, e - 1); else e = Math.min(ve.dur, s + 1); }
+                document.getElementById('ve-start').value = s; document.getElementById('ve-end').value = e;
+                ve.start = s; ve.end = e;
+                document.getElementById('ve-start-val').textContent = s + 's';
+                document.getElementById('ve-end-val').textContent = e + 's';
+                const vid = document.getElementById('ve-video');
+                try { if (vid.currentTime < s || vid.currentTime > e) vid.currentTime = s; } catch (err) {}
+                this.veEstimate();
+            }
+            veQuality(q, btn) {
+                this.ve.quality = q;
+                document.querySelectorAll('#ve-quality button').forEach(b => b.classList.toggle('on', b === btn));
+                this.veEstimate();
+            }
+            veEstimate() {
+                const ve = this.ve; if (!ve) return;
+                const p = VE_PRESETS[ve.quality];
+                const secs = ve.dur > 0 ? Math.max(1, ve.end - ve.start) : (ve.file.size / (1.5 * 1024 * 1024 / 8));
+                const mb = (p.mbps * 1e6 * secs / 8 + 0.1 * 1e6 * secs / 8) / (1024 * 1024);
+                const el = document.getElementById('ve-estimate');
+                const fits = mb <= 12;
+                el.innerHTML = `Estimativa: <b style="color:${fits ? 'var(--ok)' : 'var(--danger)'}">~${mb.toFixed(1)}MB</b>` +
+                    (ve.dur > 0 ? ` · ${Math.max(1, (ve.end - ve.start)).toFixed(0)}s` : '') +
+                    (fits ? '' : ' · corte mais o tempo ou use Leve');
+            }
+            veCancel() {
+                const ve = this.ve; this.veClose(); if (ve) ve.resolve(null);
+            }
+            veClose() {
+                document.getElementById('vid-editor').classList.remove('open');
+                const v = document.getElementById('ve-video');
+                try { v.pause(); } catch (e) {} v.removeAttribute('src'); try { v.load(); } catch (e) {}
+                if (this.ve && this.ve.url) { try { URL.revokeObjectURL(this.ve.url); } catch (e) {} }
+                this.ve = null;
+            }
+            async veApply() {
+                const ve = this.ve; if (!ve || ve._busy) return;
+                ve._busy = true;
+                const preset = VE_PRESETS[ve.quality];
+                const wait = this.toastSticky('🎬 Compactando vídeo… não feche o app.');
+                let res = null;
+                try { res = await this.compressVideo(ve.file, { start: ve.start, end: ve.end || ve.dur, maxDim: preset.dim, mbps: preset.mbps }); }
+                catch (e) { res = null; }
+                this.dropToast(wait);
+                ve._busy = false;
+                if (!res || !res.blob || !res.blob.size) {
+                    if (ve.file.size <= MAX_VIDEO_BYTES) { const f = ve.file; this.veClose(); this.toast('Usei o vídeo original.'); ve.resolve({ file: f, poster: res && res.poster || null }); }
+                    else this.toast('Não consegui compactar. Tente cortar o tempo ou outro vídeo.');
+                    return;
+                }
+                if (res.blob.size > MAX_VIDEO_BYTES) {
+                    this.toast(`Ficou em ${(res.blob.size / 1048576).toFixed(1)}MB. Corte mais o tempo ou use qualidade Leve.`);
+                    return; // mantém o editor aberto pra ajustar
+                }
+                const poster = res.poster;
+                const outFile = res.blob;
+                this.veClose();
+                this.toast(`Pronto: ${(outFile.size / 1048576).toFixed(1)}MB. 🪶`);
+                ve.resolve({ file: outFile, poster: poster });
+            }
+            // Transcodifica desenhando os frames num canvas menor e regravando com bitrate alvo.
+            compressVideo(file, opts) {
+                return new Promise((resolve) => {
+                    const o = opts || {};
+                    let settled = false; const finish = (v) => { if (!settled) { settled = true; resolve(v); } };
+                    let video = null, objUrl = null;
+                    try {
+                        video = document.createElement('video');
+                        objUrl = URL.createObjectURL(file);
+                        video.src = objUrl; video.muted = true; video.playsInline = true; video.preload = 'auto';
+                    } catch (e) { return finish(null); }
+                    const cleanup = () => { try { video.pause(); } catch (e) {} try { URL.revokeObjectURL(objUrl); } catch (e) {} };
+                    video.onerror = () => { cleanup(); finish(null); };
+                    video.onloadedmetadata = async () => {
+                        try {
+                            const dur = (isFinite(video.duration) && video.duration > 0) ? video.duration : (o.end || 0);
+                            const s = Math.max(0, o.start || 0);
+                            const e = Math.min(o.end || dur || 1e9, dur || 1e9);
+                            const vw = video.videoWidth || 720, vh = video.videoHeight || 1280;
+                            const scale = Math.min(1, (o.maxDim || 720) / Math.max(vw, vh));
+                            const cw = Math.max(2, Math.round(vw * scale / 2) * 2);
+                            const ch = Math.max(2, Math.round(vh * scale / 2) * 2);
+                            const canvas = document.createElement('canvas'); canvas.width = cw; canvas.height = ch;
+                            const ctx = canvas.getContext('2d');
+                            const cstream = canvas.captureStream(30);
+                            let audioTrack = null;
+                            try {
+                                const vs = video.captureStream ? video.captureStream() : (video.mozCaptureStream ? video.mozCaptureStream() : null);
+                                const at = vs && vs.getAudioTracks ? vs.getAudioTracks() : [];
+                                if (at && at.length) audioTrack = at[0];
+                            } catch (er) {}
+                            const tracks = cstream.getVideoTracks().concat(audioTrack ? [audioTrack] : []);
+                            const out = new MediaStream(tracks);
+                            let mime = 'video/webm';
+                            ['video/mp4;codecs=h264,aac', 'video/webm;codecs=vp8,opus', 'video/webm;codecs=vp9,opus', 'video/webm']
+                                .some(m => { try { if (MediaRecorder.isTypeSupported(m)) { mime = m; return true; } } catch (er) {} return false; });
+                            const rec = new MediaRecorder(out, { mimeType: mime, videoBitsPerSecond: Math.round((o.mbps || 1.4) * 1e6), audioBitsPerSecond: 96000 });
+                            const chunks = [];
+                            rec.ondataavailable = ev => { if (ev.data && ev.data.size) chunks.push(ev.data); };
+                            const stopped = new Promise(r => { rec.onstop = r; });
+                            // vai pro início do corte
+                            await new Promise(r => { const on = () => { video.removeEventListener('seeked', on); r(); }; video.addEventListener('seeked', on); try { video.currentTime = s; } catch (er) { r(); } });
+                            let poster = null;
+                            try { rec.start(150); } catch (er) { cleanup(); return finish(null); }
+                            await video.play().catch(() => {});
+                            const deadline = Date.now() + (e - s) * 1000 + 6000; // trava de segurança
+                            await new Promise(r => {
+                                const tick = () => {
+                                    if (video.currentTime >= e || video.ended || Date.now() > deadline) return r();
+                                    try { ctx.drawImage(video, 0, 0, cw, ch); } catch (er) {}
+                                    if (!poster) { try { poster = canvas.toDataURL('image/jpeg', 0.72); } catch (er) {} }
+                                    requestAnimationFrame(tick);
+                                };
+                                requestAnimationFrame(tick);
+                            });
+                            try { rec.stop(); } catch (er) {}
+                            await stopped;
+                            cleanup();
+                            const blob = new Blob(chunks, { type: mime.split(';')[0] });
+                            finish({ blob: blob, mime: mime.split(';')[0], poster: poster });
+                        } catch (err) { cleanup(); finish(null); }
+                    };
+                    setTimeout(() => finish(null), 180000); // nunca trava pra sempre
+                });
+            }
+            // Captura só um frame (sem gravar) — usado como capa quando não há compressão.
+            captureVideoPoster(file) {
+                return new Promise((resolve) => {
+                    let done = false; const fin = (v) => { if (!done) { done = true; resolve(v); } };
+                    try {
+                        const v = document.createElement('video');
+                        const url = URL.createObjectURL(file);
+                        v.src = url; v.muted = true; v.playsInline = true;
+                        const grab = () => {
+                            try {
+                                const vw = v.videoWidth || 720, vh = v.videoHeight || 1280;
+                                const scale = Math.min(1, 720 / Math.max(vw, vh));
+                                const cw = Math.max(2, Math.round(vw * scale)), ch = Math.max(2, Math.round(vh * scale));
+                                const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+                                c.getContext('2d').drawImage(v, 0, 0, cw, ch);
+                                try { URL.revokeObjectURL(url); } catch (e) {}
+                                fin(c.toDataURL('image/jpeg', 0.72));
+                            } catch (e) { fin(null); }
+                        };
+                        v.onloadeddata = () => {
+                            const seekTo = Math.min(0.1, (v.duration || 1) / 3);
+                            const on = () => { v.removeEventListener('seeked', on); grab(); };
+                            v.addEventListener('seeked', on);
+                            try { v.currentTime = seekTo; } catch (e) { grab(); }
+                        };
+                        v.onerror = () => fin(null);
+                        setTimeout(() => fin(null), 4000);
+                    } catch (e) { fin(null); }
+                });
+            }
+
             async handleMedia(event) {
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file || !this.currentGroup) return;
@@ -3518,7 +3796,6 @@
             async handleStoryFile(event) {
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file) return;
-                if (file.size > 12 * 1024 * 1024) return this.toast('Arquivo excede 12MB.');
                 if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return this.toast('Story deve ser foto ou vídeo.');
                 if (file.type.startsWith('image/')) {
                     // Foto: edita (cortar/ajustar) e depois escreve por cima.
@@ -3526,7 +3803,10 @@
                     if (!edited) return;
                     this.scOpen({ mode: 'image', dataUrl: edited.dataUrl });
                 } else {
-                    this.scOpen({ mode: 'video', file: file });
+                    // Vídeo: corte + compressão, depois escreve por cima.
+                    const vid = await this.editVideo(file);
+                    if (!vid) return;
+                    this.scOpen({ mode: 'video', file: vid.file });
                 }
             }
             askStoryVisibility() {
@@ -3637,7 +3917,7 @@
             scAddText() {
                 if (!this.sc) return;
                 const t = {
-                    id: ++this.sc.seq, text: '', x: 0.5, y: this.sc.mode === 'text' ? 0.5 : 0.72,
+                    id: ++this.sc.seq, text: '', x: 0.5, y: this.sc.mode === 'text' ? 0.5 : 0.72, rot: 0,
                     color: this.scColor, sizeRel: Number(document.getElementById('sc-size').value) / 400
                 };
                 const el = document.createElement('div'); el.className = 'sc-text';
@@ -3685,26 +3965,65 @@
                 t.el.style.left = (t.x * 100) + '%';
                 t.el.style.top = (t.y * 100) + '%';
                 t.el.style.color = t.color;
+                t.el.style.transform = `translate(-50%, -50%) rotate(${t.rot || 0}deg)`;
                 t.el.style.fontSize = Math.max(10, t.sizeRel * w) + 'px';
             }
+            // Um dedo arrasta; dois dedos redimensionam (pinça) e giram — livre, como no Insta.
             scBindText(t) {
+                const el = t.el;
+                const pts = new Map();
                 let sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
-                t.el.addEventListener('pointerdown', (e) => {
-                    e.stopPropagation();
-                    t.el.setPointerCapture(e.pointerId);
-                    sx = e.clientX; sy = e.clientY; ox = t.x; oy = t.y; moved = false;
+                let startDist = 0, startAng = 0, startSize = 0, startRot = 0;
+                const centroid = () => { const a = [...pts.values()]; return { x: (a[0].x + a[1].x) / 2, y: (a[0].y + a[1].y) / 2 }; };
+                const setBaseFrom = (x, y) => { sx = x; sy = y; ox = t.x; oy = t.y; };
+                const syncSizeSlider = () => {
+                    const px = Math.round(t.sizeRel * 400);
+                    const sl = document.getElementById('sc-size'); if (sl) sl.value = Math.max(14, Math.min(90, px));
+                    const lbl = document.getElementById('sc-size-val'); if (lbl) lbl.textContent = px;
+                };
+                el.addEventListener('pointerdown', (e) => {
+                    e.stopPropagation(); e.preventDefault();
+                    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+                    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
                     this.scSelect(t.id);
+                    if (pts.size === 1) { setBaseFrom(e.clientX, e.clientY); moved = false; }
+                    else if (pts.size === 2) {
+                        const a = [...pts.values()];
+                        startDist = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1;
+                        startAng = Math.atan2(a[1].y - a[0].y, a[1].x - a[0].x);
+                        startSize = t.sizeRel; startRot = t.rot || 0;
+                        const c = centroid(); setBaseFrom(c.x, c.y); moved = true;
+                    }
                 });
-                t.el.addEventListener('pointermove', (e) => {
-                    if (!t.el.hasPointerCapture || !t.el.hasPointerCapture(e.pointerId)) return;
-                    const dx = (e.clientX - sx) / (this.sc.w || 1);
-                    const dy = (e.clientY - sy) / (this.sc.h || 1);
-                    if (Math.abs(e.clientX - sx) > 3 || Math.abs(e.clientY - sy) > 3) moved = true;
-                    t.x = Math.max(0.06, Math.min(0.94, ox + dx));
-                    t.y = Math.max(0.05, Math.min(0.95, oy + dy));
+                el.addEventListener('pointermove', (e) => {
+                    if (!pts.has(e.pointerId)) return;
+                    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+                    if (pts.size >= 2) {
+                        const a = [...pts.values()];
+                        const dist = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1;
+                        const ang = Math.atan2(a[1].y - a[0].y, a[1].x - a[0].x);
+                        t.sizeRel = Math.max(0.02, Math.min(0.75, startSize * (dist / startDist)));
+                        t.rot = startRot + (ang - startAng) * 180 / Math.PI;
+                        const c = centroid();
+                        t.x = Math.max(0.02, Math.min(0.98, ox + (c.x - sx) / (this.sc.w || 1)));
+                        t.y = Math.max(0.02, Math.min(0.98, oy + (c.y - sy) / (this.sc.h || 1)));
+                        moved = true; syncSizeSlider();
+                    } else {
+                        const dx = (e.clientX - sx) / (this.sc.w || 1);
+                        const dy = (e.clientY - sy) / (this.sc.h || 1);
+                        if (Math.abs(e.clientX - sx) > 3 || Math.abs(e.clientY - sy) > 3) moved = true;
+                        t.x = Math.max(0.02, Math.min(0.98, ox + dx));
+                        t.y = Math.max(0.02, Math.min(0.98, oy + dy));
+                    }
                     this.scPaint(t);
                 });
-                t.el.addEventListener('pointerup', () => { if (!moved) document.getElementById('sc-input').focus(); });
+                const up = (e) => {
+                    pts.delete(e.pointerId);
+                    if (pts.size === 1) { const r = [...pts.values()][0]; setBaseFrom(r.x, r.y); moved = true; } // evita "pulo" ao soltar 1 dedo
+                    else if (pts.size === 0 && !moved) { const i = document.getElementById('sc-input'); if (i) i.focus(); }
+                };
+                el.addEventListener('pointerup', up);
+                el.addEventListener('pointercancel', up);
             }
             scCancel() { this.scClose(); }
             scClose() {
@@ -3724,7 +4043,7 @@
                 if (sc.mode === 'video') {
                     this.pendingStory = {
                         type: 'video', file: sc.file,
-                        caption: live.length ? JSON.stringify({ ov: 1, t: live.map(t => ({ x: +t.x.toFixed(4), y: +t.y.toFixed(4), s: +t.sizeRel.toFixed(4), c: t.color, w: t.text })) }) : ''
+                        caption: live.length ? JSON.stringify({ ov: 1, t: live.map(t => ({ x: +t.x.toFixed(4), y: +t.y.toFixed(4), s: +t.sizeRel.toFixed(4), r: +((t.rot || 0).toFixed(1)), c: t.color, w: t.text })) }) : ''
                     };
                     this.scClose(); this.askStoryVisibility(); return;
                 }
@@ -3763,11 +4082,14 @@
                             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                             const lines = this.scWrap(ctx, t.text, outW * 0.86);
                             const lh = fs * 1.18;
-                            const top = t.y * outH - ((lines.length - 1) * lh) / 2;
+                            ctx.save();
+                            ctx.translate(t.x * outW, t.y * outH);
+                            ctx.rotate((t.rot || 0) * Math.PI / 180); // mesma inclinação do preview
                             ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = fs * 0.28; ctx.shadowOffsetY = fs * 0.05;
                             ctx.fillStyle = t.color;
-                            lines.forEach((ln, i) => ctx.fillText(ln, t.x * outW, top + i * lh));
-                            ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+                            const top = -((lines.length - 1) * lh) / 2;
+                            lines.forEach((ln, i) => ctx.fillText(ln, 0, top + i * lh));
+                            ctx.restore();
                         });
                         resolve(cv.toDataURL('image/jpeg', 0.88));
                     };
@@ -3806,7 +4128,7 @@
                     if (!r.width || !r.height) return;
                     layer.style.cssText = `position:absolute;left:${r.left - body.left}px;top:${r.top - body.top}px;width:${r.width}px;height:${r.height}px;inset:auto;`;
                     layer.innerHTML = data.map(t =>
-                        `<div class="sc-text" style="left:${t.x * 100}%;top:${t.y * 100}%;color:${this.esc(t.c)};font-size:${Math.max(10, t.s * r.width)}px;">${this.esc(t.w)}</div>`
+                        `<div class="sc-text" style="left:${t.x * 100}%;top:${t.y * 100}%;transform:translate(-50%,-50%) rotate(${(t.r || 0)}deg);color:${this.esc(t.c)};font-size:${Math.max(10, t.s * r.width)}px;">${this.esc(t.w)}</div>`
                     ).join('');
                 };
                 place();
@@ -3815,6 +4137,8 @@
             }
             openStories(authorIdx) {
                 if (!this.storyGroups[authorIdx]) return;
+                this.setupStoryHold();
+                this._storyPaused = false;
                 this.storyAuthorIdx = authorIdx; this.storyItemIdx = 0;
                 document.getElementById('story-viewer').classList.add('open');
                 this.renderStoryItem();
@@ -3837,6 +4161,8 @@
             }
             renderStoryItem() {
                 clearTimeout(this.storyTimer);
+                this._storyPaused = false;
+                document.getElementById('story-viewer').classList.remove('paused');
                 const group = this.storyGroups[this.storyAuthorIdx];
                 if (!group) return this.closeStories();
                 const item = group.items[this.storyItemIdx];
@@ -3967,9 +4293,64 @@
             }
             animateStoryProgress(fillEl, duration) {
                 if (!fillEl) return;
+                this.storyProg = { fillEl: fillEl, duration: duration, startedAt: Date.now(), remaining: duration };
                 fillEl.style.transition = 'none'; fillEl.style.width = '0%';
                 void fillEl.offsetWidth;
                 fillEl.style.transition = `width ${duration}ms linear`; fillEl.style.width = '100%';
+            }
+            // Segurar o dedo pausa o story (barra + vídeo); soltar retoma de onde parou.
+            pauseStory() {
+                if (this._storyPaused) return;
+                if (!document.getElementById('story-viewer').classList.contains('open')) return;
+                this._storyPaused = true;
+                clearTimeout(this.storyTimer);
+                const p = this.storyProg;
+                if (p && p.fillEl) {
+                    const elapsed = Date.now() - p.startedAt;
+                    p.remaining = Math.max(0, p.duration - elapsed);
+                    const pct = Math.max(0, Math.min(100, (elapsed / p.duration) * 100));
+                    p.fillEl.style.transition = 'none'; p.fillEl.style.width = pct + '%';
+                }
+                const v = document.getElementById('sv-body').querySelector('video');
+                if (v) { try { v.pause(); } catch (e) {} }
+                document.getElementById('story-viewer').classList.add('paused');
+            }
+            resumeStory() {
+                if (!this._storyPaused) return;
+                this._storyPaused = false;
+                document.getElementById('story-viewer').classList.remove('paused');
+                const p = this.storyProg;
+                if (p && p.fillEl && p.remaining != null) {
+                    void p.fillEl.offsetWidth;
+                    p.fillEl.style.transition = `width ${p.remaining}ms linear`; p.fillEl.style.width = '100%';
+                    p.startedAt = Date.now() - (p.duration - p.remaining);
+                    clearTimeout(this.storyTimer);
+                    this.storyTimer = setTimeout(() => this.storyNext(), p.remaining);
+                }
+                const v = document.getElementById('sv-body').querySelector('video');
+                if (v) { try { v.play().catch(() => {}); } catch (e) {} }
+            }
+            setupStoryHold() {
+                if (this._storyHoldBound) return; this._storyHoldBound = true;
+                const body = document.getElementById('sv-body');
+                let holdTimer = null;
+                const down = () => {
+                    this._storyHeld = false;
+                    clearTimeout(holdTimer);
+                    holdTimer = setTimeout(() => { this._storyHeld = true; this.pauseStory(); }, 220);
+                };
+                const up = () => {
+                    clearTimeout(holdTimer);
+                    if (this._storyHeld) { this.resumeStory(); this._storySuppressClick = true; this._storyHeld = false; }
+                };
+                body.addEventListener('pointerdown', down);
+                body.addEventListener('pointerup', up);
+                body.addEventListener('pointercancel', up);
+                body.addEventListener('pointerleave', up);
+                // suprime o clique de navegação logo após um "segurar para pausar"
+                body.addEventListener('click', (e) => {
+                    if (this._storySuppressClick) { e.stopPropagation(); e.preventDefault(); this._storySuppressClick = false; }
+                }, true);
             }
             storyNext() {
                 clearTimeout(this.storyTimer);
@@ -4076,6 +4457,7 @@
                     this.attachDoubleTapLike(media, p, likeBtn);
                 } else {
                     const wrap = document.createElement('div'); wrap.className = 'feed-video-wrap';
+                    if (p.cover) { const pi = document.createElement('img'); pi.className = 'fv-poster'; pi.draggable = false; pi.oncontextmenu = () => false; pi.src = this.driveImageUrl(p.cover); wrap.appendChild(pi); }
                     const play = document.createElement('div'); play.className = 'feed-play'; play.innerHTML = ICONS.play;
                     wrap.appendChild(play); wrap.onclick = () => this.playFeedVideo(wrap, p); media.appendChild(wrap);
                 }
@@ -4269,16 +4651,19 @@
             async handleFeedFile(event) {
                 const file = event.target.files[0]; event.target.value = '';
                 if (!file) return;
-                if (file.size > 12 * 1024 * 1024) return this.toast('Arquivo excede 12MB.');
                 if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return this.toast('Deve ser foto ou vídeo.');
-                this.pendingFeedFile = null; this.pendingFeedImage = null;
+                this.pendingFeedFile = null; this.pendingFeedImage = null; this.pendingFeedPoster = null;
                 if (file.type.startsWith('image/')) {
                     // Foto vai pro editor antes de virar post.
                     const edited = await this.editImage(file, { ratios: IE_RATIOS, maxOut: 1440, quality: 0.86 });
                     if (!edited) return;
                     this.pendingFeedImage = edited;
                 } else {
-                    this.pendingFeedFile = file;
+                    // Vídeo: editor de corte + compressão (gera também a capa).
+                    const vid = await this.editVideo(file);
+                    if (!vid) return;
+                    this.pendingFeedFile = vid.file;
+                    this.pendingFeedPoster = vid.poster || null;
                 }
                 this.feedTtl = 0;
                 this.showModal(
@@ -4297,19 +4682,25 @@
                 document.querySelectorAll('#ttl-choice button').forEach(b => b.classList.toggle('on', b === btn));
             }
             async confirmFeed(visibility) {
-                const file = this.pendingFeedFile; const edited = this.pendingFeedImage;
-                this.pendingFeedFile = null; this.pendingFeedImage = null;
+                const file = this.pendingFeedFile; const edited = this.pendingFeedImage; let poster = this.pendingFeedPoster;
+                this.pendingFeedFile = null; this.pendingFeedImage = null; this.pendingFeedPoster = null;
                 const capEl = document.getElementById('feed-caption');
                 const caption = capEl ? capEl.value : '';
                 this.closeModal();
                 if (!file && !edited) return;
                 const type = edited ? 'image' : 'video';
-                let dataUrl, mime;
+                let dataUrl, mime, cover = '';
                 if (edited) { dataUrl = edited.dataUrl; mime = edited.mime; }
-                else { mime = file.type; dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); }); }
+                else {
+                    mime = file.type || 'video/webm';
+                    // Sem capa ainda (navegador sem compressão)? Gera um frame agora.
+                    if (!poster) { try { poster = await this.captureVideoPoster(file); } catch (e) {} }
+                    cover = poster || '';
+                    dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); });
+                }
                 const wait = this.toastSticky(type === 'video' ? '⏫ Enviando vídeo… não feche o app, pode levar um tempinho.' : '⏫ Publicando…');
                 try {
-                    await this.request('postFeed', { content: dataUrl, type, mimeType: mime, visibility, caption, hours: this.feedTtl });
+                    await this.request('postFeed', { content: dataUrl, type, mimeType: mime, visibility, caption, hours: this.feedTtl, cover });
                     this.dropToast(wait);
                     this.toast('Publicado! ' + this.ttlLabel());
                     this.switchTab('feed');
@@ -4344,6 +4735,7 @@
                     slide.appendChild(img);
                 } else {
                     const wrap = document.createElement('div'); wrap.className = 'vv-playwrap';
+                    if (p.cover) { const pi = document.createElement('img'); pi.className = 'fv-poster'; pi.draggable = false; pi.oncontextmenu = () => false; pi.src = this.driveImageUrl(p.cover); wrap.appendChild(pi); }
                     const play = document.createElement('div'); play.className = 'feed-play'; play.innerHTML = ICONS.play;
                     wrap.appendChild(play);
                     wrap.onclick = async () => {
